@@ -1,2 +1,3 @@
-# project
-c++ project for csc3002
+# CSC3002 project
+
+这个是我们组的project的远程仓库。
