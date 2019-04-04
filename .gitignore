@@ -2,3 +2,9 @@
 *.a
 *.out
 *.exe
+
+Aeroplane_Project/cocos2d/
+Aeroplane_Project/proj.win32/
+Aeroplane_Project/proj.android/
+Aeroplane_Project/proj.ios_mac/
+Aeroplane_Project/proj.linux/
