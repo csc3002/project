@@ -22,12 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __GAMING_SCENE_H__
-#define __GAMING_SCENE_H__
+#ifndef __HELLOWORLD_SCENE_H__
+#define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
-
-class MainGame : public cocos2d::Scene
+#include "SimpleAudioEngine.h"
+USING_NS_CC;
+using namespace CocosDenshion;
+class HelloWorld : public cocos2d::Scene
 {
 public:
     static cocos2d::Scene* createScene();
@@ -36,9 +38,18 @@ public:
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-    
+	void HelloWorld::runPlane(Ref* pSender, Sprite* p1);
     // implement the "static create()" method manually
-    CREATE_FUNC(MainGame);
+    CREATE_FUNC(HelloWorld);
+};
+class Planes : public cocos2d::Sprite {
+public:
+	bool _selected = false;
+	virtual bool init();
+	static Planes* create();
+	bool Planes::ccTouchBegan(CCTouch* pTouch, CCEvent* pEvent);
+	//CREATE_FUNC(MySprite);
+
 };
 
 #endif // __HELLOWORLD_SCENE_H__
