@@ -94,22 +94,25 @@ bool HelloWorld::init()
         return false;
     }
 
+	
     auto visibleSize = Director::getInstance()->getVisibleSize();
+	log("[%f, %f]", visibleSize.width, visibleSize.height);
+
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	// floor Sprite
-	auto  floor = Sprite::create("white.jpg");
-	floor->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
-	floor->setScaleX(visibleSize.width / floor->getContentSize().width);
-	floor->setScaleY(visibleSize.height / floor->getContentSize().height);
-	this->addChild(floor, 0);
+	//auto  floor = Sprite::create("white.jpg");
+	//floor->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
+	//floor->setScaleX(visibleSize.width / floor->getContentSize().width);
+	//floor->setScaleY(visibleSize.height / floor->getContentSize().height);
+	//this->addChild(floor, 0);
 	//background Sprite
-	auto  bg = Sprite::create("background.jpg");
+	auto  bg = Sprite::create("background.png");
 	bg->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
-	bg->setScaleX((visibleSize.width / bg->getContentSize().width) - 0.5);
-	bg->setScaleY((visibleSize.height / bg->getContentSize().height) - 0.5);
+	bg->setScaleX(visibleSize.width / bg->getContentSize().width);
+	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
 	this->addChild(bg, 0);
 	auto s = Planes::create();
-	s->setPosition(Vec2(767,406));//设置精灵的位置
+	s->setPosition(Vec2(630, 737));//设置精灵的位置
 	s->setRotation(90);
 	this->addChild(s,0);
 	
