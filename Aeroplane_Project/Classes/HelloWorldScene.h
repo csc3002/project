@@ -38,18 +38,15 @@ public:
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-	void HelloWorld::runPlane(Ref* pSender, Sprite* p1);
+	void runPlane(Ref* pSender, Sprite* p1);
     // implement the "static create()" method manually
+    virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
+    virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
+    virtual void onTouchMoved(cocos2d::Touch*, cocos2d::Event*);
+    virtual void onTouchCancelled(cocos2d::Touch*, cocos2d::Event*);
     CREATE_FUNC(HelloWorld);
-};
-class Planes : public cocos2d::Sprite {
-public:
-	bool _selected = false;
-	virtual bool init();
-	static Planes* create();
-	bool Planes::ccTouchBegan(CCTouch* pTouch, CCEvent* pEvent);
-	//CREATE_FUNC(MySprite);
-
+private:
+    cocos2d::Label* labelTouchInfo;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
