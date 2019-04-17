@@ -7,3 +7,5 @@
 1，先clone下来随便一个文件夹
 2，新建一个cocos2d工程，把cocos2d还有几个proj文件夹复制过来扔到clone下来的路径
 3，然后就可以照常push和pull了 因为那几个大文件夹我都用gitignore屏蔽了（接下来用vs或者gitbash都可以了
+
+
