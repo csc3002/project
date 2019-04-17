@@ -24,54 +24,12 @@
 
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "planes.h"
 
 USING_NS_CC;
 
 //}
-bool Planes::init() {
 
-	if (!Sprite::initWithFile("plane.png")) {
-		return false;
-	}
-	//在这里进行一些精灵类的设置
-	setScale(0.152f, 0.152f);//设置缩放
-	//setRotation(90);//顺时针方向
-	return true;
-}
-Planes* Planes::create() {
-	Planes * sprite = new Planes();
-	if (sprite->init()) {
-		sprite->autorelease();//有程序控制sprite的生命周期，
-	}
-	else
-	{
-		delete sprite;
-		sprite = NULL;
-		return NULL;
-	}
-	return sprite;
-}
-
-bool Planes::ccTouchBegan(CCTouch* pTouch, CCEvent* pEvent) {
-	CCPoint ptClick = pTouch->getLocation();
-	bool bClickStone = false;
-	if (this->boundingBox().containsPoint(ptClick))
-	{
-		//点中了红色的棋子
-		this->_selected = true;
-
-		//点中了棋子
-		bClickStone = true;
-	}
-	if (bClickStone)
-	{
-		//移动棋子
-		CCMoveTo* moveTo1 = CCMoveTo::create(1, ccp(this->getPositionX() + 50, this->getPositionY() + 50));
-		this->runAction(moveTo1);
-
-	}
-	return true;
-}
 Scene* HelloWorld::createScene()
 {
     return HelloWorld::create();
@@ -94,22 +52,37 @@ bool HelloWorld::init()
         return false;
     }
 
+	labelTouchInfo = Label::createWithSystemFont("Touch or clicksomewhere to begin", "Arial", 80);
+    labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
+                                     Director::getInstance()->getVisibleSize().height / 2));
+    auto touchListener = EventListenerTouchOneByOne::create();
+    
+    touchListener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
+    touchListener->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
+    touchListener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
+    touchListener->onTouchCancelled = CC_CALLBACK_2(HelloWorld::onTouchCancelled, this);
+    
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+    
+    this->addChild(labelTouchInfo,1);
     auto visibleSize = Director::getInstance()->getVisibleSize();
+	log("[%f, %f]", visibleSize.width, visibleSize.height);
+
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	// floor Sprite
-	auto  floor = Sprite::create("white.jpg");
-	floor->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
-	floor->setScaleX(visibleSize.width / floor->getContentSize().width);
-	floor->setScaleY(visibleSize.height / floor->getContentSize().height);
-	this->addChild(floor, 0);
+	//auto  floor = Sprite::create("white.jpg");
+	//floor->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
+	//floor->setScaleX(visibleSize.width / floor->getContentSize().width);
+	//floor->setScaleY(visibleSize.height / floor->getContentSize().height);
+	//this->addChild(floor, 0);
 	//background Sprite
-	auto  bg = Sprite::create("background.jpg");
-	bg->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
-	bg->setScaleX((visibleSize.width / bg->getContentSize().width) - 0.5);
-	bg->setScaleY((visibleSize.height / bg->getContentSize().height) - 0.5);
+	auto  bg = Sprite::create("background.png");
+	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	bg->setScaleX(visibleSize.width / bg->getContentSize().width);
+	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
 	this->addChild(bg, 0);
 	auto s = Planes::create();
-	s->setPosition(Vec2(767,406));//设置精灵的位置
+	s->setPosition(Vec2(630, 737));//设置精灵的位置
 	s->setRotation(90);
 	this->addChild(s,0);
 	
@@ -222,8 +195,8 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
 {
 	//Close the cocos2d-x game scene and quit the application
-	CCActionInterval* rotateBy1 = CCRotateBy::create(0.5,45);
-	CCMoveTo* moveTo1 = CCMoveTo::create(0.5, ccp(p1->getPositionX()-16, p1->getPositionY()-40));
+	ActionInterval* rotateBy1 = RotateBy::create(0.5,45);
+	MoveTo* moveTo1 = MoveTo::create(0.5, Vec2(p1->getPositionX()-16, p1->getPositionY()-40));
 	p1->runAction(rotateBy1);
 	p1->runAction(moveTo1);
 
@@ -231,6 +204,26 @@ void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
 
 	//EventCustom customEndEvent("game_scene_close_event");
 	//_eventDispatcher->dispatchEvent(&customEndEvent);
+}
 
+bool HelloWorld::onTouchBegan(Touch* touch, Event* event)
+{
+    labelTouchInfo->setPosition(touch->getLocation());
+    labelTouchInfo->setString("You Touched Here");
+    return true;
+}
 
+void HelloWorld::onTouchEnded(Touch* touch, Event* event)
+{
+    cocos2d::log("touch ended");
+}
+
+void HelloWorld::onTouchMoved(Touch* touch, Event* event)
+{
+    cocos2d::log("touch moved");
+}
+
+void HelloWorld::onTouchCancelled(Touch* touch, Event* event)
+{
+    cocos2d::log("touch cancelled");
 }
