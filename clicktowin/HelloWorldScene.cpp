@@ -51,7 +51,7 @@ bool HelloWorld::init()
         return false;
     }
 
-	labelTouchInfo = Label::createWithSystemFont("Touch or clicksomewhere to begin", "Arial", 80);
+	labelTouchInfo = Label::createWithSystemFont("Touch or clicksomewhere to begin", "Arial", 36);
     labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
                                      Director::getInstance()->getVisibleSize().height / 2));
     auto touchListener = EventListenerTouchOneByOne::create();
@@ -85,34 +85,28 @@ bool HelloWorld::init()
 
 	int players[4] = {0, 0, 1, 0};
 
-	auto red_plane_0 = Planes::create(2, 0, 13, 10, 30, 42, Vec2(745, 815), Vec2(645, 825));
+	auto red_plane_0 = Planes::create(2, 0, 13, 10, 30, 42, 90, Vec2(745, 815), Vec2(645, 825));
 	red_plane_0->setPosition(red_plane_0->start_point);//设置精灵的位置
-	red_plane_0->setRotation(90);
 	//this->addChild(red_plane_0, 0);
 
-	auto red_plane_1 = Planes::create(2, 1, 13, 10, 30, 42, Vec2(815, 815), Vec2(645, 825));
+	auto red_plane_1 = Planes::create(2, 1, 13, 10, 30, 42, 90, Vec2(815, 815), Vec2(645, 825));
 	red_plane_1->setPosition(red_plane_1->start_point);//设置精灵的位置
-	red_plane_1->setRotation(90);
 	//this->addChild(red_plane_1, 0);
 
-	auto red_plane_2 = Planes::create(2, 2, 13, 10, 30, 42, Vec2(745, 745), Vec2(645, 825));
+	auto red_plane_2 = Planes::create(2, 2, 13, 10, 30, 42, 90, Vec2(745, 745), Vec2(645, 825));
 	red_plane_2->setPosition(red_plane_2->start_point);//设置精灵的位置
-	red_plane_2->setRotation(90);
 	//this->addChild(red_plane_2, 0);
 
-	auto red_plane_3 = Planes::create(2, 3, 13, 10, 30, 42, Vec2(815, 745), Vec2(645, 825));
+	auto red_plane_3 = Planes::create(2, 3, 13, 10, 30, 42, 90, Vec2(815, 745), Vec2(645, 825));
 	red_plane_3->setPosition(red_plane_3->start_point);//设置精灵的位置
-	red_plane_3->setRotation(90);
 	//this->addChild(red_plane_3, 0);
 
 	auto test_plane = Planes::create();
 	test_plane->setPosition(Vec2(480, 223));//设置精灵的位置
-	test_plane->setRotation(90);
 	this->addChild(test_plane, 0);
 
-	auto test_plane2 = Planes::create(2, 4, 13, 10, 30, 42, Vec2(780, 780), Vec2(645, 825));
+	auto test_plane2 = Planes::create(2, 4, 13, 10, 30, 42, 180, Vec2(780, 780), Vec2(645, 825));
 	test_plane2->setPosition(test_plane2->start_point);//设置精灵的位置
-	test_plane2->setRotation(90);
 	this->addChild(test_plane2, 0);
 
 	if (players[2]) {
@@ -201,7 +195,6 @@ bool HelloWorld::init()
     return true;
 }
 
-
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
     //Close the cocos2d-x game scene and quit the application
@@ -214,6 +207,7 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 
 }
+
 //void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
 //{
 //	//Close the cocos2d-x game scene and quit the application
@@ -229,6 +223,7 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 //
 //
 //}
+
 void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
 {
 	//Close the cocos2d-x game scene and quit the application

@@ -29,16 +29,14 @@
 #include "SimpleAudioEngine.h"
 USING_NS_CC;
 using namespace CocosDenshion;
-class HelloWorld : public cocos2d::Scene
-{
+
+class HelloWorld: public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
-
     virtual bool init();
-    
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-	void runPlane(Ref* pSender, Sprite* p1);
+    void runPlane(Ref* pSender, Sprite* p1);
     // implement the "static create()" method manually
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
