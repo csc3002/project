@@ -28,6 +28,7 @@ bool Planes::init(int _init_rotation) {
     setRotation(_init_rotation);
     auto touchListener = EventListenerTouchOneByOne::create();
     touchListener->onTouchBegan = CC_CALLBACK_2(Planes::onTouchBegan, this);
+	touchListener->setSwallowTouches(true);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     return true;
 }
@@ -44,24 +45,24 @@ Planes* Planes::create() {
 	return sprite;
 }
 
-Planes* Planes::create(int _color, int _id, int _enter_point, int _turn_point, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_point, Vec2 _take_off_point) {
+Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string _status, int _position, int _roll) {
     Planes * sprite = new Planes();
     if (sprite->init(_init_rotation)) {
 		sprite->autorelease();
 		sprite->color = _color;
 		sprite->id = _id;
-		sprite->status = "ground";
+		sprite->status = _status;
 		sprite->buff = "None";
 		sprite->round_left = 0;
-		sprite->position = -1;
-		sprite->enter_point = _enter_point;
-		sprite->turn_point = _turn_point;
+		sprite->position = _position;
+		sprite->enter_pt = _enter_pt;
+		sprite->turn_pt = _turn_pt;
 		sprite->fly_start = _fly_start;
 		sprite->fly_end = _fly_end;
 		sprite->init_rotation = _init_rotation;
-		sprite->roll = 2;
-		sprite->start_point = _start_point;
-		sprite->take_off_point = _take_off_point;
+		sprite->roll = _roll;
+		sprite->start_pt = _start_pt;
+		sprite->take_off_pt = _take_off_pt;
 		sprite->jumped = FALSE;
 		sprite->can_touch = TRUE;
 	} else {
@@ -77,32 +78,60 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 	if (this->getBoundingBox().containsPoint(ptClick)) {
 		if (can_touch == TRUE) {
 			//can_touch = FALSE;
-			auto delay = DelayTime::create(0.1f);
-			ActionInterval* act[7] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
-			//cocos2d::log(to_string(roll).c_str());
+			auto delay = DelayTime::create(0.01f);
+			ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+				delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
 			int direction = 1; // 1 = 前进, 0 = 终点通路后退
 			jumped = FALSE;
 
 			for (int i = 0; i < roll; i++) {
-				//if (status == "ground" && roll == 6) {
+				//if (status == "ground" && roll == 6) { // 6才能起飞
 				if (status == "ground") {
-					auto start = MoveTo::create(0.25, take_off_point);
+					auto start = MoveTo::create(0.25, take_off_pt);
 					this->runAction(start);
 					status = "taking off";
 					break;
 				}
 				else if (status == "taking off") {
-					auto take_off = MoveTo::create(0.25, outer[enter_point]);
+					auto take_off = MoveTo::create(0.25, outer[enter_pt]);
 					act[i] = take_off->clone();
 					status = "outer";
-					position = enter_point;
+					position = enter_pt;
 				}
-				else if (status == "outer" && position != turn_point) {
+				else if (status == "outer" && position != turn_pt) {
 					position = (position + 1) % 52;
 					auto outer_go = MoveTo::create(0.25, outer[position]);
 					act[i] = outer_go->clone();
+
+					if (status == "outer" && position == fly_start && i == roll - 1) {
+						position = fly_end;
+						auto fly = MoveTo::create(1, outer[fly_end]);
+						act[6] = fly->clone();
+					}
+					else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
+						for (int i = 0; i < 4; i++) {
+							position = (position + 1) % 52;
+							auto jump = MoveTo::create(0.25, outer[position]);
+							act[7 + i] = jump->clone();
+						}
+						jumped = TRUE;
+					}
+
+					if (status == "outer" && position == fly_start && i == roll - 1) {
+						position = fly_end;
+						auto fly = MoveTo::create(1, outer[fly_end]);
+						act[11] = fly->clone();
+					}
+					else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
+						for (int i = 0; i < 4; i++) {
+							position = (position + 1) % 52;
+							auto jump = MoveTo::create(0.25, outer[position]);
+							act[7 + i] = jump->clone();
+						}
+						jumped = TRUE;
+					}
 				}
-				else if (position == turn_point) {
+				else if (position == turn_pt) {
 					position = 0;
 					status = "inner";
 					if (color == 0) {
@@ -123,7 +152,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 					}
 				}
 				else if (status == "inner") {
-					//if (position > 4) position = 4;
+					//if (position > 4) position = 4; // 仅供测试，使飞机总是恰好到达终点
 					if (position == 5) {
 						direction = 0;
 					}
@@ -154,16 +183,35 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 					position = -100;
 					status = "finished";
 					can_touch = FALSE;
-					auto finish = MoveTo::create(1, start_point);
+					auto finish = MoveTo::create(1, start_pt);
 					act[6] = finish->clone();
 				}
 			}
 
-			auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], nullptr);
+			auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], nullptr);
 			this->runAction(sequence);
-			//auto rotateBy1 = RotateBy::create(0.5,45);
-			//this->runAction(rotateBy1);
 		}
+		return true;
 	}
-	return true;
+	return false;
 }
+
+void Planes::going_down() {
+	auto going_down = MoveTo::create(1, start_pt);
+	auto rotate_back = RotateTo::create(0.25, init_rotation);
+	auto sequence = Sequence::create(going_down, rotate_back, nullptr);
+	this->runAction(sequence);
+	status = "ground";
+	buff = "None";
+	round_left = 0;
+	position = -1;
+	jumped = FALSE;
+}
+
+/*bool Planes::onTouchBegan(Touch* touch, Event* event) {
+	Vec2 ptClick = touch->getLocation();
+	if (this->getBoundingBox().containsPoint(ptClick)) {
+			going_down();
+	}
+	return false;
+}*/

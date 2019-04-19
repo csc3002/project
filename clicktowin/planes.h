@@ -21,21 +21,22 @@ public:
 	string buff;                                               // for extension
 	int round_left;                                            // for extension
 	int position;                                              // 位置
-	int enter_point;                                           // 入外圈点
-	int turn_point;                                            // 拐点
+	int enter_pt;                                              // 入外圈点
+	int turn_pt;                                               // 拐点
 	int fly_start;                                             // 虚线起点
 	int fly_end;                                               // 虚线终点
 	int init_rotation;                                         // 初始机头方向
 	int roll;                                                  // 骰子点数
-	Vec2 start_point;                                          // 在机场内的坐标
-	Vec2 take_off_point;                                       // 出发点坐标
+	Vec2 start_pt;                                             // 在机场内的坐标
+	Vec2 take_off_pt;                                          // 出发点坐标
 	bool jumped;                                               // 是否已跳跃同颜色格子
 	bool can_touch;                                            // 函数onTouchBegan是否生效
     bool _selected = false;
     virtual bool init(int _init_rotation);
 	static Planes* create();
-	static Planes* create(int _color, int _id, int _enter_point, int _turn_point, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_point, Vec2 _take_off_point);
+	static Planes* create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string _status = "ground", int _position = -1, int _roll = 2);
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
+	virtual void going_down();
     //CREATE_FUNC(MySprite);
 };
 
