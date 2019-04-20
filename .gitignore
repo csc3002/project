@@ -2,6 +2,8 @@
 *.a
 *.out
 *.exe
+*.pro
+*.pro.user
 
 Aeroplane_Project/cocos2d/
 Aeroplane_Project/proj.win32/
