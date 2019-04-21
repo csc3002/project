@@ -16,6 +16,7 @@
 #define WIN "win"
 
 // Define chess id
+#define ALLBACK -1
 #define NOCHESS 0
 #define RED1 1
 #define RED2 2
@@ -35,10 +36,11 @@
 #define GREEN4 16
 
 // Define chessboard code
+#define OUTSIDE -1
 #define OUTER_BEGIN 0
 #define OUTER_END 51
-#define TRACK_BEGIN 52
-#define TRACK_END 57
+#define TRACK_BEGIN 1
+#define TRACK_END 6
 #define RED_OFF 3       // The point after the taking off point
 #define YELLOW_OFF 16
 #define BLUE_OFF 29
@@ -88,7 +90,6 @@ typedef struct _coordinate {
 typedef struct _chessmove {
     int chessID;         // the ID of chess being moved
     int rollPoint;       // roll point
-    int value = -9999999;    //value of this move
 } CHESSMOVE;
 
 // Define the structure representing a chess

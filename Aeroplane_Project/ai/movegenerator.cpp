@@ -4,6 +4,7 @@
  * This file stores the implementation of move generator.
  */
 #include<stdio.h>
+#include<iostream>
 #include<stdlib.h>
 #include "define.h"
 #include "movegenerator.h"
@@ -51,84 +52,78 @@ int moveGenerator::roll()
  * Implementation note: createPossibleMove
  * ----------------------------------------
  * Notice that this function will NOT change the current chessboard.
+ * Also this method does not check how many times does the dice roll.
  */
 
 int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, int side){
+    moveCount = 0;
     // selecting chesses according to player's side
     CHESS possible[5];
     possible[0].chessID = NOCHESS;
     possible[0].color = side;
+    // select the chess bas on side
     switch(side){
     case RED:{
         for(int i = 1; i <= 4; i++)
             possible[i] = chessboard[i-1];
-        int off = RED_OFF;
-        int turn = RED_TURN;
-        int flyBegin = RED_FLY_BEGIN;
-        int flyEnd = RED_FLY_END;
         break;
     }
 
     case YELLOW:{
         for(int i = 1; i <= 4; i++)
             possible[i] = chessboard[i+3];
-        int off = YELLOW_OFF;
-        int turn = YELLOW_TURN;
-        int flyBegin = YELLOW_FLY_BEGIN;
-        int flyEnd = YELLOW_FLY_END;
         break;
         }
     case BLUE:{
         for(int i = 1; i <= 4; i++)
             possible[i] = chessboard[i+7];
-        int off = BLUE_OFF;
-        int turn = BLUE_TURN;
-        int flyBegin = BLUE_FLY_BEGIN;
-        int flyEnd = BLUE_FLY_END;
         break;
         }
     case GREEN:{
         for(int i = 1; i <= 4; i++)
             possible[i] = chessboard[i+11];
-        int off = GREEN_OFF;
-        int turn = GREEN_TURN;
-        int flyBegin = GREEN_FLY_BEGIN;
-        int flyEnd = GREEN_FLY_END;
         break;
         }
     default:
             return -1;
     }
 
+
     // offCounts: use to eliminate repeat taking off
     int offCount = 0;
     // iterate all chesses:
     for(int i = 0; i < 5; i++){
         CHESS & nowChess = possible[i];
-        if(nowChess.chessID == NOCHESS){
+        if(nowChess.chessID == NOCHESS){            // do not move is always avaliable
             addMove(rollPoint, nowChess.chessID);
+            std::cout << "add no chess" << std::endl;
             continue;
         }
-        if(nowChess.currentCoor.region == WIN)
+        if(nowChess.currentCoor.region == WIN)      // skip the chesses already win
             continue;
         else if(nowChess.currentCoor.region == APRON){
-            if(rollPoint >= offMode && offCount == 0){
-                addMove(rollPoint, nowChess.chessID);
+            if(rollPoint >= offMode && offCount == 0){      // special treatement for taking off:
+                addMove(rollPoint, nowChess.chessID);       // taking off just count once
                 offCount++;
+                std::cout << "add take off" << std::endl;
             }
             else
                 continue;
         }
-        else
+        else{
             addMove(rollPoint, nowChess.chessID);
+            std::cout << "add move a chess" << std::endl;
+        }
     }
+    std::cout <<"how many moves: " << moveCount<< std::endl;
     return moveCount;
 }
 
 /*
- * Implementation note: chessID
+ * Implementation note: addMove
  * ------------------------------
- * The implementation of addMove.
+ * The implementation of addMove. It will increase moveCount
+ * by one once it is called.
  */
 
 
@@ -136,6 +131,7 @@ void moveGenerator::addMove(int rollPoint, int chessID){
     moveList[moveCount].rollPoint = rollPoint;
     moveList[moveCount].chessID = chessID;
     moveCount++;
+    std::cout << moveCount << std::endl;
 }
 
 

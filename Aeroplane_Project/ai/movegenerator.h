@@ -60,7 +60,7 @@ public:
 
 //  This is the data structure which stores all possible moves.
 
-    CHESSMOVE moveList[4];
+    CHESSMOVE moveList[5];
 
 //  This variable indicates the condition of taking off.
 //  When dice roll is larger or equal to offMode, a plane
