@@ -211,6 +211,14 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 	return false;
 }
 
+void Planes::setRollPoint(int _roll){
+    roll = _roll;
+}
+
+void Planes::setTouchable(bool _can_touch){
+    can_touch = _can_touch;
+}
+
 //when the plane goes down
 void Planes::going_down() {
 	auto going_down = MoveTo::create(1, start_pt);

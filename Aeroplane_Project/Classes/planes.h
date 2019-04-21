@@ -41,6 +41,10 @@ class Planes: public cocos2d::Sprite {
     
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     
+    virtual void setRollPoint(int _roll);
+    
+    virtual void setTouchable(bool _can_touch);
+    
 	virtual void going_down();
     //CREATE_FUNC(MySprite);
 };

@@ -74,6 +74,14 @@ bool HelloWorld::init()
 	bg->setScaleX(visibleSize.width / bg->getContentSize().width);
 	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
     
+    //dice initial by enaokao1
+    auto dice = Sprite::create("dice.png");
+    dice->setPosition(Vec2(900, 800));
+    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
+    control_dice->setPosition(Vec2(900, 600));
+    auto menu = Menu::create(control_dice, NULL);
+    menu->setPosition(Vec2::ZERO);
+
     // initial players and planes
 	// players: 1 = human, -1 = ai, 0 = nobody
 
@@ -154,25 +162,8 @@ bool HelloWorld::init()
 //    test_plane_2->setPosition(Vec2(300, 300));
 //    test_plane_2->setRotation(270);
 //    this->addChild(test_plane_2, 0);
-
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::runPlane, this, red_plane_0));
     
-    if (closeItem == nullptr ||
-        closeItem->getContentSize().width <= 0 ||
-        closeItem->getContentSize().height <= 0)
-    {
-        problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-    }
-    else
-    {
-        float x = origin.x + visibleSize.width - closeItem->getContentSize().width/2;
-        float y = origin.y + closeItem->getContentSize().height/2;
-        closeItem->setPosition(Vec2(x,y));
-    }
-    
+    // add child
     if (players[0]) {
         this->addChild(blue_plane_0, 10);
         this->addChild(blue_plane_1, 10);
@@ -200,8 +191,10 @@ bool HelloWorld::init()
         this->addChild(yellow_plane_2, 10);
         this->addChild(yellow_plane_3, 10);
     }
-
-    this->addChild(closeItem, 1);
+    
+    
+    this->addChild(dice, 1);
+    this->addChild(menu, 1);
     this->addChild(labelTouchInfo,1);
     this->addChild(bg, 0);
     return true;
@@ -242,4 +235,68 @@ void HelloWorld::onTouchMoved(Touch* touch, Event* event)
 void HelloWorld::onTouchCancelled(Touch* touch, Event* event)
 {
     cocos2d::log("touch cancelled");
+}
+
+int HelloWorld::getrandom(Ref* pSender, Sprite* dice) {
+    this->dice_anim(dice);
+    float ran = CCRANDOM_0_1();
+    int num = 0;
+    if (ran <= 0.166){
+        num = 1;
+        dice->setTexture("dice1.png");
+    }
+    else if(0.166 < ran <= 0.333){
+        num = 2;
+        dice->setTexture("dice2.png");
+    }
+    else if (0.333 < ran <= 0.5) {
+        num = 3;
+        dice->setTexture("dice3.png");
+    }
+    else if (0.5 < ran <= 0.666) {
+        num = 4;
+        dice->setTexture("dice4.png");
+    }
+    else if (0.666 < ran <= 0.833) {
+        num = 5;
+        dice->setTexture("dice5.png");
+    }
+    else if (0.833 < ran < 1) {
+        num = 6;
+        dice->setTexture("dice6.png");
+    }
+    return num;
+    
+}
+void HelloWorld::dice_anim(Sprite* dice) {
+    for (int i = 0; i < 3; i++) {
+        float ran = CCRANDOM_0_1();
+        int num = 0;
+        DelayTime* delayTime = DelayTime::create(0.9f);
+        if (ran < 0.167) {
+            num = 1;
+            dice->setTexture("dice1.png");
+        }
+        else if (0.166 < ran < 0.333) {
+            num = 2;
+            dice->setTexture("dice2.png");
+        }
+        else if (0.333 < ran < 0.5) {
+            num = 3;
+            dice->setTexture("dice3.png");
+        }
+        else if (0.5 < ran < 0.666) {
+            num = 4;
+            dice->setTexture("dice4.png");
+        }
+        else if (0.666 < ran < 0.833) {
+            num = 5;
+            dice->setTexture("dice5.png");
+        }
+        else if (0.833 < ran < 1) {
+            num = 6;
+            dice->setTexture("dice6.png");
+        }
+        this->runAction(delayTime);
+    }
 }
