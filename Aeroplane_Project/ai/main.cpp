@@ -13,6 +13,7 @@ void outputChessboard(CHESS * chessboard, searchEngine * player){
     for(int i = 0; i < 4; i++){
         cout << "Chess: " << chessboard[i].chessID << "  " << chessboard[i].currentCoor.region << "  " << chessboard[i].currentCoor.code << endl;
     }
+    cout << "==================End of this round=======================\n" << endl;
 }
 
 
@@ -40,18 +41,22 @@ int main()
         if(i >= 12 && i <= 15)
             chessboard[i].color = GREEN;
     }
-
-    cout << "----------------------------Game Start---------------------------" << endl;
-    while(true){
+    int roundCount = 0;
+    cout << "*******************************Game Start*******************************" << endl;
+    while(!ai_player.isGameOver(chessboard)){
+        cout << "====================Begin of this round=======================\n" << endl;
         ai_player.play(chessboard, RED);
         //ai_player.play(chessboard, YELLOW);
         //ai_player.play(chessboard, BLUE);
         //ai_player.play(chessboard, GREEN);
         outputChessboard(chessboard, & ai_player);
-        sleep(5);
+
+        // sleep(1);
+        roundCount ++;
 
     }
-
+    std::cout << "******************************Game is Finished!***************************" << std::endl;
+    cout << "Final roun count: " << roundCount  << ", jinx count:" << ai_player.jinxCount<<"\n" << endl;
 
     return 0;
 }

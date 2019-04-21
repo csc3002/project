@@ -96,7 +96,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         CHESS & nowChess = possible[i];
         if(nowChess.chessID == NOCHESS){            // do not move is always avaliable
             addMove(rollPoint, nowChess.chessID);
-            std::cout << "add no chess" << std::endl;
+            std::cout << "add no chess, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
             continue;
         }
         if(nowChess.currentCoor.region == WIN)      // skip the chesses already win
@@ -105,14 +105,14 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
             if(rollPoint >= offMode && offCount == 0){      // special treatement for taking off:
                 addMove(rollPoint, nowChess.chessID);       // taking off just count once
                 offCount++;
-                std::cout << "add take off" << std::endl;
+                std::cout << "add take off, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
             }
             else
                 continue;
         }
         else{
             addMove(rollPoint, nowChess.chessID);
-            std::cout << "add move a chess" << std::endl;
+            std::cout << "add move a chess,chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
         }
     }
     std::cout <<"how many moves: " << moveCount<< std::endl;
@@ -131,7 +131,7 @@ void moveGenerator::addMove(int rollPoint, int chessID){
     moveList[moveCount].rollPoint = rollPoint;
     moveList[moveCount].chessID = chessID;
     moveCount++;
-    std::cout << moveCount << std::endl;
+    std::cout << moveCount << ": ";
 }
 
 

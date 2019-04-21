@@ -13,5 +13,5 @@ evaluator::~evaluator()
 
 int evaluator::evaluate(const CHESS chessboard[], int side)
 {
-    return rand();
+    return rand() % 10;
 }

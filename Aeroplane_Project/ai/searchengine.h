@@ -36,11 +36,24 @@ public:
     void searchAGoodMove(int count, int side);
 
 
+/*
+ * Method: isGameOver
+ * Usage: win = isGameOver(chessboard[16])
+ * ---------------------------------------
+ * This method is used to judge whether game is over.
+ * It can be use when searching a good move. Probably
+ * can be used in other situations.
+ */
+    bool isGameOver(const CHESS chessboard[]);
+
 //  This two method set evaluator and move generator to the search engine.
     virtual void setEvaluator(evaluator * eval){pEval = eval;}
     virtual void setMoveGenerator(moveGenerator * MG){pMG = MG;}
 
+//  This variable preserves the roll point
     int rollPoint;
+// Testing variable:jinx count
+    int jinxCount = 0;
 
 protected:
 
@@ -54,16 +67,6 @@ protected:
 
     void makeMove(CHESSMOVE * move, CHESS * chessboard, int side);
 
-
-/*
- * Method: isGameOver
- * Usage: win = isGameOver(chessboard[16])
- * ---------------------------------------
- * This method is used to judge whether game is over.
- * It can be use when searching a good move. Probably
- * can be used in other situations.
- */
-    bool isGameOver(const CHESS chessboard[]);
 
 
 /*
@@ -80,13 +83,13 @@ protected:
  * ---------------------
  * This method generates the move from inner loop, including the turning point.
  */
-    void genInnerMove(CHESS *chess, CHESS * chessboard, int rollPoint, int turn);
+    void genInnerMove(CHESS *chess, int rollPoint, int turn);
 
 //  This array is the current chessboard
     CHESS cur_Chessboard [16];
 
 //  This variable stores the current best move.
-    CHESSMOVE * bestMove;
+    CHESSMOVE * bestMove = nullptr;
 
 //  This is the pointer to the evaluator.
     evaluator * pEval;
