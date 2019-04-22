@@ -25,10 +25,10 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "planes.h"
-
+#include "dice.h"
+#include <string>
 USING_NS_CC;
-
-//}
+using namespace std;
 
 Scene* HelloWorld::createScene()
 {
@@ -51,147 +51,131 @@ bool HelloWorld::init()
     {
         return false;
     }
-
-	labelTouchInfo = Label::createWithSystemFont("Touch or clicksomewhere to begin", "Arial", 80);
-    labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-                                     Director::getInstance()->getVisibleSize().height / 2));
-    auto touchListener = EventListenerTouchOneByOne::create();
     
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    
+    // add touchlistener
+    auto touchListener = EventListenerTouchOneByOne::create();
     touchListener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
     touchListener->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
     touchListener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
     touchListener->onTouchCancelled = CC_CALLBACK_2(HelloWorld::onTouchCancelled, this);
-    
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     
-    this->addChild(labelTouchInfo,1);
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-	log("[%f, %f]", visibleSize.width, visibleSize.height);
-
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	// floor Sprite
-	//auto  floor = Sprite::create("white.jpg");
-	//floor->setPosition(ccp(visibleSize.width / 2, visibleSize.height / 2));
-	//floor->setScaleX(visibleSize.width / floor->getContentSize().width);
-	//floor->setScaleY(visibleSize.height / floor->getContentSize().height);
-	//this->addChild(floor, 0);
-	//background Sprite
+    // touch info, for test
+	labelTouchInfo = Label::createWithSystemFont("Touch or clicksomewhere to begin", "Arial", 18);
+    labelTouchInfo->setTextColor(Color4B(0,0,0,255));
+    labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
+                                     Director::getInstance()->getVisibleSize().height / 2));
+    
+    // set background
 	auto  bg = Sprite::create("background.png");
 	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	bg->setScaleX(visibleSize.width / bg->getContentSize().width);
 	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
-	this->addChild(bg, 0);
-	auto s = Planes::create();
-	s->setPosition(Vec2(630, 737));//设置精灵的位置
-	s->setRotation(90);
-	this->addChild(s,0);
+    
+    //dice initial by enaokao1
+    auto dice = Dice::create();
+//    dice->setPosition(Vec2(900, 800));
+//    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
+//    control_dice->setPosition(Vec2(900, 600));
+//    auto menu = Menu::create(control_dice, NULL);
+//    menu->setPosition(Vec2::ZERO);
+
+    // initial players and planes
+	// players: 1 = human, -1 = ai, 0 = nobody
+
+	int players[4] = {1, 1, 1, 1};
+    round = 0;
+    const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
+    const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
+    const Vec2 red_start_pts[5] = {Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825)};
+    const Vec2 yellow_start_pts[5] = {Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315)};
+    
+    const int enter_pt[4] = {39, 0, 13, 26};
+    const int turn_pt[4] = {36, 49, 10, 23};
+    const int fly_start[4] = {4, 17, 30, 43};
+    const int fly_end[4] = {16, 29, 42, 3};
+    const int init_rotation[4] ={270, 0, 90, 180};
+
+    // color, id, enter_pt, turn_pt, fly_start, fly_end, init_rotation, start_pt, take_off_pt, icon, status = "ground", position = -1, roll
+    Planes* blue[4];
+    Planes* green[4];
+    Planes* red[4];
+    Planes* yellow[4];
+    
+    for (int i = 0; i < 4; ++i){
+        blue[i] = Planes::create(0, i, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[i], blue_start_pts[4], "plane_blue.png");
+        blue[i]->setPosition(blue[i]->start_pt);
+        green[i] = Planes::create(1, i, enter_pt[1], turn_pt[1], fly_start[1], fly_end[1], init_rotation[1], green_start_pts[i], green_start_pts[4], "plane_green.png");
+        green[i]->setPosition(green[i]->start_pt);
+        red[i] = Planes::create(2, i, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[i], red_start_pts[4], "plane_red.png");
+        red[i]->setPosition(red[i]->start_pt);
+        yellow[i] = Planes::create(3, i, enter_pt[3], turn_pt[3], fly_start[3], fly_end[3], init_rotation[3], yellow_start_pts[i], yellow_start_pts[4], "plane_yellow.png");
+        yellow[i]->setPosition(yellow[i]->start_pt);
+    }
+    
+    auto blue_plane_0 = blue[0];
+    auto blue_plane_1 = blue[1];
+    auto blue_plane_2 = blue[2];
+    auto blue_plane_3 = blue[3];
+    auto green_plane_0 = green[0];
+    auto green_plane_1 = green[1];
+    auto green_plane_2 = green[2];
+    auto green_plane_3 = green[3];
+    auto red_plane_0 = red[0];
+    auto red_plane_1 = red[1];
+    auto red_plane_2 = red[2];
+    auto red_plane_3 = red[3];
+    auto yellow_plane_0 = yellow[0];
+    auto yellow_plane_1 = yellow[1];
+    auto yellow_plane_2 = yellow[2];
+    auto yellow_plane_3 = yellow[3];
+    
+    // add child
+    if (players[0]) {
+        this->addChild(blue_plane_0, 10);
+        this->addChild(blue_plane_1, 10);
+        this->addChild(blue_plane_2, 10);
+        this->addChild(blue_plane_3, 10);
+    }
+    
+    if (players[1]) {
+        this->addChild(green_plane_0, 10);
+        this->addChild(green_plane_1, 10);
+        this->addChild(green_plane_2, 10);
+        this->addChild(green_plane_3, 10);
+    }
+    
+	if (players[2]) {
+		this->addChild(red_plane_0, 10);
+		this->addChild(red_plane_1, 10);
+		this->addChild(red_plane_2, 10);
+		this->addChild(red_plane_3, 10);
+	}
 	
-	/*auto  plane = Sprite::create("plane.png");
-	plane->setPosition(Vec2(480, 775));
-	plane->setScaleX(50 / plane->getContentSize().width);
-	plane->setScaleY(50 / plane->getContentSize().height);
-	this->addChild(plane, 0);*/
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::runPlane, this,s));
-
-    if (closeItem == nullptr ||
-        closeItem->getContentSize().width <= 0 ||
-        closeItem->getContentSize().height <= 0)
-    {
-        problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+    if (players[3]) {
+        this->addChild(yellow_plane_0, 10);
+        this->addChild(yellow_plane_1, 10);
+        this->addChild(yellow_plane_2, 10);
+        this->addChild(yellow_plane_3, 10);
     }
-    else
-    {
-        float x = origin.x + visibleSize.width - closeItem->getContentSize().width/2;
-        float y = origin.y + closeItem->getContentSize().height/2;
-        closeItem->setPosition(Vec2(x,y));
-    }
-	auto control1 = MenuItemImage::create(
-		"button1.png",
-		"button1_choosen.png",
-		CC_CALLBACK_1(HelloWorld::runPlane, this, s));
-	float x = 900;
-	float y = 480;
-	control1->setPosition(Vec2(x, y));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem,control1, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-
-    //auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-    //if (label == nullptr)
-    //{
-    //    problemLoading("'fonts/Marker Felt.ttf'");
-    //}
-    //else
-    //{
-    //    // position the label on the center of the screen
-    //    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-    //                            origin.y + visibleSize.height - label->getContentSize().height));
-
-    //    // add the label as a child to this layer
-    //    this->addChild(label, 1);
-    //}
-
-    // add "HelloWorld" splash screen"
-    //auto sprite = Sprite::create("HelloWorld.png");
-    //if (sprite == nullptr)
-    //{
-    //    problemLoading("'HelloWorld.png'");
-    //}
-    //else
-    //{
-    //    // position the sprite on the center of the screen
-    //    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-    //    // add the sprite as a child to this layer
-    //    this->addChild(sprite, 0);
-    //}
+    
+    
+    this->addChild(dice, 1);
+//    this->addChild(menu, 1);
+    this->addChild(labelTouchInfo,1);
+    this->addChild(bg, 0);
     return true;
 }
-
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
     //Close the cocos2d-x game scene and quit the application
     Director::getInstance()->end();
-
-    /*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() as given above,instead trigger a custom event created in RootViewController.mm as below*/
-
-    //EventCustom customEndEvent("game_scene_close_event");
-    //_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }
-//void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
-//{
-//	//Close the cocos2d-x game scene and quit the application
-//	CCActionInterval* rotateBy1 = CCRotateBy::create(0.5, 45);
-//	CCMoveTo* moveTo1 = CCMoveTo::create(0.5, ccp(p1->getPositionX() + 37, p1->getPositionY()-17));
-//	p1->runAction(rotateBy1);
-//	p1->runAction(moveTo1);
-//
-//	/*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() as given above,instead trigger a custom event created in RootViewController.mm as below*/
-//
-//	//EventCustom customEndEvent("game_scene_close_event");
-//	//_eventDispatcher->dispatchEvent(&customEndEvent);
-//
-//
-//}
+
 void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
 {
 	//Close the cocos2d-x game scene and quit the application
@@ -199,11 +183,6 @@ void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
 	MoveTo* moveTo1 = MoveTo::create(0.5, Vec2(p1->getPositionX()-16, p1->getPositionY()-40));
 	p1->runAction(rotateBy1);
 	p1->runAction(moveTo1);
-
-	/*To navigate back to native iOS screen(if present) without quitting the application  ,do not use Director::getInstance()->end() as given above,instead trigger a custom event created in RootViewController.mm as below*/
-
-	//EventCustom customEndEvent("game_scene_close_event");
-	//_eventDispatcher->dispatchEvent(&customEndEvent);
 }
 
 bool HelloWorld::onTouchBegan(Touch* touch, Event* event)
@@ -227,3 +206,67 @@ void HelloWorld::onTouchCancelled(Touch* touch, Event* event)
 {
     cocos2d::log("touch cancelled");
 }
+
+//int HelloWorld::getrandom(Ref* pSender, Sprite* dice) {
+//    this->dice_anim(dice);
+//    float ran = CCRANDOM_0_1();
+//    int num = 0;
+//    if (ran <= 0.166){
+//        num = 1;
+//        dice->setTexture("dice1.png");
+//    }
+//    else if(0.166 < ran <= 0.333){
+//        num = 2;
+//        dice->setTexture("dice2.png");
+//    }
+//    else if (0.333 < ran <= 0.5) {
+//        num = 3;
+//        dice->setTexture("dice3.png");
+//    }
+//    else if (0.5 < ran <= 0.666) {
+//        num = 4;
+//        dice->setTexture("dice4.png");
+//    }
+//    else if (0.666 < ran <= 0.833) {
+//        num = 5;
+//        dice->setTexture("dice5.png");
+//    }
+//    else if (0.833 < ran < 1) {
+//        num = 6;
+//        dice->setTexture("dice6.png");
+//    }
+//    return num;
+//
+//}
+//void HelloWorld::dice_anim(Sprite* dice) {
+//    for (int i = 0; i < 3; i++) {
+//        float ran = CCRANDOM_0_1();
+//        int num = 0;
+//        DelayTime* delayTime = DelayTime::create(0.9f);
+//        if (ran < 0.167) {
+//            num = 1;
+//            dice->setTexture("dice1.png");
+//        }
+//        else if (0.166 < ran < 0.333) {
+//            num = 2;
+//            dice->setTexture("dice2.png");
+//        }
+//        else if (0.333 < ran < 0.5) {
+//            num = 3;
+//            dice->setTexture("dice3.png");
+//        }
+//        else if (0.5 < ran < 0.666) {
+//            num = 4;
+//            dice->setTexture("dice4.png");
+//        }
+//        else if (0.666 < ran < 0.833) {
+//            num = 5;
+//            dice->setTexture("dice5.png");
+//        }
+//        else if (0.833 < ran < 1) {
+//            num = 6;
+//            dice->setTexture("dice6.png");
+//        }
+//        this->runAction(delayTime);
+//    }
+//}
