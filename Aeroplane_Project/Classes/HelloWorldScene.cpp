@@ -25,6 +25,7 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "planes.h"
+#include "dice.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -75,17 +76,18 @@ bool HelloWorld::init()
 	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
     
     //dice initial by enaokao1
-    auto dice = Sprite::create("dice.png");
-    dice->setPosition(Vec2(900, 800));
-    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
-    control_dice->setPosition(Vec2(900, 600));
-    auto menu = Menu::create(control_dice, NULL);
-    menu->setPosition(Vec2::ZERO);
+    auto dice = Dice::create();
+//    dice->setPosition(Vec2(900, 800));
+//    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
+//    control_dice->setPosition(Vec2(900, 600));
+//    auto menu = Menu::create(control_dice, NULL);
+//    menu->setPosition(Vec2::ZERO);
 
     // initial players and planes
 	// players: 1 = human, -1 = ai, 0 = nobody
 
 	int players[4] = {1, 1, 1, 1};
+    round = 0;
     const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
     const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
     const Vec2 red_start_pts[5] = {Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825)};
@@ -95,7 +97,7 @@ bool HelloWorld::init()
     const int turn_pt[4] = {36, 49, 10, 23};
     const int fly_start[4] = {4, 17, 30, 43};
     const int fly_end[4] = {16, 29, 42, 3};
-    const int init_rotation[4] ={0, 90, 180, 270};
+    const int init_rotation[4] ={270, 0, 90, 180};
 
     // color, id, enter_pt, turn_pt, fly_start, fly_end, init_rotation, start_pt, take_off_pt, icon, status = "ground", position = -1, roll
     Planes* blue[4];
@@ -113,6 +115,7 @@ bool HelloWorld::init()
         yellow[i] = Planes::create(3, i, enter_pt[3], turn_pt[3], fly_start[3], fly_end[3], init_rotation[3], yellow_start_pts[i], yellow_start_pts[4], "plane_yellow.png");
         yellow[i]->setPosition(yellow[i]->start_pt);
     }
+    
     auto blue_plane_0 = blue[0];
     auto blue_plane_1 = blue[1];
     auto blue_plane_2 = blue[2];
@@ -129,39 +132,6 @@ bool HelloWorld::init()
     auto yellow_plane_1 = yellow[1];
     auto yellow_plane_2 = yellow[2];
     auto yellow_plane_3 = yellow[3];
-    
-//    auto blue_plane_0 = Planes::create(0, 0, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[0], blue_start_pts[4], "plane_blue.png");
-//    blue_plane_0->setPosition(blue_plane_0->start_pt);
-//
-//    auto blue_plane_1 = Planes::create(0, 1, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[1], blue_start_pts[4], "plane_blue.png");
-//    blue_plane_1->setPosition(blue_plane_1->start_pt);
-//
-//    auto blue_plane_2 = Planes::create(0, 2, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[2], blue_start_pts[4], "plane_blue.png");
-//    blue_plane_2->setPosition(blue_plane_2->start_pt);
-//
-//    auto blue_plane_3 = Planes::create(0, 3, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[3], blue_start_pts[4], "plane_blue.png");
-//    blue_plane_3->setPosition(blue_plane_3->start_pt);
-//
-//    auto red_plane_0 = Planes::create(2, 0, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[0], red_start_pts[4], "plane_red.png");
-//    red_plane_0->setPosition(red_plane_0->start_pt);
-//
-//    auto red_plane_1 = Planes::create(2, 1, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[1], red_start_pts[4], "plane_red.png");
-//    red_plane_1->setPosition(red_plane_1->start_pt);
-//
-//    auto red_plane_2 = Planes::create(2, 2, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[2], red_start_pts[4], "plane_red.png");
-//    red_plane_2->setPosition(red_plane_2->start_pt);
-//
-//    auto red_plane_3 = Planes::create(2, 3, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[3], red_start_pts[4], "plane_red.png");
-//    red_plane_3->setPosition(red_plane_3->start_pt);
-
-//    auto test_plane = Planes::create();
-//    test_plane->setPosition(Vec2(480, 223));
-//    this->addChild(test_plane, 0);
-
-//    auto test_plane_2 = Planes::create(2, 4, 13, 10, 30, 42, 180, Vec2(780, 780), Vec2(645, 825), "plane_red.png", "outer", 24);
-//    test_plane_2->setPosition(Vec2(300, 300));
-//    test_plane_2->setRotation(270);
-//    this->addChild(test_plane_2, 0);
     
     // add child
     if (players[0]) {
@@ -194,7 +164,7 @@ bool HelloWorld::init()
     
     
     this->addChild(dice, 1);
-    this->addChild(menu, 1);
+//    this->addChild(menu, 1);
     this->addChild(labelTouchInfo,1);
     this->addChild(bg, 0);
     return true;
@@ -237,66 +207,66 @@ void HelloWorld::onTouchCancelled(Touch* touch, Event* event)
     cocos2d::log("touch cancelled");
 }
 
-int HelloWorld::getrandom(Ref* pSender, Sprite* dice) {
-    this->dice_anim(dice);
-    float ran = CCRANDOM_0_1();
-    int num = 0;
-    if (ran <= 0.166){
-        num = 1;
-        dice->setTexture("dice1.png");
-    }
-    else if(0.166 < ran <= 0.333){
-        num = 2;
-        dice->setTexture("dice2.png");
-    }
-    else if (0.333 < ran <= 0.5) {
-        num = 3;
-        dice->setTexture("dice3.png");
-    }
-    else if (0.5 < ran <= 0.666) {
-        num = 4;
-        dice->setTexture("dice4.png");
-    }
-    else if (0.666 < ran <= 0.833) {
-        num = 5;
-        dice->setTexture("dice5.png");
-    }
-    else if (0.833 < ran < 1) {
-        num = 6;
-        dice->setTexture("dice6.png");
-    }
-    return num;
-    
-}
-void HelloWorld::dice_anim(Sprite* dice) {
-    for (int i = 0; i < 3; i++) {
-        float ran = CCRANDOM_0_1();
-        int num = 0;
-        DelayTime* delayTime = DelayTime::create(0.9f);
-        if (ran < 0.167) {
-            num = 1;
-            dice->setTexture("dice1.png");
-        }
-        else if (0.166 < ran < 0.333) {
-            num = 2;
-            dice->setTexture("dice2.png");
-        }
-        else if (0.333 < ran < 0.5) {
-            num = 3;
-            dice->setTexture("dice3.png");
-        }
-        else if (0.5 < ran < 0.666) {
-            num = 4;
-            dice->setTexture("dice4.png");
-        }
-        else if (0.666 < ran < 0.833) {
-            num = 5;
-            dice->setTexture("dice5.png");
-        }
-        else if (0.833 < ran < 1) {
-            num = 6;
-            dice->setTexture("dice6.png");
-        }
-        this->runAction(delayTime);
-    }
-}
+//int HelloWorld::getrandom(Ref* pSender, Sprite* dice) {
+//    this->dice_anim(dice);
+//    float ran = CCRANDOM_0_1();
+//    int num = 0;
+//    if (ran <= 0.166){
+//        num = 1;
+//        dice->setTexture("dice1.png");
+//    }
+//    else if(0.166 < ran <= 0.333){
+//        num = 2;
+//        dice->setTexture("dice2.png");
+//    }
+//    else if (0.333 < ran <= 0.5) {
+//        num = 3;
+//        dice->setTexture("dice3.png");
+//    }
+//    else if (0.5 < ran <= 0.666) {
+//        num = 4;
+//        dice->setTexture("dice4.png");
+//    }
+//    else if (0.666 < ran <= 0.833) {
+//        num = 5;
+//        dice->setTexture("dice5.png");
+//    }
+//    else if (0.833 < ran < 1) {
+//        num = 6;
+//        dice->setTexture("dice6.png");
+//    }
+//    return num;
+//
+//}
+//void HelloWorld::dice_anim(Sprite* dice) {
+//    for (int i = 0; i < 3; i++) {
+//        float ran = CCRANDOM_0_1();
+//        int num = 0;
+//        DelayTime* delayTime = DelayTime::create(0.9f);
+//        if (ran < 0.167) {
+//            num = 1;
+//            dice->setTexture("dice1.png");
+//        }
+//        else if (0.166 < ran < 0.333) {
+//            num = 2;
+//            dice->setTexture("dice2.png");
+//        }
+//        else if (0.333 < ran < 0.5) {
+//            num = 3;
+//            dice->setTexture("dice3.png");
+//        }
+//        else if (0.5 < ran < 0.666) {
+//            num = 4;
+//            dice->setTexture("dice4.png");
+//        }
+//        else if (0.666 < ran < 0.833) {
+//            num = 5;
+//            dice->setTexture("dice5.png");
+//        }
+//        else if (0.833 < ran < 1) {
+//            num = 6;
+//            dice->setTexture("dice6.png");
+//        }
+//        this->runAction(delayTime);
+//    }
+//}

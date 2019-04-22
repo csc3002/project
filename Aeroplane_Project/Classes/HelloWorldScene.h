@@ -38,8 +38,8 @@ public:
     void menuCloseCallback(cocos2d::Ref* pSender);
     void runPlane(Ref* pSender, Sprite* p1);
     // implement the "static create()" method manually
-    int getrandom(Ref* pSender, Sprite* dice);
-    void dice_anim(Sprite* dice);
+//    int getrandom(Ref* pSender, Sprite* dice);
+//    void dice_anim(Sprite* dice);
     
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
@@ -48,6 +48,7 @@ public:
     CREATE_FUNC(HelloWorld);
 private:
     cocos2d::Label* labelTouchInfo;
+    int round;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
