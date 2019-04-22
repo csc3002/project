@@ -2,7 +2,7 @@
 #include <iostream>
 #include "define.h"
 #include "movegenerator.h"
-#include "searchengine.h"
+#include "searchengin.h"
 #include "evaluator.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,21 +10,22 @@ using namespace std;
 
 void outputChessboard(CHESS * chessboard, searchEngine * player){
     cout << "\nRoll point: " << player->rollPoint << endl;
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 16; i++){
+        if(i % 4 == 0)
+            cout << endl;
         cout << "Chess: " << chessboard[i].chessID << "  " << chessboard[i].currentCoor.region << "  " << chessboard[i].currentCoor.code << endl;
     }
-    cout << "==================End of this round=======================\n" << endl;
 }
 
 
 
 int main()
 {
-    moveGenerator mg = moveGenerator(5);
-    evaluator eval;
+    moveGenerator * mg = new moveGenerator(5);
+    evaluator * eval = new evaluator();
     searchEngine ai_player;
-    ai_player.setEvaluator(&eval);
-    ai_player.setMoveGenerator(&mg);
+    ai_player.setEvaluator(eval);
+    ai_player.setMoveGenerator(mg);
 
     // initializing the chessboard
     CHESS chessboard[16];
@@ -42,15 +43,31 @@ int main()
             chessboard[i].color = GREEN;
     }
     int roundCount = 0;
-    cout << "*******************************Game Start*******************************" << endl;
+    cout << "*******************************Game Start*******************************\n" << endl;
     while(!ai_player.isGameOver(chessboard)){
-        cout << "====================Begin of this round=======================\n" << endl;
-        ai_player.play(chessboard, RED);
-        //ai_player.play(chessboard, YELLOW);
-        //ai_player.play(chessboard, BLUE);
-        //ai_player.play(chessboard, GREEN);
-        outputChessboard(chessboard, & ai_player);
+        cout << "\n\n====================Begin of this round=======================" << endl;
 
+        cout << "\n[[[[[[[[[[[[[[[[[[[[Begin of RED's round]]]]]]]]]]]]]]]]]]]]]]]]" << endl;
+        ai_player.play(chessboard, RED);
+        outputChessboard(chessboard, & ai_player);
+        cout << "[[[[[[[[[[[[[[[[[[[[End of RED's round]]]]]]]]]]]]]]]]]]]]]]]]\n" << endl;
+
+        cout << "\n[[[[[[[[[[[[[[[[[[[[Begin of YELLOW's round]]]]]]]]]]]]]]]]]]]]]]]]" << endl;
+        ai_player.play(chessboard, YELLOW);
+        outputChessboard(chessboard, & ai_player);
+        cout << "[[[[[[[[[[[[[[[[[[[[End of YELLOW's round]]]]]]]]]]]]]]]]]]]]]]]]\n" << endl;
+
+        cout << "\n[[[[[[[[[[[[[[[[[[[[Begin of BLUE's round]]]]]]]]]]]]]]]]]]]]]]]]" << endl;
+        ai_player.play(chessboard, BLUE);
+        outputChessboard(chessboard, & ai_player);
+        cout << "[[[[[[[[[[[[[[[[[[[[End of BLUE's round]]]]]]]]]]]]]]]]]]]]]]]]\n" << endl;
+
+        cout << "\n[[[[[[[[[[[[[[[[[[[[Begin of GREEN's round]]]]]]]]]]]]]]]]]]]]]]]]" << endl;
+        ai_player.play(chessboard, GREEN);
+        outputChessboard(chessboard, & ai_player);
+        cout << "[[[[[[[[[[[[[[[[[[[[End of GREEN's round]]]]]]]]]]]]]]]]]]]]]]]]\n" << endl;
+
+        cout << "=====================End of this round========================\n\n" << endl;
         // sleep(1);
         roundCount ++;
 
