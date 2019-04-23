@@ -74,17 +74,26 @@ bool HelloWorld::init() {
     
     //dice initial by enaokao1
     auto dice = Dice::create();
-
+//    auto dice = Dice::create();
+//    dice->setPosition(Vec2(900, 800));
+//    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
+//    control_dice->setPosition(Vec2(900, 600));
+//    auto menu = Menu::create(control_dice, NULL);
+//    menu->setPosition(Vec2::ZERO);
+    
     // initial players and planes
 	// players: 1 = human, -1 = ai, 0 = nobody
 
 	int players[4] = {1, 1, 1, 1};
     round = 0;
+
+    // coordinates of starting area
     const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
     const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
     const Vec2 red_start_pts[5] = {Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825)};
     const Vec2 yellow_start_pts[5] = {Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315)};
     
+    // positions of special points
     const int enter_pt[4] = {39, 0, 13, 26};
     const int turn_pt[4] = {36, 49, 10, 23};
     const int fly_start[4] = {4, 17, 30, 43};
@@ -97,7 +106,7 @@ bool HelloWorld::init() {
     Planes* red[4];
     Planes* yellow[4];
     
-    for (int i = 0; i < 4; ++i){
+    for (int i = 0; i < 4; ++i) {
         blue[i] = Planes::create(0, i, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[i], blue_start_pts[4], "plane_blue.png");
         blue[i]->setPosition(blue[i]->start_pt);
         green[i] = Planes::create(1, i, enter_pt[1], turn_pt[1], fly_start[1], fly_end[1], init_rotation[1], green_start_pts[i], green_start_pts[4], "plane_green.png");
@@ -181,6 +190,7 @@ bool HelloWorld::init() {
     
     
     this->addChild(dice, 1, "dice");
+//    this->addChild(dice, 1);
 //    this->addChild(menu, 1);
     this->addChild(labelTouchInfo,1);
     this->addChild(bg, 0);

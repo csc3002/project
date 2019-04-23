@@ -1,18 +1,22 @@
-// TODO: file description
+/*
+ * File: simplesearchengine.cpp
+ * ----------------------------
+ * This file is the implementatio of search engine.
+ */
 
 #include <iostream>
-#include "searchengine.h"
+#include "searchengin.h"
 #include "define.h"
 #include "movegenerator.h"
 #include "evaluator.h"
 
-
+/* costructor and destructor */
 searchEngine::searchEngine()
 {
 
 }
 
-
+// destructor should remove the move generator and evaluator
 searchEngine::~searchEngine(){
     delete pMG;
     delete pEval;
@@ -21,7 +25,15 @@ searchEngine::~searchEngine(){
 /*
  * Implementation note: play
  * --------------------------
- * TODO
+ * This method simulates player behavior like this:
+ * 1. Copy the chessboard into cur_Chessboard which is inside the search engine instance;
+ * 2. Roll the dice. Then take action:
+ *      2.1. if it is the jinx case (rolling six in 3 times), all non-win chess back to apron.
+ *      2.2 if not the jinx case, create move.
+ * 3. If there is only one move, it must be "don't move" case. Then do not do any movement.
+ *    If there is more than one possible move, search a good move and make move.
+ * 4. If game is not over now and roll point is six, continue until the third time roll. Else, player end its turn.
+ * 5. Copy the modified chessboard in place to the original one.
  */
 
 void searchEngine::play(CHESS chessboard[], int side){
@@ -66,19 +78,24 @@ void searchEngine::play(CHESS chessboard[], int side){
 /*
  * Implementation note: searchAGoodMove
  * --------------------------
- * TODO
+ * The AI search a good move like this:
+ * 1. Set the current best move to the first element in moveList.
+ * 2. Iterate through the possible move, generate a future board for each of them
+ * 3. Evaluate the current chessboard and every future board's value.
+ * 4. Compare each value, and set bestMove to the move which has the largest value.
  */
 
 void searchEngine::searchAGoodMove(int count, int side){
     int score = 0;
-    int current = pEval->evaluate(cur_Chessboard, side);
+    int current = 0;
     bestMove = & pMG->moveList[0];
 
     CHESS futureBoard[16];
     for(int i = 0; i < count ; i++){
         memcpy(futureBoard, cur_Chessboard, sizeof(cur_Chessboard));    // flush the future board every time
         makeMove(& pMG->moveList[i], futureBoard, side);
-        score = pEval->evaluate(futureBoard, side);
+        score = pEval->evaluate(cur_Chessboard, futureBoard, side);
+        std::cout << "Score: " << score << std::endl;
         if(score >= current){         // if the future board is better than the current one, choose the move
             current = score;
             bestMove = & pMG->moveList[i];
@@ -89,7 +106,12 @@ void searchEngine::searchAGoodMove(int count, int side){
 /*
  * Implementation note: makeMove
  * --------------------------
- * TODO
+ * This method work like this:
+ * 1. Set some critical points(turning points, flying points, etc.) according to the side;
+ * 2. Handle the jinx case;
+ * 3. If not jinx, handle the taking off case;
+ * 4. If not taking off, handle normal move case. If the chess is about or is right in track,
+ *    use inner move function; else, use outer move function.
  */
 
 void searchEngine::makeMove(CHESSMOVE * move, CHESS * chessboard,  int side){
@@ -172,7 +194,8 @@ void searchEngine::makeMove(CHESSMOVE * move, CHESS * chessboard,  int side){
 /*
  * Implementation note: isGameOver
  * ---------------------------------
- *
+ * This function iterate through the chessboard. If 4 chesses of the same color are set to win,
+ * then the game is over.
  */
 
 bool searchEngine::isGameOver(const CHESS chessboard[]){
@@ -191,14 +214,21 @@ bool searchEngine::isGameOver(const CHESS chessboard[]){
 /*
  * Implementation note: genOuterMove
  * ---------------------------------
- *
+ * This function generate moves if the chess is on the taking off state or on outerloop bu not at
+ * the turning point. It works like this:
+ * 1. If the chess is on taking off state, generate temporary destination specially;
+ * 2. If the chess is about to enter the inner loop, just go; otherwise generate temporary destination normally;
+ * 3. Check the temporary destination:
+ *    3.1. If the temporary destination is not the same color, do move and end the function;
+ *    3.2. When the temporary destination is the same color, do jump or fly.
+ *    3.3 After jump or fly, check if can jump again. If no, do move and end the function; if yes, jump again and
+ *        do move and end the function.
  */
 
 void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int rollPoint, int off, int turn, int flyBegin, int flyEnd){
     int n = chess->currentCoor.code ;      // code of the destination
     if(chess->currentCoor.region == OFF) {             // if starts from taking off point, use special treatment
         n = off + rollPoint -1;
-        std::cout << "move from off point, current n is: " << n << std::endl;
         chess->currentCoor.region = OUTERLOOP;
     }
     else if(n >= 0){                        // make sure the plane is on outer loop
@@ -208,7 +238,7 @@ void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int
                 n = turn;
                 chess->currentCoor.code = n;
                 for(int i = 0; i < 16; i++){             // crash other plan if needed
-                    if(chessboard[i].color != side && chessboard[i].currentCoor.code == n){
+                    if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP && chessboard[i].currentCoor.code == n){
                         chessboard[i].currentCoor.region = APRON;
                         chessboard[i].currentCoor.code = OUTSIDE;
                     }
@@ -231,7 +261,7 @@ void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int
     if(n % 4 != side){                      // if can't jump or fly, just change the chessboard
         chess->currentCoor.code = n;
         for(int i = 0; i < 16; i++){             // crash other plan if needed
-            if(chessboard[i].color != side && chessboard[i].currentCoor.code == n){
+            if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP &&chessboard[i].currentCoor.code == n){
                 chessboard[i].currentCoor.region = APRON;
                 chessboard[i].currentCoor.code = OUTSIDE;
             }
@@ -243,7 +273,7 @@ void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int
             n = flyEnd + 4;                // 4 blocks after the fly end
             chess->currentCoor.code = n;
             for(int i = 0; i < 16; i++){             // crash other plan if needed
-                if(chessboard[i].color != side && chessboard[i].currentCoor.code == n){
+                if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP &&chessboard[i].currentCoor.code == n){
                     chessboard[i].currentCoor.region = APRON;
                     chessboard[i].currentCoor.code = OUTSIDE;
                 }
@@ -256,7 +286,7 @@ void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int
                 n = flyEnd;
                 chess->currentCoor.code = n;
                 for(int i = 0; i < 16; i++){             // crash other plan if needed
-                    if(chessboard[i].color != side && chessboard[i].currentCoor.code == n){
+                    if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP &&chessboard[i].currentCoor.code == n){
                         chessboard[i].currentCoor.region = APRON;
                         chessboard[i].currentCoor.code = OUTSIDE;
                     }
@@ -266,7 +296,7 @@ void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int
             else{
                 chess->currentCoor.code = n;
                 for(int i = 0; i < 16; i++){             // crash other plan if needed
-                    if(chessboard[i].color != side && chessboard[i].currentCoor.code == n){
+                    if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP &&chessboard[i].currentCoor.code == n){
                         chessboard[i].currentCoor.region = APRON;
                         chessboard[i].currentCoor.code = OUTSIDE;
                     }
@@ -280,7 +310,13 @@ void searchEngine::genOuterMove(CHESS * chess, CHESS * chessboard, int side, int
 /*
  * Implementation note: genInnerMove
  * ---------------------------------
- *
+ * This function generate moves if the chess is at the turning point or on the track. It works
+ * like this:
+ * 1. If chess is at the turning point, use special movement;
+ * 2. If the chess is on the track, use normal movement:
+ *    2.1. If the roll point can't make the chess to the win point, just move;
+ *    2.2. If the roll point can make the chess to the win point, set the chess to win state;
+ *    2.3. If the roll point exceed, let the chess go forward and go backward accordingly.
  */
 
 void searchEngine::genInnerMove(CHESS * chess, int rollPoint, int turn){

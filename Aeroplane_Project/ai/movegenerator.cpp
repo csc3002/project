@@ -103,14 +103,14 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
             continue;
         else if(nowChess.currentCoor.region == APRON){
             if(rollPoint >= offMode && offCount == 0){      // special treatement for taking off:
-                addMove(rollPoint, nowChess.chessID);       // taking off just count once
+                addMove(rollPoint, nowChess.chessID);       // taking off just counts once
                 offCount++;
                 std::cout << "add take off, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
             }
             else
                 continue;
         }
-        else{
+        else{       // else are the situations that move a chess on the chessboard
             addMove(rollPoint, nowChess.chessID);
             std::cout << "add move a chess,chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
         }
@@ -122,10 +122,9 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
 /*
  * Implementation note: addMove
  * ------------------------------
- * The implementation of addMove. It will increase moveCount
+ * The implementation of addMove. It will modify moveList and increase moveCount
  * by one once it is called.
  */
-
 
 void moveGenerator::addMove(int rollPoint, int chessID){
     moveList[moveCount].rollPoint = rollPoint;
@@ -133,15 +132,5 @@ void moveGenerator::addMove(int rollPoint, int chessID){
     moveCount++;
     std::cout << moveCount << ": ";
 }
-
-
-
-
-
-
-
-
-
-
 
 

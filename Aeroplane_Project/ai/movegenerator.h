@@ -1,8 +1,11 @@
 /*
  * File: movegenerator.h
  * ---------------
- * This file is the move generator for the AI.
- *
+ * This file is the move generator for the AI. It has the following functions:
+ * 1. Initialize the game mode, such as deciding the taking off condition.
+ * 2. Can create and store possible moves according to chessboard, roll point and side.
+ * The moves it store can be accessed by the search engine and evaluator in order to
+ * find the current best move.
  */
 
 #include "define.h"
@@ -55,7 +58,7 @@ public:
  * The method will write all possible moves into moveList.
  */
 
-    int createPossibleMove(const CHESS chessboard[], int rollPoint, int side);
+    virtual int createPossibleMove(const CHESS chessboard[], int rollPoint, int side);
 
 
 //  This is the data structure which stores all possible moves.
@@ -65,7 +68,6 @@ public:
 //  This variable indicates the condition of taking off.
 //  When dice roll is larger or equal to offMode, a plane
 //  can take off.
-
 
     int offMode = 6;
 

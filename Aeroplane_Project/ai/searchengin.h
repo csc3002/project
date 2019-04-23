@@ -1,4 +1,12 @@
-//TODO: file description
+/*
+ * File: searchengin.h
+ * ----------------------
+ * This file is the core logic for traditional aeroplane AI. It can simulates a
+ * player's behavior.
+ * The main function is play(), which accepts a chessboard and the side of this
+ * player. Once it is called, it will roll dice and choose move like human players,
+ * and it will change the chessboard in place.
+ */
 
 #include "define.h"
 #include "movegenerator.h"
@@ -20,10 +28,10 @@ public:
  * Usage: searchengine.play(chessboard[16], side)
  * ---------------------------
  * This method simulates a player. It receives a chessboard
- * and returns the new chessboard.
+ * and change the original chessboard in place.
  */
 
-    void play(CHESS chessboard[],int side);
+    virtual void play(CHESS chessboard[],int side);
 
 /*
  * Method: searchAGoodMove
@@ -33,7 +41,7 @@ public:
  * it will change the bestMoves pointer pointing to the best move
  * in the moveList.
  */
-    void searchAGoodMove(int count, int side);
+    virtual void searchAGoodMove(int count, int side);
 
 
 /*
@@ -65,9 +73,7 @@ protected:
  * The method will modify the chessboard according to the move.
  */
 
-    void makeMove(CHESSMOVE * move, CHESS * chessboard, int side);
-
-
+    virtual void makeMove(CHESSMOVE * move, CHESS * chessboard, int side);
 
 /*
  * Method: genOuterMove
@@ -75,7 +81,8 @@ protected:
  * ---------------------
  * This method generates the move from outer loop.
  */
-    void genOuterMove(CHESS *chess, CHESS * chessboard, int side, int rollPoint, int off, int turn, int flyBegin, int flyEnd);
+
+    virtual void genOuterMove(CHESS *chess, CHESS * chessboard, int side, int rollPoint, int off, int turn, int flyBegin, int flyEnd);
 
 /*
  * Method: genInnerMove
@@ -83,7 +90,8 @@ protected:
  * ---------------------
  * This method generates the move from inner loop, including the turning point.
  */
-    void genInnerMove(CHESS *chess, int rollPoint, int turn);
+
+    virtual void genInnerMove(CHESS *chess, int rollPoint, int turn);
 
 //  This array is the current chessboard
     CHESS cur_Chessboard [16];
