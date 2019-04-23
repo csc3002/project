@@ -17,8 +17,10 @@ bool Dice::init(){
 //    setScale(0.095f, 0.095f);
     setPosition(Vec2(900, 600));
     auto touchListener = EventListenerTouchOneByOne::create();
+    auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
     touchListener->onTouchBegan = CC_CALLBACK_2(Dice::onTouchBegan, this);
     touchListener->setSwallowTouches(true);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     return true;
 }
@@ -71,10 +73,18 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event){
     Vec2 ptClick = touch->getLocation();
     if (this->getBoundingBox().containsPoint(ptClick) && can_touch){
         roll_num = this->getrandom();
+        setTouchable(false);
+        EventCustom eventClick = EventCustom("roll_click");
+        eventClick.setUserData((void*)true);
+        EventCustom eventRollPT = EventCustom("roll_point");
+        eventRollPT.setUserData((void*)&roll_num);
+        _eventDispatcher->dispatchEvent(&eventClick);
+        _eventDispatcher->dispatchEvent(&eventRollPT);
     }
     return true;
 }
 
-void Dice::setTouchable(bool _can_touch){
+bool Dice::setTouchable(bool _can_touch){
     can_touch = _can_touch;
+    return true;
 }

@@ -30,9 +30,15 @@ bool Planes::init(int _init_rotation, string icon) {
     setScale(0.095f, 0.095f);
     setRotation(_init_rotation);
     auto touchListener = EventListenerTouchOneByOne::create();
+    auto rollClickListener = EventListenerCustom::create("roll_click", CC_CALLBACK_1(Planes::setTouchable, this));
+    auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Planes::setRollPoint, this));
+    auto planeClickListener = EventListenerCustom::create("plane_click", CC_CALLBACK_1(Planes::setTouchable, this));
     touchListener->onTouchBegan = CC_CALLBACK_2(Planes::onTouchBegan, this);
 	touchListener->setSwallowTouches(true);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(rollPTListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeClickListener, this);
     return true;
 }
 
@@ -69,7 +75,7 @@ Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fl
 		sprite->start_pt = _start_pt;
 		sprite->take_off_pt = _take_off_pt;
 		sprite->jumped = false;
-		sprite->can_touch = true;
+		sprite->can_touch = false;
 	} else {
 		delete sprite;
 		sprite = NULL;
@@ -83,7 +89,10 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 	Vec2 ptClick = touch->getLocation();
 	if (this->getBoundingBox().containsPoint(ptClick)) {
 		if (can_touch == true) {
-			//can_touch = false;
+			setTouchable(false);
+            EventCustom eventPlaneClick = EventCustom("plane_click");
+            eventPlaneClick.setUserData((bool*)false);
+            _eventDispatcher->dispatchEvent(&eventPlaneClick);
 			auto delay = DelayTime::create(0.01f);
 			ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
 				delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
@@ -205,14 +214,18 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             //run the sequence
 			auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], nullptr);
 			this->runAction(sequence);
+            EventCustom eventPlaneEnd = EventCustom("plane_end");
+            eventPlaneEnd.setUserData((bool*)true);
+            _eventDispatcher->dispatchEvent(&eventPlaneEnd);
 		}
 		return true;
 	}
 	return false;
 }
 
-void Planes::setRollPoint(int _roll){
-    roll = _roll;
+void Planes::setRollPoint(EventCustom* event){
+    int* roll_num = (int*)event->getUserData();
+    roll = *roll_num;
 }
 
 void Planes::setTouchable(bool _can_touch){

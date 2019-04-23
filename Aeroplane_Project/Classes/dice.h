@@ -26,7 +26,7 @@ class Dice: public cocos2d::Sprite{
     
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     
-    virtual void setTouchable(bool _can_touch);
+    virtual bool setTouchable(bool _can_touch);
 };
 #include <stdio.h>
 

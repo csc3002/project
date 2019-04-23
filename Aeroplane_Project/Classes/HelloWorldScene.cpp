@@ -30,21 +30,18 @@
 USING_NS_CC;
 using namespace std;
 
-Scene* HelloWorld::createScene()
-{
+Scene* HelloWorld::createScene() {
     return HelloWorld::create();
 }
 
 // Print useful error message instead of segfaulting when files are not there.
-static void problemLoading(const char* filename)
-{
+static void problemLoading(const char* filename) {
     printf("Error while loading: %s\n", filename);
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
 // on "init" you need to initialize your instance
-bool HelloWorld::init()
-{
+bool HelloWorld::init() {
     //////////////////////////////
     // 1. super init first
     if ( !Scene::init() )
@@ -64,7 +61,7 @@ bool HelloWorld::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     
     // touch info, for test
-	labelTouchInfo = Label::createWithSystemFont("Touch or clicksomewhere to begin", "Arial", 18);
+	labelTouchInfo = Label::createWithSystemFont("Touch or click somewhere to begin", "Arial", 18);
     labelTouchInfo->setTextColor(Color4B(0,0,0,255));
     labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
                                      Director::getInstance()->getVisibleSize().height / 2));
@@ -77,11 +74,6 @@ bool HelloWorld::init()
     
     //dice initial by enaokao1
     auto dice = Dice::create();
-//    dice->setPosition(Vec2(900, 800));
-//    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
-//    control_dice->setPosition(Vec2(900, 600));
-//    auto menu = Menu::create(control_dice, NULL);
-//    menu->setPosition(Vec2::ZERO);
 
     // initial players and planes
 	// players: 1 = human, -1 = ai, 0 = nobody
@@ -133,6 +125,31 @@ bool HelloWorld::init()
     auto yellow_plane_2 = yellow[2];
     auto yellow_plane_3 = yellow[3];
     
+//    while (true) {
+//        if (!dice->can_touch) {
+//            if (round % 4 == 0) {
+//                blue_plane_0->can_touch = true;
+//                blue_plane_1->can_touch = true;
+//                blue_plane_2->can_touch = true;
+//                blue_plane_3->can_touch = true;
+//            } else if (round % 4 == 1) {
+//                green_plane_0->can_touch = true;
+//                green_plane_1->can_touch = true;
+//                green_plane_2->can_touch = true;
+//                green_plane_3->can_touch = true;
+//            } else if (round % 4 == 2) {
+//                red_plane_0->can_touch = true;
+//                red_plane_1->can_touch = true;
+//                red_plane_2->can_touch = true;
+//                red_plane_3->can_touch = true;
+//            } else if (round % 4 == 3) {
+//                yellow_plane_0->can_touch = true;
+//                yellow_plane_1->can_touch = true;
+//                yellow_plane_2->can_touch = true;
+//                yellow_plane_3->can_touch = true;
+//            }
+//        }
+//    }
     // add child
     if (players[0]) {
         this->addChild(blue_plane_0, 10);
@@ -163,110 +180,39 @@ bool HelloWorld::init()
     }
     
     
-    this->addChild(dice, 1);
+    this->addChild(dice, 1, "dice");
 //    this->addChild(menu, 1);
     this->addChild(labelTouchInfo,1);
     this->addChild(bg, 0);
     return true;
 }
 
-void HelloWorld::menuCloseCallback(Ref* pSender)
-{
+void HelloWorld::menuCloseCallback(Ref* pSender) {
     //Close the cocos2d-x game scene and quit the application
     Director::getInstance()->end();
 }
 
-void HelloWorld::runPlane(Ref* pSender, Sprite* p1)
-{
-	//Close the cocos2d-x game scene and quit the application
-	ActionInterval* rotateBy1 = RotateBy::create(0.5,45);
-	MoveTo* moveTo1 = MoveTo::create(0.5, Vec2(p1->getPositionX()-16, p1->getPositionY()-40));
-	p1->runAction(rotateBy1);
-	p1->runAction(moveTo1);
-}
-
-bool HelloWorld::onTouchBegan(Touch* touch, Event* event)
-{
+bool HelloWorld::onTouchBegan(Touch* touch, Event* event) {
     labelTouchInfo->setPosition(touch->getLocation());
     labelTouchInfo->setString("You Touched Here");
     return true;
 }
 
-void HelloWorld::onTouchEnded(Touch* touch, Event* event)
-{
+void HelloWorld::onTouchEnded(Touch* touch, Event* event) {
     cocos2d::log("touch ended");
 }
 
-void HelloWorld::onTouchMoved(Touch* touch, Event* event)
-{
+void HelloWorld::onTouchMoved(Touch* touch, Event* event) {
     cocos2d::log("touch moved");
 }
 
-void HelloWorld::onTouchCancelled(Touch* touch, Event* event)
-{
+void HelloWorld::onTouchCancelled(Touch* touch, Event* event) {
     cocos2d::log("touch cancelled");
 }
 
-//int HelloWorld::getrandom(Ref* pSender, Sprite* dice) {
-//    this->dice_anim(dice);
-//    float ran = CCRANDOM_0_1();
-//    int num = 0;
-//    if (ran <= 0.166){
-//        num = 1;
-//        dice->setTexture("dice1.png");
-//    }
-//    else if(0.166 < ran <= 0.333){
-//        num = 2;
-//        dice->setTexture("dice2.png");
-//    }
-//    else if (0.333 < ran <= 0.5) {
-//        num = 3;
-//        dice->setTexture("dice3.png");
-//    }
-//    else if (0.5 < ran <= 0.666) {
-//        num = 4;
-//        dice->setTexture("dice4.png");
-//    }
-//    else if (0.666 < ran <= 0.833) {
-//        num = 5;
-//        dice->setTexture("dice5.png");
-//    }
-//    else if (0.833 < ran < 1) {
-//        num = 6;
-//        dice->setTexture("dice6.png");
-//    }
-//    return num;
-//
-//}
-//void HelloWorld::dice_anim(Sprite* dice) {
-//    for (int i = 0; i < 3; i++) {
-//        float ran = CCRANDOM_0_1();
-//        int num = 0;
-//        DelayTime* delayTime = DelayTime::create(0.9f);
-//        if (ran < 0.167) {
-//            num = 1;
-//            dice->setTexture("dice1.png");
-//        }
-//        else if (0.166 < ran < 0.333) {
-//            num = 2;
-//            dice->setTexture("dice2.png");
-//        }
-//        else if (0.333 < ran < 0.5) {
-//            num = 3;
-//            dice->setTexture("dice3.png");
-//        }
-//        else if (0.5 < ran < 0.666) {
-//            num = 4;
-//            dice->setTexture("dice4.png");
-//        }
-//        else if (0.666 < ran < 0.833) {
-//            num = 5;
-//            dice->setTexture("dice5.png");
-//        }
-//        else if (0.833 < ran < 1) {
-//            num = 6;
-//            dice->setTexture("dice6.png");
-//        }
-//        this->runAction(delayTime);
+//void HelloWorld::setTouchable(string str) {
+//    if (str == "roll_click") {
+//        auto dice = this->getChildByName("dice");
+//        
 //    }
 //}

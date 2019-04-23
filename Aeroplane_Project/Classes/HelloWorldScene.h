@@ -26,7 +26,10 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "planes.h"
+#include "dice.h"
 #include "SimpleAudioEngine.h"
+#include <string>
 USING_NS_CC;
 using namespace CocosDenshion;
 
@@ -36,7 +39,6 @@ public:
     virtual bool init();
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-    void runPlane(Ref* pSender, Sprite* p1);
     // implement the "static create()" method manually
 //    int getrandom(Ref* pSender, Sprite* dice);
 //    void dice_anim(Sprite* dice);
@@ -45,10 +47,13 @@ public:
     virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchMoved(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchCancelled(cocos2d::Touch*, cocos2d::Event*);
+//    void setTouchable(std::string str);
+//    void setDiceTouchable(Dice::Dice*, bool _can_touch);
+//    void setPlanesTouchable(Planes::Planes*, bool _can_touch);
     CREATE_FUNC(HelloWorld);
 private:
     cocos2d::Label* labelTouchInfo;
-    int round;
+    int round = 0;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
