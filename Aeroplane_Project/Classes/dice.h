@@ -14,9 +14,11 @@ USING_NS_CC;
 using namespace std;
 
 class Dice: public cocos2d::Sprite{
-    public:
+public:
     int roll_num;
     bool can_touch;
+    int round = 0;
+    int statusArray[4];
     
     virtual bool init();
     
@@ -27,6 +29,8 @@ class Dice: public cocos2d::Sprite{
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     
     virtual void setTouchable(EventCustom* event);
+    
+    virtual void setStatusArray(EventCustom* event);
 };
 #include <stdio.h>
 

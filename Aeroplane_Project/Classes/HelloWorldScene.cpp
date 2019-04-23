@@ -85,7 +85,6 @@ bool HelloWorld::init() {
 	// players: 1 = human, -1 = ai, 0 = nobody
 
 	int players[4] = {1, 1, 1, 1};
-    round = 0;
 
     // coordinates of starting area
     const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};

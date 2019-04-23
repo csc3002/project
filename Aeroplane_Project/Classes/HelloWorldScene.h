@@ -53,7 +53,6 @@ public:
     CREATE_FUNC(HelloWorld);
 private:
     cocos2d::Label* labelTouchInfo;
-    int round = 0;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

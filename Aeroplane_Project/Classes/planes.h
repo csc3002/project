@@ -15,7 +15,7 @@ using namespace std;
 
 class Planes: public cocos2d::Sprite {
     public:
-    int color;                                             // 0 = blue, 1 = green, 2 = red, 3 = »Æ
+    int color;                                             // 0 = blue, 1 = green, 2 = red, 3 = yellow
     int id;                                                // 0-3
     string status;                                         // "ground" = airport, "taking off" = take-off, "outer" = outer runway, "inner" = final runway, "finished" = final
     string buff;                                           // for extension
@@ -31,7 +31,6 @@ class Planes: public cocos2d::Sprite {
     Vec2 take_off_pt;                                      // position of take-off
     bool jumped;                                           // have jumped of not in a round
     bool can_touch;                                        // enable to be touched or not
-    bool _selected = false;
     
     virtual bool init(int _init_rotation, string icon);
     

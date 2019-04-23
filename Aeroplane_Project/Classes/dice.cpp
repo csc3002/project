@@ -10,18 +10,29 @@
 USING_NS_CC;
 using namespace std;
 
+// initial dice
 bool Dice::init(){
     if (!Sprite::initWithFile("dice.png")) {
         return false;
     }
-//    setScale(0.095f, 0.095f);
     setPosition(Vec2(900, 600));
+    // set touch listener
     auto touchListener = EventListenerTouchOneByOne::create();
-    auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
     touchListener->onTouchBegan = CC_CALLBACK_2(Dice::onTouchBegan, this);
     touchListener->setSwallowTouches(true);
+    // set custom event listeners
+    auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
+    auto planeStatusListener_0 = EventListenerCustom::create("plane_status_0", CC_CALLBACK_1(Dice::setStatusArray, this));
+    auto planeStatusListener_1 = EventListenerCustom::create("plane_status_1", CC_CALLBACK_1(Dice::setStatusArray, this));
+    auto planeStatusListener_2 = EventListenerCustom::create("plane_status_2", CC_CALLBACK_1(Dice::setStatusArray, this));
+    auto planeStatusListener_3 = EventListenerCustom::create("plane_status_3", CC_CALLBACK_1(Dice::setStatusArray, this));
+    // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_0, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_1, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_2, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_3, this);
     return true;
 }
 
@@ -40,6 +51,7 @@ Dice* Dice::create(){
     return sprite;
 }
 
+// get random numbers as roll point
 int Dice::getrandom(){
     float ran = CCRANDOM_0_1();
     if (ran <= 0.166){
@@ -74,16 +86,47 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event){
     if (this->getBoundingBox().containsPoint(ptClick) && can_touch){
         roll_num = this->getrandom();
         can_touch = false;
-        EventCustom eventClick = EventCustom("roll_click");
+        // pass touchable to corresponding planes
+        EventCustom eventClick = EventCustom("roll_click_blue");
+        switch (this->round) {
+            case 0: // case blue
+                eventClick = EventCustom("roll_click_blue");
+                break;
+            case 1: // case green
+                eventClick = EventCustom("roll_click_green");
+                break;
+            case 2: // case red
+                eventClick = EventCustom("roll_click_red");
+                break;
+            case 3: // case yellow
+                eventClick = EventCustom("roll_click_yellow");
+                break;
+        }
         eventClick.setUserData((void*)true);
+        // pass roll point to all planes
         EventCustom eventRollPT = EventCustom("roll_point");
         eventRollPT.setUserData((void*)&roll_num);
         _eventDispatcher->dispatchEvent(&eventClick);
         _eventDispatcher->dispatchEvent(&eventRollPT);
+        // if roll_num != 6, the next player roll the dice
+        if (roll_num != 6) {
+            round = (round + 1) % 4;
+        }
+        // if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
+        if (!statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3]){
+            can_touch = true;
+        }
     }
     return true;
 }
 
+// callback function to set the touchability of dice
 void Dice::setTouchable(EventCustom* event){
     can_touch = (bool*)event->getUserData();
+}
+
+// callback function to set the status array of corresponding color
+void Dice::setStatusArray(EventCustom* event){
+    int* array = (int*)event->getUserData();
+    statusArray[*(array+1)] = *array;
 }
