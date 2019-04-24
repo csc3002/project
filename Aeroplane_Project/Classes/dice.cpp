@@ -55,6 +55,7 @@ Dice* Dice::create() {
 // get a random number as roll point
 int Dice::getrandom() {
     float roll_num = randomInteger(1, 6);
+	roll_num = randomInteger(1, 6);
     if (roll_num == 1) {
         this->setTexture("dice1.png");
     }
