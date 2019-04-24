@@ -22,7 +22,7 @@ const Vec2 inner_green[6] = {Vec2(223, 480), Vec2(266, 480), Vec2(315, 480), Vec
 const Vec2 inner_red[6] = {Vec2(480, 737), Vec2(480, 694), Vec2(480, 645), Vec2(480, 606), Vec2(480, 564), Vec2(480, 522)};
 const Vec2 inner_yellow[6] = {Vec2(737, 480), Vec2(694, 480), Vec2(645, 480), Vec2(606, 480), Vec2(564, 480), Vec2(522, 480)};
 
-// initial function
+// initiate plane
 bool Planes::init(int _init_rotation, string icon) {
     if (!Sprite::initWithFile(icon)) {
         return false;
@@ -50,7 +50,8 @@ Planes* Planes::create() {
 	Planes* sprite = new Planes();
 	if (sprite->init(0, "plane.png")) {
 		sprite->autorelease();
-	} else {
+	}
+	else {
 		delete sprite;
 		sprite = NULL;
 		return NULL;
@@ -60,8 +61,8 @@ Planes* Planes::create() {
 
 // create function. including color, id, some special point preset, initial rotation, initial status and position
 Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string icon, string _status, int _position, int _roll) {
-    Planes* sprite = new Planes();
-    if (sprite->init(_init_rotation, icon)) {
+	Planes* sprite = new Planes();
+	if (sprite->init(_init_rotation, icon)) {
 		sprite->autorelease();
 		sprite->color = _color;
 		sprite->id = _id;
@@ -79,27 +80,28 @@ Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fl
 		sprite->take_off_pt = _take_off_pt;
 		sprite->jumped = false;
 		sprite->can_touch = false;
-        // for diffenent colors, initial different listener to control touchable separatedly
-        auto rollClickListener = EventListenerCustom::create("roll_click_blue", CC_CALLBACK_1(Planes::setTouchable, sprite));
-        switch (_color) {
-            case 0:
-                rollClickListener = EventListenerCustom::create("roll_click_blue", CC_CALLBACK_1(Planes::setTouchable, sprite));
-                sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
-                break;
-            case 1:
-                rollClickListener = EventListenerCustom::create("roll_click_green", CC_CALLBACK_1(Planes::setTouchable, sprite));
-                sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
-                break;
-            case 2:
-                rollClickListener = EventListenerCustom::create("roll_click_red", CC_CALLBACK_1(Planes::setTouchable, sprite));
-                sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
-                break;
-            case 3:
-                rollClickListener = EventListenerCustom::create("roll_click_yellow", CC_CALLBACK_1(Planes::setTouchable, sprite));
-                sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
-                break;
-        }
-	} else {
+		// for diffenent colors, initial different listener to control touchable separatedly
+		auto rollClickListener = EventListenerCustom::create("roll_click_blue", CC_CALLBACK_1(Planes::setTouchable, sprite));
+		switch (_color) {
+		case 0:
+			rollClickListener = EventListenerCustom::create("roll_click_blue", CC_CALLBACK_1(Planes::setTouchable, sprite));
+			sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
+			break;
+		case 1:
+			rollClickListener = EventListenerCustom::create("roll_click_green", CC_CALLBACK_1(Planes::setTouchable, sprite));
+			sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
+			break;
+		case 2:
+			rollClickListener = EventListenerCustom::create("roll_click_red", CC_CALLBACK_1(Planes::setTouchable, sprite));
+			sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
+			break;
+		case 3:
+			rollClickListener = EventListenerCustom::create("roll_click_yellow", CC_CALLBACK_1(Planes::setTouchable, sprite));
+			sprite->_eventDispatcher->addEventListenerWithSceneGraphPriority(rollClickListener, sprite);
+			break;
+		}
+	}
+	else {
 		delete sprite;
 		sprite = NULL;
 		return NULL;
@@ -107,10 +109,10 @@ Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fl
 	return sprite;
 }
 
-// on touch function. control when click, how does the plane move.
+// on touch function. control when click, how the plane moves.
 bool Planes::onTouchBegan(Touch* touch, Event* event) {
-	Vec2 ptClick = touch->getLocation();
-	if (this->getBoundingBox().containsPoint(ptClick) && can_touch) {
+    Vec2 ptClick = touch->getLocation();
+    if (this->getBoundingBox().containsPoint(ptClick) && can_touch) {
         can_touch = false;
         // to tell other planes that this plane has been click and let them untouchable
         EventCustom eventPlaneClick = EventCustom("plane_click");
@@ -123,8 +125,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
         bool go_forward = true;   // true = forward, false = go back in the final runway
         jumped = false;
 
-        for (int i = 0; i < roll; i++) {
-            //if (status == "ground" && roll == 6) { // can only take of when roll == 6
+        for (int i = 0; i < roll; ++i) {
             // at the airport
             if (status == "ground") {
                 auto start = MoveTo::create(0.2, take_off_pt);
@@ -132,21 +133,18 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                 status = "taking off";
                 break;
             }
-                
-            // at the take_off point
+            // at take-off point
             else if (status == "taking off") {
                 auto take_off = MoveTo::create(0.2, outer[enter_pt]);
                 act[i] = take_off->clone();
                 status = "outer";
                 position = enter_pt;
             }
-            
             // at outer runway
             else if (status == "outer" && position != turn_pt) {
                 position = (position + 1) % 52;
                 auto outer_go = MoveTo::create(0.2, outer[position]);
                 act[i] = outer_go->clone();
-                
             // when stop at the fly point
                 if (status == "outer" && position == fly_start && i == roll - 1) {
                     position = fly_end;
@@ -155,7 +153,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                 }
                 // when stop at the same color point
                 else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
-                    for (int i = 0; i < 4; i++) {
+                    for (int i = 0; i < 4; ++i) {
                         position = (position + 1) % 52;
                         auto jump = MoveTo::create(0.2, outer[position]);
                         act[7 + i] = jump->clone();
@@ -170,7 +168,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                 }
                 // when stop at the same colop point which is not fly point
                 else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
-                    for (int i = 0; i < 4; i++) {
+                    for (int i = 0; i < 4; ++i) {
                         position = (position + 1) % 52;
                         auto jump = MoveTo::create(0.2, outer[position]);
                         act[7 + i] = jump->clone();
@@ -201,14 +199,14 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             }
             // when at the final runway
             else if (status == "inner") {
-                //if (position > 4) position = 4; // only for test, let the plane goes to the final point
+                /*if (position > 4) position = 4;*/ // only for test, let the plane goes to the final point
                 if (position == 5) {
                     go_forward = false;
                 }
                 if (go_forward) {
-                    position++;
+                    ++position;
                 } else {
-                    position--;
+                    --position;
                 }
                 if (color == 0) {
                     auto inner_go = MoveTo::create(0.2, inner_blue[position]);
@@ -251,36 +249,40 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
         // run the sequence
         auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], nullptr);
         this->runAction(sequence);
-        // tell the dice that action has been end and let it touchable
+        // tell the dice that the action ends and let it touchable
         EventCustom eventPlaneEnd = EventCustom("plane_end");
         eventPlaneEnd.setUserData((bool*)true);
         _eventDispatcher->dispatchEvent(&eventPlaneEnd);
         // tell other planes its position
         EventCustom eventPlanePosition = EventCustom("plane_position");
         int PositionArray[3] = {color, position, 0};
-        if (status == "outer") {PositionArray[2] = 1;}
+        if (status == "outer") {
+            PositionArray[2] = 1;
+        }
         eventPlanePosition.setUserData((int*)PositionArray);
         _eventDispatcher->dispatchEvent(&eventPlanePosition);
         return true;
     }
-	return false;
+    return false;
 }
 
 // set dice point to plane
-void Planes::setRollPoint(EventCustom* event){
+void Planes::setRollPoint(EventCustom* event) {
     roll = *(int*)event->getUserData();
-    if (roll != 6 && (status == "ground" || status == "finished")) {
+    if ((roll != 6 && status == "ground") || status == "finished") {
         can_touch = false;
     }
 }
 
 // set touchability to plane
-void Planes::setTouchable(EventCustom* event){
+void Planes::setTouchable(EventCustom* event) {
     can_touch = (bool*)event->getUserData();
     // tell the plane status to dice
-    EventCustom eventPlaneStatus = EventCustom((string)"plane_status_"+(char)(id+48));
-    int statusArray[2] = {1,id};
-    if (status == "ground" || status == "finished") {statusArray[0] = 0;}
+    EventCustom eventPlaneStatus = EventCustom((string)"plane_status_" + (char)(id + 48));
+    int statusArray[2] = {1, id};
+    if (status == "ground" || status == "finished") {
+        statusArray[0] = 0;
+    }
     eventPlaneStatus.setUserData((int*)statusArray);
     _eventDispatcher->dispatchEvent(&eventPlaneStatus);
 }
@@ -300,11 +302,3 @@ void Planes::going_down(EventCustom* event) {
         jumped = false;
     }
 }
-
-/*bool Planes::onTouchBegan(Touch* touch, Event* event) {
-	Vec2 ptClick = touch->getLocation();
-	if (this->getBoundingBox().containsPoint(ptClick)) {
-			going_down();
-	}
-	return false;
-}*/

@@ -32,6 +32,5 @@ public:
     
     virtual void setStatusArray(EventCustom* event);
 };
-#include <stdio.h>
 
-#endif /* dice_h */
+#endif // dice_h
