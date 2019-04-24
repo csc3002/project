@@ -44,7 +44,7 @@ class Planes: public cocos2d::Sprite {
     
     virtual void setTouchable(EventCustom* event);
     
-	virtual void going_down();
+	virtual void going_down(EventCustom* event);
     //CREATE_FUNC(MySprite);
 };
 

@@ -36,10 +36,12 @@ bool Planes::init(int _init_rotation, string icon) {
     // custom events listeners
     auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Planes::setRollPoint, this));
     auto planeClickListener = EventListenerCustom::create("plane_click", CC_CALLBACK_1(Planes::setTouchable, this));
+    auto planePositionListener = EventListenerCustom::create("plane_position", CC_CALLBACK_1(Planes::going_down, this));
     // add listeners
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(rollPTListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeClickListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planePositionListener, this);
     return true;
 }
 
@@ -232,6 +234,18 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                 can_touch = false;
                 auto finish = MoveTo::create(0.5, start_pt);
                 act[6] = finish->clone();
+                if (color == 0) {
+                    this->setTexture("plane_win_blue.png");
+                }
+                if (color == 1) {
+                    this->setTexture("plane_win_green.png");
+                }
+                if (color == 2) {
+                    this->setTexture("plane_win_red.png");
+                }
+                if (color == 3) {
+                    this->setTexture("plane_win_yellow.png");
+                }
             }
         }
         // run the sequence
@@ -241,6 +255,12 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
         EventCustom eventPlaneEnd = EventCustom("plane_end");
         eventPlaneEnd.setUserData((bool*)true);
         _eventDispatcher->dispatchEvent(&eventPlaneEnd);
+        // tell other planes its position
+        EventCustom eventPlanePosition = EventCustom("plane_position");
+        int PositionArray[3] = {color, position, 0};
+        if (status == "outer") {PositionArray[2] = 1;}
+        eventPlanePosition.setUserData((int*)PositionArray);
+        _eventDispatcher->dispatchEvent(&eventPlanePosition);
         return true;
     }
 	return false;
@@ -266,16 +286,19 @@ void Planes::setTouchable(EventCustom* event){
 }
 
 // when the plane goes down
-void Planes::going_down() {
-	auto going_down = MoveTo::create(1, start_pt);
-	auto rotate_back = RotateTo::create(0.2, init_rotation);
-	auto sequence = Sequence::create(going_down, rotate_back, nullptr);
-	this->runAction(sequence);
-	status = "ground";
-	buff = "None";
-	round_left = 0;
-	position = -1;
-	jumped = false;
+void Planes::going_down(EventCustom* event) {
+    int* array = (int*)event->getUserData();
+    if (array[0] != color && array[1] == position && array[2] && status == "outer" ) {
+        auto going_down = MoveTo::create(1, start_pt);
+        auto rotate_back = RotateTo::create(0.2, init_rotation);
+        auto sequence = Sequence::create(going_down, rotate_back, nullptr);
+        this->runAction(sequence);
+        status = "ground";
+        buff = "None";
+        round_left = 0;
+        position = -1;
+        jumped = false;
+    }
 }
 
 /*bool Planes::onTouchBegan(Touch* touch, Event* event) {
