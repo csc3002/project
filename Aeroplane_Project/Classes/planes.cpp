@@ -287,7 +287,7 @@ void Planes::setTouchable(EventCustom* event) {
     _eventDispatcher->dispatchEvent(&eventPlaneStatus);
 }
 
-// when the plane goes down
+// when the plane takes damage
 void Planes::going_down(EventCustom* event) {
     int* array = (int*)event->getUserData();
     if (array[0] != color && array[1] == position && array[2] && status == "outer" ) {
