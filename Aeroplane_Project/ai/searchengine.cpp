@@ -27,9 +27,7 @@ searchEngine::~searchEngine(){
  * --------------------------
  * This method simulates player behavior like this:
  * 1. Copy the chessboard into cur_Chessboard which is inside the search engine instance;
- * 2. Roll the dice. Then take action:
- *      2.1. if it is the jinx case (rolling six in 3 times), all non-win chess back to apron.
- *      2.2 if not the jinx case, create move.
+ * 2. Roll the dice. Then take create move.
  * 3. If there is only one move, it must be "don't move" case. Then do not do any movement.
  *    If there is more than one possible move, search a good move and make move.
  * 4. If game is not over now and roll point is six, continue until the third time roll. Else, player end its turn.
@@ -46,31 +44,19 @@ void searchEngine::play(CHESS chessboard[], int side){
     while(rollCount < 3){   // dice can only be rolled 3 times
         rollPoint = pMG->roll();
         rollCount ++;
-        // rolling times check here:
-        if(rollCount == 3 && rollPoint == 6){   //  if is the 3rd six...
-            std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n!!!!!!!!!!!!!Entering all back situation!!!!!!!!!!!!!!\n\n\n\n\n\n\n\n\n\n\n\n" << std::endl;
-            jinxCount ++;
-            pMG->moveList[0].rollPoint = 6;
-            pMG->moveList[0].chessID = ALLBACK;
-            bestMove = & pMG->moveList[0];
+        std::cout << "-------------------Adding moves-------------------" << std::endl;
+        count = pMG->createPossibleMove(cur_Chessboard, rollPoint, side);
+
+        if(count != 1){     // search move only when it is able to move a chess
+            searchAGoodMove(count, side);
+            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << std::endl;
             makeMove(bestMove, cur_Chessboard, side);
-            break;
         }
-        else{       // if not the 3rd six......
-            std::cout << "-------------------Adding moves-------------------" << std::endl;
-            count = pMG->createPossibleMove(cur_Chessboard, rollPoint, side);
 
-            if(count != 1){     // search move only when it is able to move a chess
-                searchAGoodMove(count, side);
-                std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << std::endl;
-                makeMove(bestMove, cur_Chessboard, side);
-            }
-
-            if(!isGameOver(cur_Chessboard) && rollPoint == 6)   // if the game is not over and rolling point is 6, continue to roll
-                continue;
-            else
-                break;
-            }
+        if(!isGameOver(cur_Chessboard) && rollPoint == 6)   // if the game is not over and rolling point is 6, continue to roll
+            continue;
+        else
+            break;
         }
     memcpy(chessboard, cur_Chessboard, sizeof(cur_Chessboard));     // copy the current chessboard to the outside
 }
@@ -91,7 +77,7 @@ void searchEngine::searchAGoodMove(int count, int side){
     bestMove = & pMG->moveList[0];
 
     CHESS futureBoard[16];
-    for(int i = 0; i < count ; i++){
+    for(int i = 1; i < count ; i++){
         memcpy(futureBoard, cur_Chessboard, sizeof(cur_Chessboard));    // flush the future board every time
         makeMove(& pMG->moveList[i], futureBoard, side);
         score = pEval->evaluate(cur_Chessboard, futureBoard, side);
@@ -108,9 +94,8 @@ void searchEngine::searchAGoodMove(int count, int side){
  * --------------------------
  * This method work like this:
  * 1. Set some critical points(turning points, flying points, etc.) according to the side;
- * 2. Handle the jinx case;
- * 3. If not jinx, handle the taking off case;
- * 4. If not taking off, handle normal move case. If the chess is about or is right in track,
+ * 2. Handle the taking off case;
+ * 3. If not taking off, handle normal move case. If the chess is about or is right in track,
  *    use inner move function; else, use outer move function.
  */
 
