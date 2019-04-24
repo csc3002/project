@@ -6,6 +6,7 @@
 //
 
 #include "dice.h"
+#include "random.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -53,29 +54,23 @@ Dice* Dice::create() {
 
 // get a random number as roll point
 int Dice::getrandom() {
-    float ran = CCRANDOM_0_1();
-    if (ran <= 0.166){
-        roll_num = 1;
+    float roll_num = randomInteger(1, 6);
+    if (roll_num == 1) {
         this->setTexture("dice1.png");
     }
-    else if(0.166 < ran <= 0.333){
-        roll_num = 2;
+    else if(roll_num == 2) {
         this->setTexture("dice2.png");
     }
-    else if (0.333 < ran <= 0.5) {
-        roll_num = 3;
+    else if (roll_num == 3) {
         this->setTexture("dice3.png");
     }
-    else if (0.5 < ran <= 0.666) {
-        roll_num = 4;
+    else if (roll_num == 4) {
         this->setTexture("dice4.png");
     }
-    else if (0.666 < ran <= 0.833) {
-        roll_num = 5;
+    else if (roll_num == 5) {
         this->setTexture("dice5.png");
     }
-    else if (0.833 < ran < 1) {
-        roll_num = 6;
+    else if (roll_num == 6) {
         this->setTexture("dice6.png");
     }
     return roll_num;
