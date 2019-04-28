@@ -26,6 +26,8 @@
 #include "SimpleAudioEngine.h"
 #include "planes.h"
 #include "dice.h"
+#include "card_generator.h"
+#include "card_slot.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -70,19 +72,28 @@ bool HelloWorld::init() {
 	bg->setScaleX(visibleSize.width / bg->getContentSize().width);
 	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
     
-    //dice initial by enaokao1
-    auto dice = Dice::create();
-//    auto dice = Dice::create();
-//    dice->setPosition(Vec2(900, 800));
-//    auto control_dice = MenuItemImage::create("button_dice.png", "button_dice_choosen.png", CC_CALLBACK_1(HelloWorld::getrandom, this, dice));
-//    control_dice->setPosition(Vec2(900, 600));
-//    auto menu = Menu::create(control_dice, NULL);
-//    menu->setPosition(Vec2::ZERO);
-    
-    // initial players and planes
-	// players: 1 = human, -1 = ai, 0 = nobody
+	// card generator initiate
+	auto card_generator = Card_Generator::create();
 
+	// initiate game mode
+	// true = advance mode, false = classical mode
+	bool is_advance_mode = true;
+    
+    // initiate players and planes
+
+	// players: 1 = human, -1 = ai, 0 = nobody
 	int players[4] = {1, 1, 1, 1};
+
+	// count the number of players
+	int number_of_players = 0;
+	for (int i = 0; i < 4; ++i) {
+		if (players[i]) {
+			++number_of_players;
+		}
+	}
+
+	// dice initiate
+	auto dice = Dice::create(players[0], players[1], players[2], players[3]);
 
     // coordinates of starting area
     const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
@@ -97,7 +108,6 @@ bool HelloWorld::init() {
     const int fly_end[4] = {16, 29, 42, 3};
     const int init_rotation[4] ={270, 0, 90, 180};
 
-    // color, id, enter_pt, turn_pt, fly_start, fly_end, init_rotation, start_pt, take_off_pt, icon, status = "ground", position = -1, roll
     Planes* blue[4];
     Planes* green[4];
     Planes* red[4];
@@ -131,31 +141,6 @@ bool HelloWorld::init() {
     auto yellow_plane_2 = yellow[2];
     auto yellow_plane_3 = yellow[3];
     
-//    while (true) {
-//        if (!dice->can_touch) {
-//            if (round % 4 == 0) {
-//                blue_plane_0->can_touch = true;
-//                blue_plane_1->can_touch = true;
-//                blue_plane_2->can_touch = true;
-//                blue_plane_3->can_touch = true;
-//            } else if (round % 4 == 1) {
-//                green_plane_0->can_touch = true;
-//                green_plane_1->can_touch = true;
-//                green_plane_2->can_touch = true;
-//                green_plane_3->can_touch = true;
-//            } else if (round % 4 == 2) {
-//                red_plane_0->can_touch = true;
-//                red_plane_1->can_touch = true;
-//                red_plane_2->can_touch = true;
-//                red_plane_3->can_touch = true;
-//            } else if (round % 4 == 3) {
-//                yellow_plane_0->can_touch = true;
-//                yellow_plane_1->can_touch = true;
-//                yellow_plane_2->can_touch = true;
-//                yellow_plane_3->can_touch = true;
-//            }
-//        }
-//    }
     // add child
     if (players[0]) {
         this->addChild(blue_plane_0, 10);
@@ -185,10 +170,11 @@ bool HelloWorld::init() {
         this->addChild(yellow_plane_3, 10);
     }
     
+	if (is_advance_mode) {
+		this->addChild(card_generator, 1);
+	}
     
-    this->addChild(dice, 1, "dice");
-//    this->addChild(dice, 1);
-//    this->addChild(menu, 1);
+    this->addChild(dice, 1);
     this->addChild(labelTouchInfo,1);
     this->addChild(bg, 0);
     return true;
@@ -216,10 +202,3 @@ void HelloWorld::onTouchMoved(Touch* touch, Event* event) {
 void HelloWorld::onTouchCancelled(Touch* touch, Event* event) {
     cocos2d::log("touch cancelled");
 }
-
-//void HelloWorld::setTouchable(string str) {
-//    if (str == "roll_click") {
-//        auto dice = this->getChildByName("dice");
-//        
-//    }
-//}

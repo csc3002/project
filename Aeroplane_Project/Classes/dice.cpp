@@ -3,13 +3,11 @@
 //  Aeroplane_Project
 //
 //  Created by HRBattery on 2019/4/22.
-//
+//  Modified by Re-Entry
 
 #include "dice.h"
 #include "random.h"
-#include <string>
 USING_NS_CC;
-using namespace std;
 
 // initiate dice
 bool Dice::init() {
@@ -23,26 +21,27 @@ bool Dice::init() {
     touchListener->setSwallowTouches(true);
     // set custom event listeners
     auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
-    auto planeStatusListener_0 = EventListenerCustom::create("plane_status_0", CC_CALLBACK_1(Dice::setStatusArray, this));
-    auto planeStatusListener_1 = EventListenerCustom::create("plane_status_1", CC_CALLBACK_1(Dice::setStatusArray, this));
-    auto planeStatusListener_2 = EventListenerCustom::create("plane_status_2", CC_CALLBACK_1(Dice::setStatusArray, this));
-    auto planeStatusListener_3 = EventListenerCustom::create("plane_status_3", CC_CALLBACK_1(Dice::setStatusArray, this));
+    auto planeStatusListener = EventListenerCustom::create("plane_status", CC_CALLBACK_1(Dice::setStatusArray, this));
+	//auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Dice::skipTurn, this));
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_0, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_1, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_2, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener_3, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener, this);
+	//_eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
     return true;
 }
 
-Dice* Dice::create() {
+Dice* Dice::create(int player0, int player1, int player2, int player3) {
     Dice* sprite = new Dice();
     if (sprite->init()) {
         sprite->autorelease();
         sprite->roll_num = 0;
+		sprite->round = 0;
         sprite->can_touch = true;
+		sprite->playerArray[0] = player0;
+		sprite->playerArray[1] = player1;
+		sprite->playerArray[2] = player2;
+		sprite->playerArray[3] = player3;
     }
     else {
         delete sprite;
@@ -80,11 +79,18 @@ int Dice::getrandom() {
 bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
     Vec2 ptClick = touch->getLocation();
     if (this->getBoundingBox().containsPoint(ptClick) && can_touch) {
-        roll_num = this->getrandom();
+
+		// skip if the player is nobody
+		while (!playerArray[round]) {
+			round = (round + 1) % 4;
+		}
+
+        roll_num = getrandom();
         can_touch = false;
+
         // pass touchable to corresponding planes
         EventCustom eventClick = EventCustom("roll_click_blue");
-        switch (this->round) {
+        switch (round) {
             case 0: // case blue
                 eventClick = EventCustom("roll_click_blue");
                 break;
@@ -99,21 +105,25 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
                 break;
         }
         eventClick.setUserData((void*)true);
-        // pass roll point to all planes
+        _eventDispatcher->dispatchEvent(&eventClick);
+
+        // pass roll point to ALL planes
         EventCustom eventRollPT = EventCustom("roll_point");
         eventRollPT.setUserData((void*)&roll_num);
-        _eventDispatcher->dispatchEvent(&eventClick);
         _eventDispatcher->dispatchEvent(&eventRollPT);
-        // if roll_num != 6, the next player rolls the dice
+
+		// pass round to the card generator
+		EventCustom eventRound = EventCustom("event_round");
+		eventRound.setUserData((void*)&round);
+		_eventDispatcher->dispatchEvent(&eventRound);
+
+        // if roll_num is not 6, the next player rolls the dice
         if (roll_num != 6) {
             round = (round + 1) % 4;
         }
-        // if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
-        if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
-            can_touch = true;
-        }
+		return true;
     }
-    return true;
+    return false;
 }
 
 // callback function to set the touchability of dice
@@ -124,5 +134,19 @@ void Dice::setTouchable(EventCustom* event) {
 // callback function to set the status array of corresponding color
 void Dice::setStatusArray(EventCustom* event) {
     int* array = (int*)event->getUserData();
-    statusArray[*(array + 1)] = *array;
+	statusArray[*(array + 1)] = *array;
+
+	// if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
+	if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
+		can_touch = true;
+	}
+	else {
+		can_touch = false;
+	}
+}
+
+// callback function to skip a player if the card_generator is clicked
+void Dice::skipTurn(EventCustom* event) {
+	round = (round + 1) % 4;
+	can_touch = true;
 }

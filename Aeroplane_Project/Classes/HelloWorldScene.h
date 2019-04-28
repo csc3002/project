@@ -36,20 +36,18 @@ using namespace CocosDenshion;
 class HelloWorld: public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
+
     virtual bool init();
+
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-    // implement the "static create()" method manually
-//    int getrandom(Ref* pSender, Sprite* dice);
-//    void dice_anim(Sprite* dice);
     
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchMoved(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchCancelled(cocos2d::Touch*, cocos2d::Event*);
-//    void setTouchable(std::string str);
-//    void setDiceTouchable(Dice::Dice*, bool _can_touch);
-//    void setPlanesTouchable(Planes::Planes*, bool _can_touch);
+
+	// implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 private:
     cocos2d::Label* labelTouchInfo;
