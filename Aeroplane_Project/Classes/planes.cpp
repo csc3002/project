@@ -309,6 +309,7 @@ void Planes::going_down() {
 	auto sequence = Sequence::create(going_down, rotate_back, nullptr);
 	this->runAction(sequence);
 	status = "ground";
+	card = "none";
 	buff = "none";
 	round_left = 0;
 	position = -10;
