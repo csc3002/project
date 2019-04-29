@@ -135,7 +135,7 @@ void Dice::setTouchable(EventCustom* event) {
 void Dice::setStatusArray(EventCustom* event) {
     int* array = (int*)event->getUserData();
 	statusArray[*(array + 1)] = *array;
-
+    log("%d,%d,%d,%d",statusArray[0],statusArray[1],statusArray[2],statusArray[3]);
 	// if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
 	if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
 		can_touch = true;
