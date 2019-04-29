@@ -17,7 +17,7 @@ public:
     bool can_touch;
     int round;
     int statusArray[4];
-	int playerArray[4];
+    int playerArray[4];
     
     virtual bool init();
     

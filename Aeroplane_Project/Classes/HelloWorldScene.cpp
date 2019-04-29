@@ -48,10 +48,10 @@ bool HelloWorld::init() {
     {
         return false;
     }
-    
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    
+
     // add touchlistener
     auto touchListener = EventListenerTouchOneByOne::create();
     touchListener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
@@ -59,48 +59,45 @@ bool HelloWorld::init() {
     touchListener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
     touchListener->onTouchCancelled = CC_CALLBACK_2(HelloWorld::onTouchCancelled, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-    
+
     // touch info, for test
-	labelTouchInfo = Label::createWithSystemFont("Touch or click somewhere to begin", "Arial", 18);
+    labelTouchInfo = Label::createWithSystemFont("Touch or click somewhere to begin", "Arial", 18);
     labelTouchInfo->setTextColor(Color4B(0,0,0,255));
     labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
                                      Director::getInstance()->getVisibleSize().height / 2));
-    
-    // set background
-	auto  bg = Sprite::create("background.png");
-	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	bg->setScaleX(visibleSize.width / bg->getContentSize().width);
-	bg->setScaleY(visibleSize.height / bg->getContentSize().height);
-    
-	// card generator initiate
-	auto card_generator = Card_Generator::create();
 
-	// initiate game mode
-	// true = advance mode, false = classical mode
-	bool is_advance_mode = true;
-    
+    // set background
+    auto  bg = Sprite::create("background.png");
+    bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+    bg->setScaleX(visibleSize.width / bg->getContentSize().width);
+    bg->setScaleY(visibleSize.height / bg->getContentSize().height);
+
+    // initiate game mode
+    // true = advance mode, false = classical mode
+    bool is_advance_mode = true;
+
     // initiate players and planes
 
-	// players: 1 = human, -1 = ai, 0 = nobody
-	int players[4] = {1, 1, 1, 1};
+    // players: 1 = human, -1 = ai, 0 = nobody
+    int players[4] = {1, 1, 1, 1};
 
-	// count the number of players
-	int number_of_players = 0;
-	for (int i = 0; i < 4; ++i) {
-		if (players[i]) {
-			++number_of_players;
-		}
-	}
+    // count the number of players
+    int number_of_players = 0;
+    for (int i = 0; i < 4; ++i) {
+        if (players[i]) {
+            ++number_of_players;
+        }
+    }
 
-	// dice initiate
-	auto dice = Dice::create(players[0], players[1], players[2], players[3]);
+    // initiate dice
+    auto dice = Dice::create(players[0], players[1], players[2], players[3]);
 
     // coordinates of starting area
     const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
     const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
     const Vec2 red_start_pts[5] = {Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825)};
     const Vec2 yellow_start_pts[5] = {Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315)};
-    
+
     // positions of special points
     const int enter_pt[4] = {39, 0, 13, 26};
     const int turn_pt[4] = {36, 49, 10, 23};
@@ -112,7 +109,7 @@ bool HelloWorld::init() {
     Planes* green[4];
     Planes* red[4];
     Planes* yellow[4];
-    
+
     for (int i = 0; i < 4; ++i) {
         blue[i] = Planes::create(0, i, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[i], blue_start_pts[4], "plane_blue.png");
         blue[i]->setPosition(blue[i]->start_pt);
@@ -123,7 +120,7 @@ bool HelloWorld::init() {
         yellow[i] = Planes::create(3, i, enter_pt[3], turn_pt[3], fly_start[3], fly_end[3], init_rotation[3], yellow_start_pts[i], yellow_start_pts[4], "plane_yellow.png");
         yellow[i]->setPosition(yellow[i]->start_pt);
     }
-    
+
     auto blue_plane_0 = blue[0];
     auto blue_plane_1 = blue[1];
     auto blue_plane_2 = blue[2];
@@ -140,7 +137,22 @@ bool HelloWorld::init() {
     auto yellow_plane_1 = yellow[1];
     auto yellow_plane_2 = yellow[2];
     auto yellow_plane_3 = yellow[3];
-    
+
+    // initiate card generator and card slots
+    auto card_generator = Card_Generator::create();
+
+    auto card_slot_blue = Card_Slot::create(0, number_of_players);
+    card_slot_blue->setPosition(Vec2(50, 50));
+
+    auto card_slot_green = Card_Slot::create(1, number_of_players);
+    card_slot_green->setPosition(Vec2(50, 910));
+
+    auto card_slot_red = Card_Slot::create(2, number_of_players);
+    card_slot_red->setPosition(Vec2(910, 910));
+
+    auto card_slot_yellow = Card_Slot::create(3, number_of_players);
+    card_slot_yellow->setPosition(Vec2(910, 50));
+
     // add child
     if (players[0]) {
         this->addChild(blue_plane_0, 10);
@@ -148,41 +160,48 @@ bool HelloWorld::init() {
         this->addChild(blue_plane_2, 10);
         this->addChild(blue_plane_3, 10);
     }
-    
+
     if (players[1]) {
         this->addChild(green_plane_0, 10);
         this->addChild(green_plane_1, 10);
         this->addChild(green_plane_2, 10);
         this->addChild(green_plane_3, 10);
     }
-    
-	if (players[2]) {
-		this->addChild(red_plane_0, 10);
-		this->addChild(red_plane_1, 10);
-		this->addChild(red_plane_2, 10);
-		this->addChild(red_plane_3, 10);
-	}
-	
+
+    if (players[2]) {
+        this->addChild(red_plane_0, 10);
+        this->addChild(red_plane_1, 10);
+        this->addChild(red_plane_2, 10);
+        this->addChild(red_plane_3, 10);
+    }
+
     if (players[3]) {
         this->addChild(yellow_plane_0, 10);
         this->addChild(yellow_plane_1, 10);
         this->addChild(yellow_plane_2, 10);
         this->addChild(yellow_plane_3, 10);
     }
-    
-	if (is_advance_mode) {
-		this->addChild(card_generator, 1);
-	}
-    
+
+    if (is_advance_mode) {
+        this->addChild(card_generator, 1);
+        if (players[0]) {
+            this->addChild(card_slot_blue, 1);
+        }
+        if (players[1]) {
+            this->addChild(card_slot_green, 1);
+        }
+        if (players[2]) {
+            this->addChild(card_slot_red, 1);
+        }
+        if (players[3]) {
+            this->addChild(card_slot_yellow, 1);
+        }
+    }
+
     this->addChild(dice, 1);
     this->addChild(labelTouchInfo,1);
     this->addChild(bg, 0);
     return true;
-}
-
-void HelloWorld::menuCloseCallback(Ref* pSender) {
-    //Close the cocos2d-x game scene and quit the application
-    Director::getInstance()->end();
 }
 
 bool HelloWorld::onTouchBegan(Touch* touch, Event* event) {
