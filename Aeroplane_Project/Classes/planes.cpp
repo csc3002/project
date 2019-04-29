@@ -235,8 +235,12 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 				}
 				// when finish
 				if (position == 5 && status == "inner" && i == roll - 1) {
-					position = -100;
 					status = "finished";
+					card = "none";
+					buff = "none";
+					round_left = 0;
+					position = -100;
+					jumped = false;
 					can_touch = false;
 					auto finish = MoveTo::create(0.5, start_pt);
 					act[6] = finish->clone();
@@ -263,7 +267,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 			_eventDispatcher->dispatchEvent(&eventPlaneEnd);
 			// tell other planes its position
 			EventCustom eventPlanePosition = EventCustom("plane_position");
-			int PositionArray[3] = { color, position, 0 };
+			int PositionArray[3] = {color, position, 0};
 			if (status == "outer") {
 				PositionArray[2] = 1;
 			}
@@ -314,6 +318,18 @@ void Planes::going_down() {
 	round_left = 0;
 	position = -10;
 	jumped = false;
+	if (color == 0) {
+		this->setTexture("plane_blue.png");
+	}
+	if (color == 1) {
+		this->setTexture("plane_green.png");
+	}
+	if (color == 2) {
+		this->setTexture("plane_red.png");
+	}
+	if (color == 3) {
+		this->setTexture("plane_yellow.png");
+	}
 }
 
 // check if the plane is rammed
