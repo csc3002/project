@@ -28,6 +28,8 @@ public:
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     
     virtual void setTouchable(EventCustom* event);
+
+    virtual void setTouchableFalse(EventCustom* event);
     
     virtual void setStatusArray(EventCustom* event);
     

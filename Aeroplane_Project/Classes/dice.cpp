@@ -9,7 +9,7 @@
 #include "random.h"
 USING_NS_CC;
 
-// initiate dice
+// initiate the dice
 bool Dice::init() {
     if (!Sprite::initWithFile("dice.png")) {
         return false;
@@ -24,13 +24,15 @@ bool Dice::init() {
     // set custom event listeners
     auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
     auto planeStatusListener = EventListenerCustom::create("plane_status", CC_CALLBACK_1(Dice::setStatusArray, this));
-    //auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Dice::skipTurn, this));
+    auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Dice::setTouchableFalse, this));
+    auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Dice::skipTurn, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener, this);
-    //_eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
     return true;
 }
 
@@ -45,10 +47,10 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->playerArray[1] = player1;
         sprite->playerArray[2] = player2;
         sprite->playerArray[3] = player3;
-		auto sign = Sprite::create("plane_blue.png");
-		sign->setPosition(Vec2(43, -50));
-		sign->setScale(0.1);
-		sprite->addChild(sign);
+        auto sign = Sprite::create("plane_blue.png");
+        sign->setPosition(Vec2(43, -50));
+        sign->setScale(0.1);
+        sprite->addChild(sign);
     }
     else {
         delete sprite;
@@ -60,7 +62,7 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
 
 // get a random number as roll point
 int Dice::getrandom() {
-    float roll_num = randomInteger(1, 6);
+    int roll_num = randomInteger(1, 6);
     roll_num = randomInteger(1, 6);
     if (roll_num == 1) {
         this->setTexture("dice1.png");
@@ -114,28 +116,56 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
         eventClick.setUserData((void*)true);
         _eventDispatcher->dispatchEvent(&eventClick);
 
-        // pass roll point to ALL planes
+        // pass roll point to the card generator and ALL planes
+        // tell the card slots the dice is clicked
         EventCustom eventRollPT = EventCustom("roll_point");
         eventRollPT.setUserData((void*)&roll_num);
         _eventDispatcher->dispatchEvent(&eventRollPT);
 
         // pass round to the card generator
-        EventCustom eventRound = EventCustom("event_round");
-        eventRound.setUserData((void*)&round);
-        _eventDispatcher->dispatchEvent(&eventRound);
+        // ask the planes for there position status
+        EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
+        eventRoundG.setUserData((void*)&round);
+        _eventDispatcher->dispatchEvent(&eventRoundG);
 
         // if roll_num is not 6, the next player rolls the dice
         if (roll_num != 6) {
             round = (round + 1) % 4;
+
+            // skip if the player is nobody
+            while (!playerArray[round]) {
+                round = (round + 1) % 4;
+            }
+
+            // pass round to the card slots
+            if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
+                EventCustom eventRoundS = EventCustom("event_round_to_slots");
+                eventRoundS.setUserData((void*)&round);
+                _eventDispatcher->dispatchEvent(&eventRoundS);
+            }
+
+            // tell the planes if the round changes
+            EventCustom eventRoundChange = EventCustom("round_change");
+            _eventDispatcher->dispatchEvent(&eventRoundChange);
         }
         return true;
     }
     return false;
 }
 
-// callback function to set the touchability of dice
+// callback function to set the touchability of the dice
 void Dice::setTouchable(EventCustom* event) {
     can_touch = (bool*)event->getUserData();
+
+    // pass round to the card slots
+    EventCustom eventRoundS = EventCustom("event_round_to_slots");
+    eventRoundS.setUserData((void*)&round);
+    _eventDispatcher->dispatchEvent(&eventRoundS);
+}
+
+// callback function to set the touchability to false
+void Dice::setTouchableFalse(EventCustom* event) {
+    can_touch = false;
 }
 
 // callback function to set the status array of corresponding color
@@ -152,8 +182,24 @@ void Dice::setStatusArray(EventCustom* event) {
     }
 }
 
-// callback function to skip a player if the card_generator is clicked
+// callback function to skip a player if the card generator is clicked
 void Dice::skipTurn(EventCustom* event) {
     round = (round + 1) % 4;
+
+    // skip if the player is nobody
+    while (!playerArray[round]) {
+        round = (round + 1) % 4;
+    }
+
+    // reset the touchablity of dice
     can_touch = true;
+
+    // pass round to the card slots
+    EventCustom eventRoundS = EventCustom("event_round_to_slots");
+    eventRoundS.setUserData((void*)&round);
+    _eventDispatcher->dispatchEvent(&eventRoundS);
+
+    // tell the planes if the round changes
+    EventCustom eventRoundChange = EventCustom("round_change");
+    _eventDispatcher->dispatchEvent(&eventRoundChange);
 }

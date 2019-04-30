@@ -19,6 +19,7 @@ public:
     int id;                                                // from 0 to 3, mark of different planes
     string status;                                         // "ground" = airport, "taking off" = take-off point, "outer" = outer runway, "inner" = final runway, "finished" = finish the run
     string card;                                           // for advance mode
+    int round_left_of_card;                                // for advance mode
     string buff;                                           // for advance mode
     int round_left;                                        // for advance mode
     int position;                                          // position of plane
@@ -46,6 +47,12 @@ public:
     virtual void setTouchable(EventCustom* event);
 
     virtual void submit_status(EventCustom* event);
+
+    virtual void setCard(EventCustom* event);
+
+    virtual void resetCard(EventCustom* event);
+
+    virtual void round_decrease(EventCustom* event);
 
     virtual void going_down();
 

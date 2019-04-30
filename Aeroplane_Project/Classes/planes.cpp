@@ -22,7 +22,7 @@ const Vec2 inner_green[6] = {Vec2(223, 480), Vec2(266, 480), Vec2(315, 480), Vec
 const Vec2 inner_red[6] = {Vec2(480, 737), Vec2(480, 694), Vec2(480, 645), Vec2(480, 606), Vec2(480, 564), Vec2(480, 522)};
 const Vec2 inner_yellow[6] = {Vec2(737, 480), Vec2(694, 480), Vec2(645, 480), Vec2(606, 480), Vec2(564, 480), Vec2(522, 480)};
 
-// initiate plane
+// initiate the plane
 bool Planes::init(int _init_rotation, string icon) {
     if (!Sprite::initWithFile(icon)) {
         return false;
@@ -39,7 +39,10 @@ bool Planes::init(int _init_rotation, string icon) {
     auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Planes::setRollPoint, this));
     auto planeClickListener = EventListenerCustom::create("plane_click", CC_CALLBACK_1(Planes::setTouchable, this));
     auto planePositionListener = EventListenerCustom::create("plane_position", CC_CALLBACK_1(Planes::ram_judge, this));
-    auto roundListener = EventListenerCustom::create("event_round", CC_CALLBACK_1(Planes::submit_status, this));
+    auto roundListener = EventListenerCustom::create("event_round_to_generator_and_planes", CC_CALLBACK_1(Planes::submit_status, this));
+    auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Planes::setCard, this));
+    auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Planes::resetCard, this));
+    auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -47,6 +50,10 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeClickListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planePositionListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(roundChangeListener, this);
+
     return true;
 }
 
@@ -73,6 +80,7 @@ Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fl
         sprite->id = _id;
         sprite->status = _status;
         sprite->card = "none";
+        sprite->round_left_of_card = 0;
         sprite->buff = "none";
         sprite->round_left = 0;
         sprite->position = _position;
@@ -120,8 +128,9 @@ Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fl
 bool Planes::onTouchBegan(Touch* touch, Event* event) {
     Vec2 ptClick = touch->getLocation();
     if (this->getBoundingBox().containsPoint(ptClick) && can_touch) {
+
         // normal move
-        if (buff != "stopaction" && card == "none") {
+        if (card == "none") {
             can_touch = false;
 
             // to tell other planes that this plane has been click and let them untouchable
@@ -130,145 +139,154 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             _eventDispatcher->dispatchEvent(&eventPlaneClick);
 
             // action
-            auto delay = DelayTime::create(0.01f); // placeholder
-            ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
-                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
-            bool go_forward = true; // true = forward, false = go back in the final runway
-            jumped = false;
+            if (buff != "stopaction") {
 
-            for (int i = 0; i < roll; ++i) {
-                // at the airport
-                if (status == "ground") {
-                    auto start = MoveTo::create(0.2, take_off_pt);
-                    this->runAction(start);
-                    status = "taking off";
-                    break;
-                }
-                // at take-off point
-                else if (status == "taking off") {
-                    auto take_off = MoveTo::create(0.2, outer[enter_pt]);
-                    act[i] = take_off->clone();
-                    status = "outer";
-                    position = enter_pt;
-                }
-                // at outer runway
-                else if (status == "outer" && position != turn_pt) {
-                    position = (position + 1) % 52;
-                    auto outer_go = MoveTo::create(0.2, outer[position]);
-                    act[i] = outer_go->clone();
-                    // when stop at the fly point
-                    if (status == "outer" && position == fly_start && i == roll - 1) {
-                        position = fly_end;
-                        auto fly = MoveTo::create(0.5, outer[fly_end]);
-                        act[6] = fly->clone();
+                // create an action array, delay works as a placeholder
+                auto delay = DelayTime::create(0.01f);
+                ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+                    delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
+
+                // direction of the plane, true = forward, false = go back in the final runway
+                bool go_forward = true;
+                jumped = false;
+
+                for (int i = 0; i < roll; ++i) {
+                    // at the airport
+                    if (status == "ground") {
+                        auto start = MoveTo::create(0.2, take_off_pt);
+                        this->runAction(start);
+                        status = "taking off";
+                        break;
                     }
-                    // when stop at the same color point
-                    else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
-                        for (int i = 0; i < 4; ++i) {
-                            position = (position + 1) % 52;
-                            auto jump = MoveTo::create(0.2, outer[position]);
-                            act[7 + i] = jump->clone();
+                    // at take-off point
+                    else if (status == "taking off") {
+                        auto take_off = MoveTo::create(0.2, outer[enter_pt]);
+                        act[i] = take_off->clone();
+                        status = "outer";
+                        position = enter_pt;
+                    }
+                    // at outer runway
+                    else if (status == "outer" && position != turn_pt) {
+                        position = (position + 1) % 52;
+                        auto outer_go = MoveTo::create(0.2, outer[position]);
+                        act[i] = outer_go->clone();
+                        // when stop at the fly point
+                        if (status == "outer" && position == fly_start && i == roll - 1) {
+                            position = fly_end;
+                            auto fly = MoveTo::create(0.5, outer[fly_end]);
+                            act[6] = fly->clone();
                         }
-                        jumped = true;
-                    }
-                    // when stop at the fly point after jump
-                    if (status == "outer" && position == fly_start && i == roll - 1) {
-                        position = fly_end;
-                        auto fly = MoveTo::create(0.5, outer[fly_end]);
-                        act[11] = fly->clone();
-                    }
-                    // when stop at the same colop point which is not fly point
-                    else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
-                        for (int i = 0; i < 4; ++i) {
-                            position = (position + 1) % 52;
-                            auto jump = MoveTo::create(0.2, outer[position]);
-                            act[7 + i] = jump->clone();
+                        // when stop at the same color point
+                        else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
+                            for (int i = 0; i < 4; ++i) {
+                                position = (position + 1) % 52;
+                                auto jump = MoveTo::create(0.2, outer[position]);
+                                act[7 + i] = jump->clone();
+                            }
+                            jumped = true;
                         }
-                        jumped = true;
+                        // when stop at the fly point after jump
+                        if (status == "outer" && position == fly_start && i == roll - 1) {
+                            position = fly_end;
+                            auto fly = MoveTo::create(0.5, outer[fly_end]);
+                            act[11] = fly->clone();
+                        }
+                        // when stop at the same colop point which is not fly point
+                        else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
+                            for (int i = 0; i < 4; ++i) {
+                                position = (position + 1) % 52;
+                                auto jump = MoveTo::create(0.2, outer[position]);
+                                act[7 + i] = jump->clone();
+                            }
+                            jumped = true;
+                        }
+                    }
+                    // when at the turn point
+                    else if (position == turn_pt) {
+                        position = 0;
+                        status = "inner";
+                        if (color == 0) {
+                            auto turn = MoveTo::create(0.2, inner_blue[position]);
+                            act[i] = turn->clone();
+                        }
+                        if (color == 1) {
+                            auto turn = MoveTo::create(0.2, inner_green[position]);
+                            act[i] = turn->clone();
+                        }
+                        if (color == 2) {
+                            auto turn = MoveTo::create(0.2, inner_red[position]);
+                            act[i] = turn->clone();
+                        }
+                        if (color == 3) {
+                            auto turn = MoveTo::create(0.2, inner_yellow[position]);
+                            act[i] = turn->clone();
+                        }
+                    }
+                    // when at the final runway
+                    else if (status == "inner") {
+                        /*if (position > 4) position = 4;*/ // only for test, let the plane goes to the final point
+                        if (position == 5) {
+                            go_forward = false;
+                        }
+                        if (go_forward) {
+                            ++position;
+                        }
+                        else {
+                            --position;
+                        }
+                        if (color == 0) {
+                            auto inner_go = MoveTo::create(0.2, inner_blue[position]);
+                            act[i] = inner_go->clone();
+                        }
+                        if (color == 1) {
+                            auto inner_go = MoveTo::create(0.2, inner_green[position]);
+                            act[i] = inner_go->clone();
+                        }
+                        if (color == 2) {
+                            auto inner_go = MoveTo::create(0.2, inner_red[position]);
+                            act[i] = inner_go->clone();
+                        }
+                        if (color == 3) {
+                            auto inner_go = MoveTo::create(0.2, inner_yellow[position]);
+                            act[i] = inner_go->clone();
+                        }
+                    }
+                    // when finish
+                    if (position == 5 && status == "inner" && i == roll - 1) {
+                        status = "finished";
+                        card = "none";
+                        round_left_of_card = 0;
+                        buff = "none";
+                        round_left = 0;
+                        position = -100;
+                        jumped = false;
+                        can_touch = false;
+                        auto finish = MoveTo::create(0.5, start_pt);
+                        act[6] = finish->clone();
+                        if (color == 0) {
+                            this->setTexture("plane_win_blue.png");
+                        }
+                        if (color == 1) {
+                            this->setTexture("plane_win_green.png");
+                        }
+                        if (color == 2) {
+                            this->setTexture("plane_win_red.png");
+                        }
+                        if (color == 3) {
+                            this->setTexture("plane_win_yellow.png");
+                        }
                     }
                 }
-                // when at the turn point
-                else if (position == turn_pt) {
-                    position = 0;
-                    status = "inner";
-                    if (color == 0) {
-                        auto turn = MoveTo::create(0.2, inner_blue[position]);
-                        act[i] = turn->clone();
-                    }
-                    if (color == 1) {
-                        auto turn = MoveTo::create(0.2, inner_green[position]);
-                        act[i] = turn->clone();
-                    }
-                    if (color == 2) {
-                        auto turn = MoveTo::create(0.2, inner_red[position]);
-                        act[i] = turn->clone();
-                    }
-                    if (color == 3) {
-                        auto turn = MoveTo::create(0.2, inner_yellow[position]);
-                        act[i] = turn->clone();
-                    }
-                }
-                // when at the final runway
-                else if (status == "inner") {
-                    /*if (position > 4) position = 4;*/ // only for test, let the plane goes to the final point
-                    if (position == 5) {
-                        go_forward = false;
-                    }
-                    if (go_forward) {
-                        ++position;
-                    }
-                    else {
-                        --position;
-                    }
-                    if (color == 0) {
-                        auto inner_go = MoveTo::create(0.2, inner_blue[position]);
-                        act[i] = inner_go->clone();
-                    }
-                    if (color == 1) {
-                        auto inner_go = MoveTo::create(0.2, inner_green[position]);
-                        act[i] = inner_go->clone();
-                    }
-                    if (color == 2) {
-                        auto inner_go = MoveTo::create(0.2, inner_red[position]);
-                        act[i] = inner_go->clone();
-                    }
-                    if (color == 3) {
-                        auto inner_go = MoveTo::create(0.2, inner_yellow[position]);
-                        act[i] = inner_go->clone();
-                    }
-                }
-                // when finish
-                if (position == 5 && status == "inner" && i == roll - 1) {
-                    status = "finished";
-                    card = "none";
-                    buff = "none";
-                    round_left = 0;
-                    position = -100;
-                    jumped = false;
-                    can_touch = false;
-                    auto finish = MoveTo::create(0.5, start_pt);
-                    act[6] = finish->clone();
-                    if (color == 0) {
-                        this->setTexture("plane_win_blue.png");
-                    }
-                    if (color == 1) {
-                        this->setTexture("plane_win_green.png");
-                    }
-                    if (color == 2) {
-                        this->setTexture("plane_win_red.png");
-                    }
-                    if (color == 3) {
-                        this->setTexture("plane_win_yellow.png");
-                    }
-                }
+                // run the sequence
+                auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], nullptr);
+                this->runAction(sequence);
             }
-            // run the sequence
-            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], nullptr);
-            this->runAction(sequence);
+
             // tell the dice that the action ends and let it touchable
             EventCustom eventPlaneEnd = EventCustom("plane_end");
             eventPlaneEnd.setUserData((bool*)true);
             _eventDispatcher->dispatchEvent(&eventPlaneEnd);
+
             // tell other planes its position
             EventCustom eventPlanePosition = EventCustom("plane_position");
             int PositionArray[3] = {color, position, 0};
@@ -278,14 +296,27 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             eventPlanePosition.setUserData((int*)PositionArray);
             _eventDispatcher->dispatchEvent(&eventPlanePosition);
         }
-        // use card
-        //else if (card == "machinegun") {}
+
+        // use cards
+        else {
+            if (status != "finished") {
+                //if (card == "machinegun") {}
+                //else if (card == "protection") {}
+                //else if (card == "stopaction") {}
+                //else if (card == "neutralize") {}
+            }
+            card = "none";
+            round_left_of_card = 0;
+            can_touch = false;
+            EventCustom eventUseCard = EventCustom("use_card");
+            _eventDispatcher->dispatchEvent(&eventUseCard);
+        }
         return true;
     }
     return false;
 }
 
-// set dice point to plane
+// set dice point to the plane
 void Planes::setRollPoint(EventCustom* event) {
     roll = *(int*)event->getUserData();
     if ((roll != 6 && status == "ground") || status == "finished") {
@@ -293,7 +324,7 @@ void Planes::setRollPoint(EventCustom* event) {
     }
 }
 
-// set touchability to plane
+// set touchability of the plane
 void Planes::setTouchable(EventCustom* event) {
     can_touch = (bool*)event->getUserData();
 }
@@ -311,6 +342,58 @@ void Planes::submit_status(EventCustom* event) {
     }
 }
 
+// when a card is clicked
+void Planes::setCard(EventCustom* event) {
+    int* cardInfoArray = (int*)event->getUserData();
+    if (cardInfoArray[0] == 1) {
+        card = "machinegun";
+    }
+    else if (cardInfoArray[0] == 2) {
+        card = "protection";
+    }
+    else if (cardInfoArray[0] == 3) {
+        card = "stopaction";
+    }
+    else if (cardInfoArray[0] == 4) {
+        card = "neutralize";
+    }
+    round_left_of_card = cardInfoArray[1];
+    can_touch = true;
+    if (!cardInfoArray[2] && color != cardInfoArray[3]) {
+        can_touch = false;
+    }
+}
+
+// when a card is activated
+void Planes::resetCard(EventCustom* event) {
+    card = "none";
+    round_left_of_card = 0;
+    can_touch = false;
+}
+
+void Planes::round_decrease(EventCustom* event) {
+    if (status != "finished") {
+        if (round_left != 0) {
+            --round_left;
+        }
+        if (round_left == 0) {
+            buff = "none";
+            if (color == 0) {
+                this->setTexture("plane_blue.png");
+            }
+            if (color == 1) {
+                this->setTexture("plane_green.png");
+            }
+            if (color == 2) {
+                this->setTexture("plane_red.png");
+            }
+            if (color == 3) {
+                this->setTexture("plane_yellow.png");
+            }
+        }
+    }
+}
+
 // go back to airport
 void Planes::going_down() {
     auto going_down = MoveTo::create(1, start_pt);
@@ -319,6 +402,7 @@ void Planes::going_down() {
     this->runAction(sequence);
     status = "ground";
     card = "none";
+    round_left_of_card = 0;
     buff = "none";
     round_left = 0;
     position = -10;

@@ -9,7 +9,7 @@
 #include "random.h"
 USING_NS_CC;
 
-// initiate card generator
+// initiate the card generator
 bool Card_Generator::init() {
     if (!Sprite::initWithFile("card_generator.png")) {
         return false;
@@ -22,8 +22,8 @@ bool Card_Generator::init() {
     touchListener->setSwallowTouches(true);
 
     // set custom event listeners
-    auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Card_Generator::setRollPoint, this));
-    auto roundListener = EventListenerCustom::create("event_round", CC_CALLBACK_1(Card_Generator::setRound, this));
+    auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Card_Generator::setTouchable, this));
+    auto roundListener = EventListenerCustom::create("event_round_to_generator_and_planes", CC_CALLBACK_1(Card_Generator::setRound, this));
     auto planeClickListener = EventListenerCustom::create("plane_click", CC_CALLBACK_1(Card_Generator::setTouchableFalse, this));
 
     // add listeners to event dispactcher
@@ -38,7 +38,6 @@ Card_Generator* Card_Generator::create() {
     Card_Generator* sprite = new Card_Generator();
     if (sprite->init()) {
         sprite->autorelease();
-        sprite->roll = 0;
         sprite->round = 0;
         sprite->can_touch = false;
     }
@@ -52,9 +51,8 @@ Card_Generator* Card_Generator::create() {
 
 // get a random number (from 1 to 4) representing the card name
 int Card_Generator::getrandom() {
-    float num = randomInteger(1, 4);
+    int num = randomInteger(1, 4);
     num = randomInteger(1, 4);
-    num = 1; // implement 1 feature first
     return num;
 }
 
@@ -82,20 +80,20 @@ bool Card_Generator::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) 
     return false;
 }
 
-// callback function to set the touchability to be false
-void Card_Generator::setTouchableFalse(EventCustom* event) {
-    can_touch = false;
-}
-
-// callback function to get the roll point and set the touchability
-void Card_Generator::setRollPoint(EventCustom* event) {
-    roll = *(int*)event->getUserData();
+// callback function to set the touchability of the card generator
+void Card_Generator::setTouchable(EventCustom* event) {
+    int roll = *(int*)event->getUserData();
     if (roll == 1 || roll == 6) {
         can_touch = true;
     }
     else {
         can_touch = false;
     }
+}
+
+// callback function to set the touchability to false
+void Card_Generator::setTouchableFalse(EventCustom* event) {
+    can_touch = false;
 }
 
 // callback function to get the round
