@@ -154,28 +154,28 @@ bool HelloWorld::init() {
     card_slot_yellow->setPosition(Vec2(910, 50));
 
     // add child
-    if (players[0]) {
+    if (players[0] != 0) {
         this->addChild(blue_plane_0, 10);
         this->addChild(blue_plane_1, 10);
         this->addChild(blue_plane_2, 10);
         this->addChild(blue_plane_3, 10);
     }
 
-    if (players[1]) {
+    if (players[1] != 0) {
         this->addChild(green_plane_0, 10);
         this->addChild(green_plane_1, 10);
         this->addChild(green_plane_2, 10);
         this->addChild(green_plane_3, 10);
     }
 
-    if (players[2]) {
+    if (players[2] != 0) {
         this->addChild(red_plane_0, 10);
         this->addChild(red_plane_1, 10);
         this->addChild(red_plane_2, 10);
         this->addChild(red_plane_3, 10);
     }
 
-    if (players[3]) {
+    if (players[3] != 0) {
         this->addChild(yellow_plane_0, 10);
         this->addChild(yellow_plane_1, 10);
         this->addChild(yellow_plane_2, 10);

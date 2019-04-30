@@ -45,6 +45,10 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->playerArray[1] = player1;
         sprite->playerArray[2] = player2;
         sprite->playerArray[3] = player3;
+		auto sign = Sprite::create("plane_blue.png");
+		sign->setPosition(Vec2(43, -50));
+		sign->setScale(0.1);
+		sprite->addChild(sign);
     }
     else {
         delete sprite;
