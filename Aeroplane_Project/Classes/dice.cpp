@@ -47,10 +47,10 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->playerArray[1] = player1;
         sprite->playerArray[2] = player2;
         sprite->playerArray[3] = player3;
-        auto sign = Sprite::create("plane_blue.png");
-        sign->setPosition(Vec2(43, -50));
-        sign->setScale(0.1);
-        sprite->addChild(sign);
+		sprite->sign = Sprite::create("plane_blue.png");
+		sprite->sign->setPosition(Vec2(44, -50));
+		sprite->sign->setScale(0.1);
+		sprite->addChild(sprite->sign);
     }
     else {
         delete sprite;
@@ -99,20 +99,24 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 
         // pass touchable to corresponding planes
         EventCustom eventClick = EventCustom("roll_click_blue");
-        switch (round) {
-            case 0: // case blue
-                eventClick = EventCustom("roll_click_blue");
-                break;
-            case 1: // case green
-                eventClick = EventCustom("roll_click_green");
-                break;
-            case 2: // case red
-                eventClick = EventCustom("roll_click_red");
-                break;
-            case 3: // case yellow
-                eventClick = EventCustom("roll_click_yellow");
-                break;
-        }
+		switch (round) {
+		case 0: // case blue
+			eventClick = EventCustom("roll_click_blue");
+			sign->setTexture("plane_blue.png");
+			break;
+		case 1: // case green
+			eventClick = EventCustom("roll_click_green");
+			sign->setTexture("plane_green.png");
+			break;
+		case 2: // case red
+			eventClick = EventCustom("roll_click_red");
+			sign->setTexture("plane_red.png");
+			break;
+		case 3: // case yellow
+			eventClick = EventCustom("roll_click_yellow");
+			sign->setTexture("plane_yellow.png");
+			break;
+		}
         eventClick.setUserData((void*)true);
         _eventDispatcher->dispatchEvent(&eventClick);
 

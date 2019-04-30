@@ -16,6 +16,7 @@ public:
     int roll_num;
     bool can_touch;
     int round;
+	Sprite* sign;
     int statusArray[4];
     int playerArray[4];
     
