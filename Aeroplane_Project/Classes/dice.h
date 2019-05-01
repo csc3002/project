@@ -35,6 +35,8 @@ public:
     virtual void setStatusArray(EventCustom* event);
     
     virtual void skipTurn(EventCustom* event);
+
+	virtual void AICall(EventCustom* event);
 };
 
 #endif // dice_h

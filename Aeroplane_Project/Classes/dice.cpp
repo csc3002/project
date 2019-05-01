@@ -7,6 +7,7 @@
 
 #include "dice.h"
 #include "random.h"
+
 USING_NS_CC;
 
 // initiate the dice
@@ -23,6 +24,7 @@ bool Dice::init() {
 
     // set custom event listeners
     auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
+	auto planeEndListener2 = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::AICall, this));
     auto planeStatusListener = EventListenerCustom::create("plane_status", CC_CALLBACK_1(Dice::setStatusArray, this));
     auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Dice::setTouchableFalse, this));
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Dice::skipTurn, this));
@@ -208,4 +210,12 @@ void Dice::skipTurn(EventCustom* event) {
     // tell the planes if the round changes
     EventCustom eventRoundChange = EventCustom("round_change");
     _eventDispatcher->dispatchEvent(&eventRoundChange);
+}
+
+void Dice::AICall(EventCustom* event) {
+	if (playerArray[round] == -1) {
+		EventCustom eventGetChess = EventCustom("event_get_chess");
+		eventGetChess.setUserData((void*)true);
+		_eventDispatcher->dispatchEvent(&eventGetChess);
+	}
 }

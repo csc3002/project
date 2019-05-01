@@ -10,6 +10,7 @@
 
 #include "cocos2d.h"
 #include <string>
+#include "define.h"
 USING_NS_CC;
 using namespace std;
 
@@ -61,6 +62,8 @@ public:
     virtual void machinegun_attack_judge(EventCustom* event);
 
     virtual void set_texture_to_default();
+
+	virtual void get_chess();
 };
 
 #endif // planes_h

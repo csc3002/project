@@ -44,6 +44,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Planes::resetCard, this));
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
+	auto getChessListener = EventListenerCustom::create("eventGetChess", CC_CALLBACK_0(Planes::get_chess, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -480,4 +481,31 @@ void Planes::set_texture_to_default() {
     if (color == 3) {
         this->setTexture("plane_yellow.png");
     }
+}
+
+void Planes::get_chess() {
+	CHESS chess;
+	chess.color = (this->color + 2) % 4;
+	chess.chessID = (chess.color * 4 + this->id + 1);
+	chess.buff_state = this->buff;
+	chess.round_left = this->round_left;
+	if (status == "ground") {
+		chess.currentCoor.region = APRON;
+		chess.currentCoor.code = OUTSIDE;
+	} else if (status == "taking off") {
+		chess.currentCoor.region = OFF;
+		chess.currentCoor.code = OUTSIDE;
+	} else if (status == "outer") {
+		chess.currentCoor.region = OUTERLOOP;
+		chess.currentCoor.code = (position + 42) % 52;
+	} else if (status == "inner") {
+		chess.currentCoor.region = TRACK;
+		chess.currentCoor.code = position + 1;
+	} else if (status == "finished") {
+		chess.currentCoor.region = WIN;
+		chess.currentCoor.code = OUTSIDE;
+	}
+	EventCustom eventChessPass = EventCustom("event_chess_pass");
+	eventChessPass.setUserData((void*)&chess);
+	_eventDispatcher->dispatchEvent(&eventChessPass);
 }

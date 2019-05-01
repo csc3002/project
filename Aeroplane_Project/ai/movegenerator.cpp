@@ -6,6 +6,7 @@
 #include<stdio.h>
 #include<iostream>
 #include<stdlib.h>
+#include<ctime>
 #include "define.h"
 #include "movegenerator.h"
 
