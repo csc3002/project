@@ -38,7 +38,7 @@ public:
 
     static Planes* create();
 
-    static Planes* create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string icon, string _status = "ground", int _position = -10, int _roll = 1);
+    static Planes* create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string icon, string _status = "ground", int _position = -100, int _roll = 1);
 
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
 
@@ -57,6 +57,10 @@ public:
     virtual void going_down();
 
     virtual void ram_judge(EventCustom* event);
+
+    virtual void machinegun_attack_judge(EventCustom* event);
+
+    virtual void set_texture_to_default();
 };
 
 #endif // planes_h

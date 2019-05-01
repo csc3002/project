@@ -51,6 +51,8 @@ Card_Generator* Card_Generator::create() {
 
 // get a random number (from 1 to 4) representing the card name
 int Card_Generator::getrandom() {
+
+    // there first number is not random, so the function is called twice
     int num = randomInteger(1, 4);
     num = randomInteger(1, 4);
     return num;

@@ -62,6 +62,8 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
 
 // get a random number as roll point
 int Dice::getrandom() {
+
+    // there first number is not random, so the function is called twice
     int roll_num = randomInteger(1, 6);
     roll_num = randomInteger(1, 6);
     if (roll_num == 1) {

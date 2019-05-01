@@ -43,6 +43,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Planes::setCard, this));
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Planes::resetCard, this));
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
+    auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -53,7 +54,7 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundChangeListener, this);
-
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(machinegunAttackListener, this);
     return true;
 }
 
@@ -258,7 +259,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                         round_left_of_card = 0;
                         buff = "none";
                         round_left = 0;
-                        position = -100;
+                        position = -1000;
                         jumped = false;
                         can_touch = false;
                         auto finish = MoveTo::create(0.5, start_pt);
@@ -300,10 +301,53 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
         // use cards
         else {
             if (status != "finished") {
-                //if (card == "machinegun") {}
-                //else if (card == "protection") {}
-                //else if (card == "stopaction") {}
-                //else if (card == "neutralize") {}
+                if (card == "machinegun" && buff != "stopaction") {
+                    int attackArray[8] = {-50, -50, -50, -50, -50, -50, -50, -50};
+                    for (int i = 0; i < 7; ++i) {
+                        attackArray[i] = (position + 52 - 3 + i) % 52;
+                    }
+                    attackArray[7] = color;
+                    EventCustom machinegunAttack = EventCustom("machinegun_attack");
+                    machinegunAttack.setUserData((int*)attackArray);
+                    _eventDispatcher->dispatchEvent(&machinegunAttack);
+                }
+                else if (card == "protection" && buff != "stopaction") {
+                    buff = card;
+                    round_left = round_left_of_card;
+                    if (color == 0) {
+                        this->setTexture("plane_shield_blue.png");
+                    }
+                    if (color == 1) {
+                        this->setTexture("plane_shield_green.png");
+                    }
+                    if (color == 2) {
+                        this->setTexture("plane_shield_red.png");
+                    }
+                    if (color == 3) {
+                        this->setTexture("plane_shield_yellow.png");
+                    }
+                }
+                else if (card == "stopaction" && buff != "protection") {
+                    buff = card;
+                    round_left = round_left_of_card;
+                    if (color == 0) {
+                        this->setTexture("plane_disturb_blue.png");
+                    }
+                    if (color == 1) {
+                        this->setTexture("plane_disturb_green.png");
+                    }
+                    if (color == 2) {
+                        this->setTexture("plane_disturb_red.png");
+                    }
+                    if (color == 3) {
+                        this->setTexture("plane_disturb_yellow.png");
+                    }
+                }
+                else if (card == "neutralize") {
+                    buff = "none";
+                    round_left = 0;
+                    set_texture_to_default();
+                }
             }
             card = "none";
             round_left_of_card = 0;
@@ -371,6 +415,7 @@ void Planes::resetCard(EventCustom* event) {
     can_touch = false;
 }
 
+// decrease the duration of a buff/debuff
 void Planes::round_decrease(EventCustom* event) {
     if (status != "finished") {
         if (round_left != 0) {
@@ -378,18 +423,7 @@ void Planes::round_decrease(EventCustom* event) {
         }
         if (round_left == 0) {
             buff = "none";
-            if (color == 0) {
-                this->setTexture("plane_blue.png");
-            }
-            if (color == 1) {
-                this->setTexture("plane_green.png");
-            }
-            if (color == 2) {
-                this->setTexture("plane_red.png");
-            }
-            if (color == 3) {
-                this->setTexture("plane_yellow.png");
-            }
+            set_texture_to_default();
         }
     }
 }
@@ -405,8 +439,35 @@ void Planes::going_down() {
     round_left_of_card = 0;
     buff = "none";
     round_left = 0;
-    position = -10;
+    position = -100;
     jumped = false;
+    set_texture_to_default();
+}
+
+// check if the plane is rammed
+void Planes::ram_judge(EventCustom* event) {
+    int* array = (int*)event->getUserData();
+    if (array[0] != color && array[1] == position && array[2] && status == "outer") {
+        going_down();
+    }
+}
+
+// check if the plane is attacked by machinegun
+void Planes::machinegun_attack_judge(EventCustom* event) {
+    int* array = (int*)event->getUserData();
+    bool underAttack = false;
+    for (int i = 0; i < 7; ++i) {
+        if (array[i] == position) {
+            underAttack = true;
+        }
+    }
+    if (array[7] != color && underAttack && status == "outer" && buff != "protection") {
+        going_down();
+    }
+}
+
+// set the texture of the plane to default
+void Planes::set_texture_to_default() {
     if (color == 0) {
         this->setTexture("plane_blue.png");
     }
@@ -418,13 +479,5 @@ void Planes::going_down() {
     }
     if (color == 3) {
         this->setTexture("plane_yellow.png");
-    }
-}
-
-// check if the plane is rammed
-void Planes::ram_judge(EventCustom* event) {
-    int* array = (int*)event->getUserData();
-    if (array[0] != color && array[1] == position && array[2] && status == "outer") {
-        going_down();
     }
 }

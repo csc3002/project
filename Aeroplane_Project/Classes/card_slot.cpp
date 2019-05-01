@@ -56,10 +56,10 @@ bool Card_Slot::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
         // set the number of effective rounds
         int round_num = 0;
         if (card_num == 2) {
-            round_num = player_count * 5;
+            round_num = player_count * 5 + 1;
         }
         if (card_num == 3) {
-            round_num = player_count * 4;
+            round_num = player_count * 4 + 1;
         }
 
         // set the scope of target
