@@ -35,13 +35,13 @@ public:
 
 /*
  * Method: searchAGoodMove
- * Usage: searchAGoodMove(count, side, rollcount)
+ * Usage: searchAGoodMove(count, side, hadCard)
  * ---------------------------------------
  * This method is used to find the best move. When it is executed,
  * it will change the bestMoves pointer pointing to the best move
  * in the moveList.
  */
-    virtual void searchAGoodMove(int count, int side);
+    virtual void searchAGoodMove(int count, int side, int hadCard);
 
 
 /*
@@ -62,6 +62,8 @@ public:
     int rollPoint;
 // Testing variable:jinx count
     int jinxCount = 0;
+// The card this player have
+    int myCard = NOCARD;
 
 protected:
 
@@ -74,6 +76,16 @@ protected:
  */
 
     virtual void makeMove(CHESSMOVE * move, CHESS * chessboard, int side);
+
+/*
+ * Method: useAbility
+ * Usage: useAbility(&move, chessboard, rollcount, side)
+ * ---------------------------------------
+ * This method receives a pointer to a chess move and a pointer to a chessboard.
+ * The method will modify the chessboard according to the ability used.
+ */
+
+    virtual void useAbility(CHESSMOVE * move, CHESS * chessboard, int side);
 
 /*
  * Method: genOuterMove

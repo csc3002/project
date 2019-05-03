@@ -67,6 +67,28 @@ int evaluator::evaluate(const CHESS oldChessboard[],const CHESS newChessboard[],
     for(int i = 0; i < 16; i++){
         const CHESS * oldChess = & oldChessboard[i];
         const CHESS * newChess = & newChessboard[i];
+        // count the benefit from using abilities
+        if(newChess->color != side) {   // use debuff or eliminate buff on enemy chesses
+            if(oldChess->buff_state == DEFENSED && oldChess->round_left > 1 && newChess->buff_state != DEFENSED){
+                benefit += 200;
+                return benefit;
+            }
+            else if(oldChess->buff_state != INTERFERRED && newChess->buff_state == INTERFERRED){
+                benefit += 400;
+                return benefit;
+            }
+        }
+        else{       // use eliminate to own chess
+            if(oldChess->buff_state == INTERFERRED  && oldChess->round_left > 1 && newChess->buff_state != INTERFERRED){
+                benefit += 400;
+                return benefit;
+            }
+            else if(oldChess->buff_state != DEFENSED && newChess->buff_state == DEFENSED){
+                benefit += 200;
+                return benefit;
+            }
+        }
+
         // count the benefit from crashing enemies
         if(newChess->color != side && oldChess->currentCoor.region == OUTERLOOP && newChess->currentCoor.region == APRON){
             benefit += 300;
@@ -87,7 +109,7 @@ int evaluator::evaluate(const CHESS oldChessboard[],const CHESS newChessboard[],
                     benefit += pow((newChess->currentCoor.code-off+52) % 52, 2) - pow((oldChess->currentCoor.code-off+52) % 52, 2);
                 }
                 else if(oldChess->currentCoor.region == OFF && newChess->currentCoor.region == OUTERLOOP){
-                    benefit += pow((newChess->currentCoor.code-off+52) % 52, 2);
+                    benefit += pow((newChess->currentCoor.code-off+52) % 52, 2) + 25;
                 }
             }
         }

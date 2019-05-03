@@ -4,9 +4,11 @@
 *.exe
 *.pro
 *.pro.user
+*.DS_Store
 
 Aeroplane_Project/cocos2d/
 Aeroplane_Project/proj.win32/
 Aeroplane_Project/proj.android/
 Aeroplane_Project/proj.ios_mac/
 Aeroplane_Project/proj.linux/
+Aeroplane_Project/ai/.DS_Store

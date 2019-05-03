@@ -45,12 +45,23 @@ void searchEngine::play(CHESS chessboard[], int side){
         rollPoint = pMG->roll();
         rollCount ++;
         std::cout << "-------------------Adding moves-------------------" << std::endl;
-        count = pMG->createPossibleMove(cur_Chessboard, rollPoint, side);
+        count = pMG->createPossibleMove(cur_Chessboard, rollPoint, side, myCard);
 
         if(count != 1){     // search move only when it is able to move a chess
-            searchAGoodMove(count, side);
-            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << std::endl;
-            makeMove(bestMove, cur_Chessboard, side);
+            searchAGoodMove(count, side, myCard);
+            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << " , " << bestMove->aboutCard << std::endl;
+
+            if(bestMove->aboutCard == DRAW) {
+                myCard = rand() % 4 + 1;
+            }
+            else if (bestMove->aboutCard != NOCARD) {
+                useAbility(bestMove, cur_Chessboard, side);
+                myCard = NOCARD;
+                break;
+            }
+            else if (bestMove->aboutCard == NOCARD){
+                makeMove(bestMove, cur_Chessboard, side);
+            }
         }
 
         if(!isGameOver(cur_Chessboard) && rollPoint == 6)   // if the game is not over and rolling point is 6, continue to roll
@@ -71,7 +82,7 @@ void searchEngine::play(CHESS chessboard[], int side){
  * 4. Compare each value, and set bestMove to the move which has the largest value.
  */
 
-void searchEngine::searchAGoodMove(int count, int side){
+void searchEngine::searchAGoodMove(int count, int side, int hadCard){
     int score = 0;
     int current = 0;
     bestMove = & pMG->moveList[0];
@@ -79,8 +90,27 @@ void searchEngine::searchAGoodMove(int count, int side){
     CHESS futureBoard[16];
     for(int i = 1; i < count ; i++){
         memcpy(futureBoard, cur_Chessboard, sizeof(cur_Chessboard));    // flush the future board every time
-        makeMove(& pMG->moveList[i], futureBoard, side);
-        score = pEval->evaluate(cur_Chessboard, futureBoard, side);
+        if(pMG->moveList[i].aboutCard == DRAW) {                        // special treatment of drawing card
+            if(hadCard == NOCARD)
+                score = 500;
+            else{
+                int a = rand() % 6 + 1;
+                if(hadCard == ATTACK)
+                    score = 120 * a;
+                else if(a <=2)
+                    score = 20;
+                else
+                    score = 90 * a;
+            }
+        }
+        else if(pMG->moveList[i].aboutCard != NOCARD) {         // special treatment for using abilities
+            useAbility(& pMG->moveList[i], futureBoard, side);
+            score = pEval->evaluate(cur_Chessboard, futureBoard, side);
+        }
+        else if(pMG->moveList[i].aboutCard == NOCARD) {        // treatment for moving chess
+            makeMove(& pMG->moveList[i], futureBoard, side);
+            score = pEval->evaluate(cur_Chessboard, futureBoard, side);
+        }
         std::cout << "Score: " << score << std::endl;
         if(score >= current){         // if the future board is better than the current one, choose the move
             current = score;
@@ -148,15 +178,7 @@ void searchEngine::makeMove(CHESSMOVE * move, CHESS * chessboard,  int side){
     int chessID = move->chessID;
     int rollPoint = move->rollPoint;
 
-    if ( chessID == ALLBACK && rollPoint == 6){             // special treatment for the jinx case
-        for(int i = head; i <= tail; i++){
-            if(chessboard[i-1].currentCoor.region != WIN){  // win chesses will not be punished
-                chessboard[i-1].currentCoor.region = APRON;
-                chessboard[i-1].currentCoor.code = OUTSIDE;
-            }
-        }
-    }
-    else if (chessID == 0){     // if do not move, do not change the chessboard
+    if (chessID == 0 || chessboard[chessID-1].buff_state == INTERFERRED){     // if do not move, do not change the chessboard
         return ;
     }
     else{                       // else, move chess
@@ -175,6 +197,51 @@ void searchEngine::makeMove(CHESSMOVE * move, CHESS * chessboard,  int side){
         }
     }
 }
+
+/*
+ * Implementation note: useAbility
+ * ---------------------------------
+ * This function iterate through the chessboard. If 4 chesses of the same color are set to win,
+ * then the game is over.
+ */
+
+void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {
+    int ability = move->aboutCard;
+    int myLocation = chessboard[move->chessID-1].currentCoor.code;
+    int enemyLocation;
+    switch (ability) {
+    case ATTACK:{
+        for(int i = 0; i < 16; i++){
+            enemyLocation = chessboard[i].currentCoor.code;
+            if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP &&
+               chessboard[i].buff_state != DEFENSED && (myLocation + 52 - enemyLocation )% 52 <= 3 && (enemyLocation + 52 - myLocation )% 52 <= 3) {
+                chessboard[i].currentCoor.region = APRON;
+                chessboard[i].currentCoor.code = OUTSIDE;
+                chessboard[i].buff_state = "";
+                chessboard[i].round_left = 0;
+                std::cout << "chess being attacked: " << chessboard[i].chessID << std::endl;
+            }
+        }
+        break;
+    }
+    case DEFENSE: {
+        chessboard[move->chessID-1].buff_state = DEFENSED;
+        chessboard[move->chessID-1].round_left += 20;
+        break;
+    }
+    case INTERFERE: {
+        chessboard[move->chessID-1].buff_state = INTERFERRED;
+        chessboard[move->chessID-1].round_left += 16;
+        break;
+    }
+    case ELIMINATE: {
+        chessboard[move->chessID-1].buff_state = "";
+        chessboard[move->chessID-1].round_left = 0;
+        break;
+    }
+    }
+}
+
 
 /*
  * Implementation note: isGameOver
