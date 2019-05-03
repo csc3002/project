@@ -74,136 +74,168 @@ bool HelloWorld::init() {
 
     // initiate game mode
     // true = advance mode, false = classical mode
-    bool is_advance_mode = true;
+    //this->is_advance_mode = true;
 
     // initiate players and planes
 
     // players: 1 = human, -1 = ai, 0 = nobody
-    int players[4] = {1, 1, 1, 1};
+	// init : Four Human Players
+	
 
-    // count the number of players
-    int number_of_players = 0;
-    for (int i = 0; i < 4; ++i) {
-        if (players[i]) {
-            ++number_of_players;
-        }
-    }
-
-    // initiate dice
-    auto dice = Dice::create(players[0], players[1], players[2], players[3]);
-
-    // coordinates of starting area
-    const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
-    const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
-    const Vec2 red_start_pts[5] = {Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825)};
-    const Vec2 yellow_start_pts[5] = {Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315)};
-
-    // positions of special points
-    const int enter_pt[4] = {39, 0, 13, 26};
-    const int turn_pt[4] = {36, 49, 10, 23};
-    const int fly_start[4] = {4, 17, 30, 43};
-    const int fly_end[4] = {16, 29, 42, 3};
-    const int init_rotation[4] ={270, 0, 90, 180};
-
-    Planes* blue[4];
-    Planes* green[4];
-    Planes* red[4];
-    Planes* yellow[4];
-
-    for (int i = 0; i < 4; ++i) {
-        blue[i] = Planes::create(0, i, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[i], blue_start_pts[4], "plane_blue.png");
-        blue[i]->setPosition(blue[i]->start_pt);
-        green[i] = Planes::create(1, i, enter_pt[1], turn_pt[1], fly_start[1], fly_end[1], init_rotation[1], green_start_pts[i], green_start_pts[4], "plane_green.png");
-        green[i]->setPosition(green[i]->start_pt);
-        red[i] = Planes::create(2, i, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[i], red_start_pts[4], "plane_red.png");
-        red[i]->setPosition(red[i]->start_pt);
-        yellow[i] = Planes::create(3, i, enter_pt[3], turn_pt[3], fly_start[3], fly_end[3], init_rotation[3], yellow_start_pts[i], yellow_start_pts[4], "plane_yellow.png");
-        yellow[i]->setPosition(yellow[i]->start_pt);
-    }
-
-    auto blue_plane_0 = blue[0];
-    auto blue_plane_1 = blue[1];
-    auto blue_plane_2 = blue[2];
-    auto blue_plane_3 = blue[3];
-    auto green_plane_0 = green[0];
-    auto green_plane_1 = green[1];
-    auto green_plane_2 = green[2];
-    auto green_plane_3 = green[3];
-    auto red_plane_0 = red[0];
-    auto red_plane_1 = red[1];
-    auto red_plane_2 = red[2];
-    auto red_plane_3 = red[3];
-    auto yellow_plane_0 = yellow[0];
-    auto yellow_plane_1 = yellow[1];
-    auto yellow_plane_2 = yellow[2];
-    auto yellow_plane_3 = yellow[3];
-
-    // initiate card generator and card slots
-    auto card_generator = Card_Generator::create();
-
-    auto card_slot_blue = Card_Slot::create(0, number_of_players);
-    card_slot_blue->setPosition(Vec2(50, 50));
-
-    auto card_slot_green = Card_Slot::create(1, number_of_players);
-    card_slot_green->setPosition(Vec2(50, 910));
-
-    auto card_slot_red = Card_Slot::create(2, number_of_players);
-    card_slot_red->setPosition(Vec2(910, 910));
-
-    auto card_slot_yellow = Card_Slot::create(3, number_of_players);
-    card_slot_yellow->setPosition(Vec2(910, 50));
-
-    // add child
-    if (players[0]) {
-        this->addChild(blue_plane_0, 10);
-        this->addChild(blue_plane_1, 10);
-        this->addChild(blue_plane_2, 10);
-        this->addChild(blue_plane_3, 10);
-    }
-
-    if (players[1]) {
-        this->addChild(green_plane_0, 10);
-        this->addChild(green_plane_1, 10);
-        this->addChild(green_plane_2, 10);
-        this->addChild(green_plane_3, 10);
-    }
-
-    if (players[2]) {
-        this->addChild(red_plane_0, 10);
-        this->addChild(red_plane_1, 10);
-        this->addChild(red_plane_2, 10);
-        this->addChild(red_plane_3, 10);
-    }
-
-    if (players[3]) {
-        this->addChild(yellow_plane_0, 10);
-        this->addChild(yellow_plane_1, 10);
-        this->addChild(yellow_plane_2, 10);
-        this->addChild(yellow_plane_3, 10);
-    }
-
-    if (is_advance_mode) {
-        this->addChild(card_generator, 1);
-        if (players[0]) {
-            this->addChild(card_slot_blue, 1);
-        }
-        if (players[1]) {
-            this->addChild(card_slot_green, 1);
-        }
-        if (players[2]) {
-            this->addChild(card_slot_red, 1);
-        }
-        if (players[3]) {
-            this->addChild(card_slot_yellow, 1);
-        }
-    }
-
-    this->addChild(dice, 1);
-    this->addChild(labelTouchInfo,1);
-    this->addChild(bg, 0);
-    return true;
+	auto label = Label::createWithTTF("Mode: Normal", "fonts/Marker Felt.ttf", 36);
+	label->setColor(ccc3(0, 0, 0));
+	label->setPosition(Vec2(320, 900));
+	this->addChild(label, 1);
+	auto label2 = Label::createWithTTF("Mode: Offline", "fonts/Marker Felt.ttf", 36);
+	label2->setColor(ccc3(0, 0, 0));
+	label2->setPosition(Vec2(640, 900));
+	this->addChild(label2, 1);
+	this->Ad_Mode = label;
+	this->Online_Mode = label2;
+	
+	this->addChild(labelTouchInfo, 1);
+	this->addChild(bg, 0);
+	this->schedule(schedule_selector(HelloWorld::update));
+	return true;
 }
 
+//This Function is executed in Start_Scene.cpp
+void HelloWorld::setPlane() {
+
+	// count the number of players
+	int number_of_players = 0;
+	for (int i = 0; i < 4; ++i) {
+		if (players[i]) {
+			++number_of_players;
+		}
+	}
+
+	// initiate dice
+	auto dice = Dice::create(players[0], players[1], players[2], players[3]);
+
+	// coordinates of starting area
+	const Vec2 blue_start_pts[5] = { Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140) };
+	const Vec2 green_start_pts[5] = { Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649) };
+	const Vec2 red_start_pts[5] = { Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825) };
+	const Vec2 yellow_start_pts[5] = { Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315) };
+
+	// positions of special points
+	const int enter_pt[4] = { 39, 0, 13, 26 };
+	const int turn_pt[4] = { 36, 49, 10, 23 };
+	const int fly_start[4] = { 4, 17, 30, 43 };
+	const int fly_end[4] = { 16, 29, 42, 3 };
+	const int init_rotation[4] = { 270, 0, 90, 180 };
+
+	Planes* blue[4];
+	Planes* green[4];
+	Planes* red[4];
+	Planes* yellow[4];
+
+	for (int i = 0; i < 4; ++i) {
+		blue[i] = Planes::create(0, i, enter_pt[0], turn_pt[0], fly_start[0], fly_end[0], init_rotation[0], blue_start_pts[i], blue_start_pts[4], "plane_blue.png");
+		blue[i]->setPosition(blue[i]->start_pt);
+		green[i] = Planes::create(1, i, enter_pt[1], turn_pt[1], fly_start[1], fly_end[1], init_rotation[1], green_start_pts[i], green_start_pts[4], "plane_green.png");
+		green[i]->setPosition(green[i]->start_pt);
+		red[i] = Planes::create(2, i, enter_pt[2], turn_pt[2], fly_start[2], fly_end[2], init_rotation[2], red_start_pts[i], red_start_pts[4], "plane_red.png");
+		red[i]->setPosition(red[i]->start_pt);
+		yellow[i] = Planes::create(3, i, enter_pt[3], turn_pt[3], fly_start[3], fly_end[3], init_rotation[3], yellow_start_pts[i], yellow_start_pts[4], "plane_yellow.png");
+		yellow[i]->setPosition(yellow[i]->start_pt);
+	}
+
+	auto blue_plane_0 = blue[0];
+	auto blue_plane_1 = blue[1];
+	auto blue_plane_2 = blue[2];
+	auto blue_plane_3 = blue[3];
+	auto green_plane_0 = green[0];
+	auto green_plane_1 = green[1];
+	auto green_plane_2 = green[2];
+	auto green_plane_3 = green[3];
+	auto red_plane_0 = red[0];
+	auto red_plane_1 = red[1];
+	auto red_plane_2 = red[2];
+	auto red_plane_3 = red[3];
+	auto yellow_plane_0 = yellow[0];
+	auto yellow_plane_1 = yellow[1];
+	auto yellow_plane_2 = yellow[2];
+	auto yellow_plane_3 = yellow[3];
+
+	// initiate card generator and card slots
+	auto card_generator = Card_Generator::create();
+
+	auto card_slot_blue = Card_Slot::create(0, number_of_players);
+	card_slot_blue->setPosition(Vec2(50, 50));
+
+	auto card_slot_green = Card_Slot::create(1, number_of_players);
+	card_slot_green->setPosition(Vec2(50, 910));
+
+	auto card_slot_red = Card_Slot::create(2, number_of_players);
+	card_slot_red->setPosition(Vec2(910, 910));
+
+	auto card_slot_yellow = Card_Slot::create(3, number_of_players);
+	card_slot_yellow->setPosition(Vec2(910, 50));
+
+	// add child
+	if (players[0]) {
+		this->addChild(blue_plane_0, 10);
+		this->addChild(blue_plane_1, 10);
+		this->addChild(blue_plane_2, 10);
+		this->addChild(blue_plane_3, 10);
+	}
+
+	if (players[1]) {
+		this->addChild(green_plane_0, 10);
+		this->addChild(green_plane_1, 10);
+		this->addChild(green_plane_2, 10);
+		this->addChild(green_plane_3, 10);
+	}
+
+	if (players[2]) {
+		this->addChild(red_plane_0, 10);
+		this->addChild(red_plane_1, 10);
+		this->addChild(red_plane_2, 10);
+		this->addChild(red_plane_3, 10);
+	}
+
+	if (players[3]) {
+		this->addChild(yellow_plane_0, 10);
+		this->addChild(yellow_plane_1, 10);
+		this->addChild(yellow_plane_2, 10);
+		this->addChild(yellow_plane_3, 10);
+	}
+
+	if (this->is_advance_mode) {
+		this->addChild(card_generator, 1);
+		if (players[0]) {
+			this->addChild(card_slot_blue, 1);
+		}
+		if (players[1]) {
+			this->addChild(card_slot_green, 1);
+		}
+		if (players[2]) {
+			this->addChild(card_slot_red, 1);
+		}
+		if (players[3]) {
+			this->addChild(card_slot_yellow, 1);
+		}
+	}
+	this->addChild(dice, 1);
+	
+}
+
+void HelloWorld::update(float dt) {
+	if (this->online == true) {
+		this->Ad_Mode->setString("Mode : Online");
+	}
+	else {
+		this->Ad_Mode->setString("Mode : Offline");
+	}
+	if (this->is_advance_mode == true) {
+		this->Online_Mode->setString("Mode : Advanced");
+	}
+	else {
+		this->Online_Mode->setString("Mode : Normal");
+	}
+}
 bool HelloWorld::onTouchBegan(Touch* touch, Event* event) {
     labelTouchInfo->setPosition(touch->getLocation());
     labelTouchInfo->setString("You Touched Here");
