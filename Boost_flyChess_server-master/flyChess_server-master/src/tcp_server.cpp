@@ -44,7 +44,7 @@ void TcpServer::handleClose(TcpConnection::Pointer conn) {
     gameManager_->removePlayer(conn); //从manager中移除conn，conn将会析构
 }
 
-void sendFile(TcpConnection::Pointer conn, int fd){
+void sendFile(TcpConnection::Pointer conn, int fd){ // fd是文件描述符, windows情况下是handle句柄, 到时候变量改一下就行
     char buf[1024];
     int n = 0;
     while (1) {
@@ -54,7 +54,7 @@ void sendFile(TcpConnection::Pointer conn, int fd){
         conn->send(msg);
     }
 }
-
+// 这个不用慌, 到时候用16进制打一下log, 或者把每类message长度用参数传进去就可以
 void TcpServer::handleRead(TcpConnection::Pointer conn, std::size_t bytes_transfered) {
     std::string recv(conn->buf().data(), bytes_transfered);
     auto msgs = utils::split(recv, "\r\n");
