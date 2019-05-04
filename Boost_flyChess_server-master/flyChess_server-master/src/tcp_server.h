@@ -8,7 +8,7 @@
 
 #include "tcp_connection.h"
 #include "game_manager.h"
-namespace doudizhu {
+namespace flyChess {
 //1
 
 class TcpServer  //nocopyable
