@@ -49,7 +49,7 @@ bool BeginScene::init()
     {
         return false;
     }
-
+	this->num_player = 0;
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	auto  bg = Sprite::create("Start.png");
@@ -145,7 +145,16 @@ bool BeginScene::init()
 	exit->setPosition(ccp(480, 480));
 	exit->setScale(0);
 	this->exit = exit;
+	
+	auto option_reset = MenuItemImage::create(
+		"reset.png",
+		"reset.png",
+		CC_CALLBACK_1(BeginScene::reset, this));
+	option_reset->setPosition(ccp(860, 25));
+	option_reset->setScale(0);
+	this->option_reset = option_reset;
 
+	this->exit = exit;
 	this->player1 = Label::createWithTTF("", "fonts/Marker Felt.ttf", 36);
 	this->player1->setColor(ccc3(0, 0, 0));
 	this->addChild(player1, 0);
@@ -239,6 +248,38 @@ bool BeginScene::init()
 	this->gamestart->setScale(0);
 	this->gamestart->setPosition(ccp(480,25));
 
+	auto cancel_1 = MenuItemImage::create(
+		"cancel.png",
+		"cancel.png",
+		CC_CALLBACK_1(BeginScene::delplayer, this, 1));
+	cancel_1->setPosition(ccp(215, 520));
+	cancel_1->setScale(0);
+	this->cancel_1 = cancel_1;
+
+	auto cancel_2 = MenuItemImage::create(
+		"cancel.png",
+		"cancel.png",
+		CC_CALLBACK_1(BeginScene::delplayer, this, 2));
+	cancel_2->setPosition(ccp(445, 520));
+	cancel_2->setScale(0);
+	this->cancel_2 = cancel_2;
+
+	auto cancel_3 = MenuItemImage::create(
+		"cancel.png",
+		"cancel.png",
+		CC_CALLBACK_1(BeginScene::delplayer, this, 3));
+	cancel_3->setPosition(ccp(675, 520));
+	cancel_3->setScale(0);
+	this->cancel_3 = cancel_3;
+
+	auto cancel_4 = MenuItemImage::create(
+		"cancel.png",
+		"cancel.png",
+		CC_CALLBACK_1(BeginScene::delplayer, this, 4));
+	cancel_4->setPosition(ccp(905, 520));
+	cancel_4->setScale(0);
+	this->cancel_4 = cancel_4;
+
 	auto plane1 = Sprite::create();
 	this->plane1 = plane1;
 	this->plane1->setPosition(ccp(135,335));
@@ -276,8 +317,8 @@ bool BeginScene::init()
     }
 
     // create menu, it's an autorelease object
-    auto menu = Menu::create(option1,option2,option3,option_back,option_online,option_offline,option_advanced,option_normal,closeItem,option_player_one, option_AI_1,option_player_two,option_AI_2
-		,option_player_three,option_AI_3,option_player_four,option_AI_4, option_gamestart , exit,
+	auto menu = Menu::create(option1, option2, option3, option_back, option_online, option_offline, option_advanced, option_normal, closeItem, option_player_one, option_AI_1, option_player_two, option_AI_2
+		, option_player_three, option_AI_3, option_player_four, option_AI_4, option_gamestart, exit, option_reset, cancel_1, cancel_2, cancel_3, cancel_4,
 		NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
@@ -298,15 +339,21 @@ void BeginScene::menuCloseCallback(Ref* pSender)
 
 
 }
-void BeginScene::reset() {
+void BeginScene::reset(Ref* pSender) {
 	for (int i = 0; i < 4;i++) {
 		this->player[i] = 0;
 		this->character[i] = 0;
 	}
-	this->advance_mode = false;
+	this->num_player = 0;
 }
 void BeginScene::update(float dt)
 {	
+	if (this->num_player >= 2) {
+		this->gamestart->setScale(1.5);
+	}
+	else {
+		this->gamestart->setScale(0);
+	}
 	this->player_show();
 }
 void BeginScene::player_show() {
@@ -315,6 +362,7 @@ void BeginScene::player_show() {
 		this->plane1->setTexture("plane_blue.png");
 		this->plane1->setRotation(270);
 		this->plane1->setScale(0.32);
+		this->cancel_1->setScale(0.7);
 		this->test->setString("1");
 	}
 	else if (this->player[0] == -1) {
@@ -322,69 +370,92 @@ void BeginScene::player_show() {
 		this->plane1->setTexture("plane_blue.png");
 		this->plane1->setRotation(270);
 		this->plane1->setScale(0.32);
+		this->cancel_1->setScale(0.7);
 		this->test->setString("1");
 	}
 	else {
 		this->player1->setString(" ");
+		this->cancel_1->setScale(0);
 		this->plane1->setScale(0);
 	}
 	if (this->player[1] == 1) {
 		this->player2->setString("Player 2");
 		this->plane2->setTexture("plane_green.png");
 		this->plane2->setRotation(270);
+		this->cancel_2->setScale(0.7);
 		this->plane2->setScale(0.32);
 	}
 	else if (this->player[1] == -1) {
 		this->player2->setString("Computer 2");
 		this->plane2->setTexture("plane_green.png");
 		this->plane2->setRotation(270);
+		this->cancel_2->setScale(0.7);
 		this->plane2->setScale(0.32);
 	}
 	else {
 		this->player2->setString(" ");
+		this->cancel_2->setScale(0);
 		this->plane2->setScale(0);
 	}
 	if (this->player[2] == 1) {
 		this->player3->setString("Player 3");
 		this->plane3->setTexture("plane_red.png");
 		this->plane3->setRotation(270);
+		this->cancel_3->setScale(0.7);
 		this->plane3->setScale(0.32);
 	}
 	else if (this->player[2] == -1) {
 		this->player3->setString("Computer 3");
 		this->plane3->setTexture("plane_red.png");
 		this->plane3->setRotation(270);
+		this->cancel_3->setScale(0.7);
 		this->plane3->setScale(0.32);
 	}
 	else {
 		this->player3->setString(" ");
+		this->cancel_3->setScale(0);
 		this->plane3->setScale(0);
 	}
 	if (this->player[3] == 1) {
 		this->player4->setString("Player 4");
 		this->plane4->setTexture("plane_yellow.png");
 		this->plane4->setRotation(270);
+		this->cancel_4->setScale(0.7);
 		this->plane4->setScale(0.32);
 	}
 	else if (this->player[3] == -1) {
 		this->player4->setString("Computer 4");
 		this->plane4->setTexture("plane_yellow.png");
 		this->plane4->setRotation(270);
+		this->cancel_4->setScale(0.7);
 		this->plane4->setScale(0.32);
 	}
 	else {
 		this->player4->setString(" ");
+		this->cancel_4->setScale(0);
 		this->plane4->setScale(0);
 	}
 }
 
 void BeginScene::addplayer(Ref* pSender, int index)
 {
+	if (this->player[index - 1] == 0) {
+		this->num_player += 1;
+	}	
 	this->player[index - 1] = 1;
+	
 }
 void BeginScene::addcomputer(Ref* pSender, int index)
 {
+	if (this->player[index - 1] == 0) {
+		this->num_player += 1;
+	}
 	this->player[index - 1] = -1;
+}
+void BeginScene::delplayer(Ref* pSender, int index)
+{
+	this->num_player -= 1;
+	this->player[index - 1] = 0;
 }
 void BeginScene::change_char(Ref* pSender, int index, int num)
 {
@@ -421,7 +492,9 @@ void BeginScene::refresh1(Ref* pSender)
 	this->plane3->setScale(0);
 	this->plane4->setScale(0);
 	this->test->setScale(0);
-	this->reset();
+	this->option_reset->setScale(0);
+	this->reset(this);
+	this->advance_mode = false;
 	//this->option_two_AI->setScale(0);
 	//this->option_three_AI->setScale(0);
 	
@@ -480,6 +553,7 @@ void BeginScene::refresh3(Ref* pSender, bool mode)
 	this->option3->setScale(0);
 	this->option_back->setScale(1);
 	this->option_back->setPosition(ccp(100,25));
+	this->option_reset->setScale(1);
 	this->option_offline->setScale(0);
 	this->option_online->setScale(0);
 	this->option_advanced->setScale(0);
@@ -497,7 +571,7 @@ void BeginScene::refresh3(Ref* pSender, bool mode)
 	this->option_AI_3->setScale(1.5);
 	this->option_player_four->setScale(1.5);
 	this->option_AI_4->setScale(1.5);
-	this->gamestart->setScale(1.5);
+	
 	
 	//this->test->setScale(1);
 	//this->option_one_AI->setScale(0);

@@ -35,6 +35,7 @@ public:
     virtual bool init();
 	bool online;
 	bool advance_mode;
+	int num_player;
 	int player[4];
 	int character[4];
 	cocos2d::MenuItemImage* option1; //start game option
@@ -51,12 +52,17 @@ public:
 	cocos2d::MenuItemImage* option_AI_1; // choose one AI
 	cocos2d::MenuItemImage* option_AI_2; // choose two AI
 	cocos2d::MenuItemImage* option_AI_3; // choose three AI
-	cocos2d::MenuItemImage* option_AI_4;
+	cocos2d::MenuItemImage* option_AI_4; // choose four AI
 	cocos2d::MenuItemImage* option_player_one; // choose one player
 	cocos2d::MenuItemImage* option_player_two; // choose two player
 	cocos2d::MenuItemImage* option_player_three; // choose three player
-	cocos2d::MenuItemImage* option_player_four;
+	cocos2d::MenuItemImage* option_player_four; // choose four player
+	cocos2d::MenuItemImage* cancel_1; 
+	cocos2d::MenuItemImage* cancel_2;
+	cocos2d::MenuItemImage* cancel_3;
+	cocos2d::MenuItemImage* cancel_4;
 	cocos2d::MenuItemImage* gamestart;
+	cocos2d::MenuItemImage* option_reset;
 	cocos2d::Label* player1;
 	cocos2d::Label* player2;
 	cocos2d::Label* player3;
@@ -70,9 +76,10 @@ public:
 	
 	void BeginScene::addplayer(Ref* pSender, int index);
 	void BeginScene::addcomputer(Ref* pSender, int index);
+	void BeginScene::delplayer(Ref* pSender, int index);
 	void BeginScene::change_char(Ref* pSender, int index, int num);
 	void BeginScene::update(float dt);
-	void BeginScene::reset();
+	void BeginScene::reset(Ref* pSender);
 	void BeginScene::player_show();
 	void Problem_show(Ref* pSender);
 	void Problem_exit(Ref* pSender);
