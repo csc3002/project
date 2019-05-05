@@ -303,11 +303,14 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
         else {
             if (status != "finished") {
                 if (card == "machinegun" && buff != "stopaction") {
-                    int attackArray[8] = {-50, -50, -50, -50, -50, -50, -50, -50};
+                    int attackArray[9] = {-50, -50, -50, -50, -50, -50, -50, -50, 0};
                     for (int i = 0; i < 7; ++i) {
                         attackArray[i] = (position + 52 - 3 + i) % 52;
                     }
                     attackArray[7] = color;
+                    if (status == "outer") {
+                        attackArray[8] = 1;
+                    }
                     EventCustom machinegunAttack = EventCustom("machinegun_attack");
                     machinegunAttack.setUserData((int*)attackArray);
                     _eventDispatcher->dispatchEvent(&machinegunAttack);
@@ -462,7 +465,7 @@ void Planes::machinegun_attack_judge(EventCustom* event) {
             underAttack = true;
         }
     }
-    if (array[7] != color && underAttack && status == "outer" && buff != "protection") {
+    if (array[7] != color && underAttack && array[8] && status == "outer" && buff != "protection") {
         going_down();
     }
 }
