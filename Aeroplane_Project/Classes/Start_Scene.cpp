@@ -248,6 +248,8 @@ bool BeginScene::init()
 	this->gamestart->setScale(0);
 	this->gamestart->setPosition(ccp(480,25));
 
+
+	// cancel button
 	auto cancel_1 = MenuItemImage::create(
 		"cancel.png",
 		"cancel.png",

@@ -57,7 +57,7 @@ public:
 	cocos2d::MenuItemImage* option_player_two; // choose two player
 	cocos2d::MenuItemImage* option_player_three; // choose three player
 	cocos2d::MenuItemImage* option_player_four; // choose four player
-	cocos2d::MenuItemImage* cancel_1; 
+	cocos2d::MenuItemImage* cancel_1;  //cancel button
 	cocos2d::MenuItemImage* cancel_2;
 	cocos2d::MenuItemImage* cancel_3;
 	cocos2d::MenuItemImage* cancel_4;
