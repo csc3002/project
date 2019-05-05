@@ -22,7 +22,7 @@ void outputChessboard(CHESS * chessboard, searchEngine * player){
 
 int main()
 {
-    moveGenerator * mg = new moveGenerator(6);
+    moveGenerator * mg = new moveGenerator(6,0);
     evaluator * eval = new evaluator();
     searchEngine ai_player1;searchEngine ai_player2;searchEngine ai_player3; searchEngine ai_player4;
     ai_player1.setEvaluator(eval);

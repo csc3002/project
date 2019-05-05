@@ -34,7 +34,7 @@ public:
  * -------------------------------------
  * Constructor and destructor of the class instance.
  */
-    moveGenerator(int offmode);
+    moveGenerator(int offmode, int advance);
     virtual ~moveGenerator();
 
 /*
@@ -70,6 +70,10 @@ public:
 //  can take off.
 
     int offMode = 6;
+
+//  This variable controls whether the advanced mode is on or off.
+//  Default setting is off (0).
+    int advanceMode = 0;
 
 
 /*

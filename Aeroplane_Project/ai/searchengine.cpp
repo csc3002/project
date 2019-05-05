@@ -201,8 +201,11 @@ void searchEngine::makeMove(CHESSMOVE * move, CHESS * chessboard,  int side){
 /*
  * Implementation note: useAbility
  * ---------------------------------
- * This function iterate through the chessboard. If 4 chesses of the same color are set to win,
- * then the game is over.
+ * There are 4 kinds of ability:
+ * 1. Attack: selecting one of OWN chess on outerloop, enemy chesses which located within 3 blocks away will be crashed.
+ * 2. Defense: selecting one of OWN chess, this chess will not be attack or interfere in 5 rounds.
+ * 3. Interfere: selecting one enemy chess, this chess cannot move in 4 rounds.
+ * 4. Eliminate: selectiong one of own chess or enemy chess, the defensed/interfered state will be eliminate.
  */
 
 void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {

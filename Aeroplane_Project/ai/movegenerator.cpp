@@ -14,12 +14,17 @@
  * Implementation note: constructor
  * ---------------------------------
  * The generator needs to set seeds when it is constructed.
- * It also sets the off mode.
+ * It also sets the off mode and advance mode. Off mode means
+ * the condition of taking off a chess. For example, offmode=6
+ * means chess can take of only if dice roll is larger or equal to 6.
+ * The parameter advance sets whether the AI is a simple AI or an advanced
+ * AI. When advance=0, the AI is simple; when advance = 1, the AI is advanced.
  */
 
-moveGenerator::moveGenerator(int offmode)
+moveGenerator::moveGenerator(int offmode, int advance)
 {
     offMode = offmode;
+    advanceMode = advance;
     srand(static_cast<unsigned>(time(nullptr)));
 }
 
@@ -119,54 +124,56 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         }
     }
 
-    // generate draw card if possible
-    if(rollPoint == 1 || rollPoint == 6) {
-        addMove(rollPoint, NOCHESS, DRAW);
-        std::cout << "draw a card" << std::endl;
-    }
-
-    // generate card use if possible
-    if(hadCard > 0) {
-        switch (hadCard) {
-        case ATTACK:{
-            for(int i = 1; i <= 4; i++) {
-                if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERRED) {
-                    addMove(rollPoint, my_chess[i].chessID, ATTACK);
-                    std::cout << "attack " << my_chess[i].chessID << std::endl;
-
-                }
-            }
-            break;
-        }
-        case DEFENSE:{
-            for(int i = 1; i <= 4; i++) {
-                if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERRED) {
-                    addMove(rollPoint, my_chess[i].chessID, DEFENSE);
-                    std::cout << "defense " << my_chess[i].chessID << std::endl;
-                }
-            }
-            break;
-        }
-        case INTERFERE:{
-            for(int i = 0; i < 16; i++) {
-                if(chessboard[i].color != side && (chessboard[i].currentCoor.region == OUTERLOOP ||
-                   chessboard[i].currentCoor.region == TRACK) && chessboard[i].buff_state != DEFENSED) {
-                    addMove(rollPoint, chessboard[i].chessID, INTERFERE);
-                    std::cout << "interfere " <<chessboard[i].chessID << std::endl;
-                }
-            }
-            break;
-        }
-        case ELIMINATE:{
-            for(int i = 0; i < 16; i++) {
-                if(chessboard[i].color == side && (chessboard[i].buff_state == DEFENSED || chessboard[i].buff_state == INTERFERRED) ) {
-                    addMove(rollPoint, chessboard[i].chessID, ELIMINATE);
-                    std::cout << "eliminate "<< chessboard[i].chessID << std::endl;
-                }
-            }
-            break;
+    if (advanceMode){
+        // generate draw card if possible
+        if(rollPoint == 1 || rollPoint == 6) {
+            addMove(rollPoint, NOCHESS, DRAW);
+            std::cout << "draw a card" << std::endl;
         }
 
+        // generate card use if possible
+        if(hadCard > 0) {
+            switch (hadCard) {
+            case ATTACK:{
+                for(int i = 1; i <= 4; i++) {
+                    if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERRED) {
+                        addMove(rollPoint, my_chess[i].chessID, ATTACK);
+                        std::cout << "attack " << my_chess[i].chessID << std::endl;
+
+                    }
+                }
+                break;
+            }
+            case DEFENSE:{
+                for(int i = 1; i <= 4; i++) {
+                    if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERRED) {
+                        addMove(rollPoint, my_chess[i].chessID, DEFENSE);
+                        std::cout << "defense " << my_chess[i].chessID << std::endl;
+                    }
+                }
+                break;
+            }
+            case INTERFERE:{
+                for(int i = 0; i < 16; i++) {
+                    if(chessboard[i].color != side && (chessboard[i].currentCoor.region == OUTERLOOP ||
+                                                       chessboard[i].currentCoor.region == TRACK) && chessboard[i].buff_state != DEFENSED) {
+                        addMove(rollPoint, chessboard[i].chessID, INTERFERE);
+                        std::cout << "interfere " <<chessboard[i].chessID << std::endl;
+                    }
+                }
+                break;
+            }
+            case ELIMINATE:{
+                for(int i = 0; i < 16; i++) {
+                    if(chessboard[i].color == side && (chessboard[i].buff_state == DEFENSED || chessboard[i].buff_state == INTERFERRED) ) {
+                        addMove(rollPoint, chessboard[i].chessID, ELIMINATE);
+                        std::cout << "eliminate "<< chessboard[i].chessID << std::endl;
+                    }
+                }
+                break;
+            }
+
+            }
         }
     }
 
