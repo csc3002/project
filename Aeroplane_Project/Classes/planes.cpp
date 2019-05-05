@@ -44,6 +44,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Planes::resetCard, this));
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
+    auto winCheckListener = EventListenerCustom::create("win_check", CC_CALLBACK_1(Planes::submit_win, this));
 	auto getChessListener = EventListenerCustom::create("eventGetChess", CC_CALLBACK_0(Planes::get_chess, this));
 
     // add listeners to event dispactcher
@@ -56,6 +57,7 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundChangeListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(machinegunAttackListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(winCheckListener, this);
     return true;
 }
 
@@ -297,6 +299,11 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             }
             eventPlanePosition.setUserData((int*)PositionArray);
             _eventDispatcher->dispatchEvent(&eventPlanePosition);
+
+            // ask planes to send whether they have finished
+            EventCustom eventWinCheck = EventCustom("win_check");
+            eventWinCheck.setUserData((void*)&color);
+            _eventDispatcher->dispatchEvent(&eventWinCheck);
         }
 
         // use cards
@@ -381,7 +388,7 @@ void Planes::setTouchable(EventCustom* event) {
 void Planes::submit_status(EventCustom* event) {
     if (color == *(int*)event->getUserData()) {
         EventCustom eventPlaneStatus = EventCustom("plane_status");
-        int statusArray[3] = {1, id};
+        int statusArray[2] = {1, id};
         if ((roll != 6 && status == "ground") || status == "finished" || buff == "stopaction") {
             statusArray[0] = 0;
         }
@@ -483,6 +490,19 @@ void Planes::set_texture_to_default() {
     }
     if (color == 3) {
         this->setTexture("plane_yellow.png");
+    }
+}
+
+// tell the judge whether the plane has finished
+void Planes::submit_win(EventCustom* event) {
+    if (color == *(int*)event->getUserData()) {
+        EventCustom eventFinishStatus = EventCustom("finish_status");
+        int finishStatusArray[3] = {0, id, color};
+        if (status == "finished") {
+            finishStatusArray[0] = 1;
+        }
+        eventFinishStatus.setUserData((int*)finishStatusArray);
+        _eventDispatcher->dispatchEvent(&eventFinishStatus);
     }
 }
 

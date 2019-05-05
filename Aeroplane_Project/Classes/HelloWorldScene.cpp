@@ -23,11 +23,13 @@
  ****************************************************************************/
 
 #include "HelloWorldScene.h"
+#include "End_Scene.h"
 #include "SimpleAudioEngine.h"
 #include "planes.h"
 #include "dice.h"
 #include "card_generator.h"
 #include "card_slot.h"
+#include "win_judge.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -67,14 +69,14 @@ bool HelloWorld::init() {
                                      Director::getInstance()->getVisibleSize().height / 2));
 
     // set background
-    auto  bg = Sprite::create("background.png");
+    auto bg = Sprite::create("background.png");
     bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
     bg->setScaleX(visibleSize.width / bg->getContentSize().width);
     bg->setScaleY(visibleSize.height / bg->getContentSize().height);
 
     // initiate game mode
     // true = advance mode, false = classical mode
-    //this->is_advance_mode = true;
+    // this->is_advance_mode = true;
 
     // initiate players and planes
 
@@ -99,7 +101,7 @@ bool HelloWorld::init() {
 	return true;
 }
 
-//This Function is executed in Start_Scene.cpp
+// executed in Start_Scene.cpp
 void HelloWorld::setPlane() {
 
 	// count the number of players
@@ -112,6 +114,9 @@ void HelloWorld::setPlane() {
 
 	// initiate dice
 	auto dice = Dice::create(players[0], players[1], players[2], players[3]);
+
+    // initiate win judge
+    auto win_judge = Win_Judge::create();
 
 	// coordinates of starting area
 	const Vec2 blue_start_pts[5] = { Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140) };
@@ -219,6 +224,7 @@ void HelloWorld::setPlane() {
 		}
 	}
 	this->addChild(dice, 1);
+    this->addChild(win_judge, 1);
 	
 }
 
@@ -236,6 +242,7 @@ void HelloWorld::update(float dt) {
 		this->Online_Mode->setString("Mode : Normal");
 	}
 }
+
 bool HelloWorld::onTouchBegan(Touch* touch, Event* event) {
     labelTouchInfo->setPosition(touch->getLocation());
     labelTouchInfo->setString("You Touched Here");

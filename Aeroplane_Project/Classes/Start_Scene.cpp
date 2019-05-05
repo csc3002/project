@@ -338,9 +338,8 @@ void BeginScene::menuCloseCallback(Ref* pSender)
 
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }
+
 void BeginScene::reset(Ref* pSender) {
 	for (int i = 0; i < 4;i++) {
 		this->player[i] = 0;
@@ -348,6 +347,7 @@ void BeginScene::reset(Ref* pSender) {
 	}
 	this->num_player = 0;
 }
+
 void BeginScene::update(float dt)
 {	
 	if (this->num_player >= 2) {
@@ -358,6 +358,7 @@ void BeginScene::update(float dt)
 	}
 	this->player_show();
 }
+
 void BeginScene::player_show() {
 	if (this->player[0] == 1) {
 		this->player1->setString("Player 1");
@@ -447,6 +448,7 @@ void BeginScene::addplayer(Ref* pSender, int index)
 	this->player[index - 1] = 1;
 	
 }
+
 void BeginScene::addcomputer(Ref* pSender, int index)
 {
 	if (this->player[index - 1] == 0) {
@@ -454,15 +456,18 @@ void BeginScene::addcomputer(Ref* pSender, int index)
 	}
 	this->player[index - 1] = -1;
 }
+
 void BeginScene::delplayer(Ref* pSender, int index)
 {
 	this->num_player -= 1;
 	this->player[index - 1] = 0;
 }
+
 void BeginScene::change_char(Ref* pSender, int index, int num)
 {
 	this->character[index - 1] = num;
 }
+
 void BeginScene::refresh1(Ref* pSender)
 {
 	this->option1->setScale(2);
@@ -502,8 +507,8 @@ void BeginScene::refresh1(Ref* pSender)
 	
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-
 }
+
 void BeginScene::refresh2(Ref* pSender)
 {
 	this->option1->setScale(0);
@@ -520,8 +525,8 @@ void BeginScene::refresh2(Ref* pSender)
 	//this->option_one_player->setScale(0);
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-
 }
+
 void BeginScene::Problem_show(Ref* pSender) {
 	this->option_back->setScale(0);
 	this->option_offline->setScale(0);
@@ -529,7 +534,8 @@ void BeginScene::Problem_show(Ref* pSender) {
 	this->problem_bg->setScale(2);
 	this->exit->setScale(2);
 }
-void BeginScene::refresh2_1(Ref* pSender ) //I forget to set the mode select
+
+void BeginScene::refresh2_1(Ref* pSender) // I forget to set the mode select
 {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
@@ -545,8 +551,8 @@ void BeginScene::refresh2_1(Ref* pSender ) //I forget to set the mode select
 	//this->option_one_player->setScale(0);
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-
 }
+
 void BeginScene::refresh3(Ref* pSender, bool mode)
 {
 	this->advance_mode = mode;
@@ -582,8 +588,8 @@ void BeginScene::refresh3(Ref* pSender, bool mode)
 	//this->option_one_player->setScale(0);
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-
 }
+
 void BeginScene::refresh_menu(Ref* pSender)
 {
 	this->option1->setScale(0);
@@ -591,9 +597,8 @@ void BeginScene::refresh_menu(Ref* pSender)
 	this->option3->setScale(0);
 	this->option_back->setPosition(ccp(150, 100));
 	this->option_back->setScale(1.5);
-
-
 }
+
 void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
 {
 	auto scene = HelloWorld::create();
@@ -604,7 +609,6 @@ void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
 		scene->players[i] = this->player[i];
 	}
 	scene->setPlane();
-	auto tran = TransitionFade::create(0.5, scene);
+	auto tran = TransitionFade::create(0.2, scene);
 	Director::getInstance()->replaceScene(tran);
-
 }

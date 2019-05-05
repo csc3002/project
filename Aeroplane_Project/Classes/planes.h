@@ -63,6 +63,8 @@ public:
 
     virtual void set_texture_to_default();
 
+    virtual void submit_win(EventCustom* event);
+
 	virtual void get_chess();
 };
 
