@@ -49,7 +49,7 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->playerArray[1] = player1;
         sprite->playerArray[2] = player2;
         sprite->playerArray[3] = player3;
-		sprite->sign = Sprite::create("plane_blue.png");
+		sprite->sign = Sprite::create();
 		sprite->sign->setPosition(Vec2(44, -50));
 		sprite->sign->setScale(0.1);
 		sprite->addChild(sprite->sign);
