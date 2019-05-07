@@ -117,7 +117,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
                 continue;
         }
         else{       // else are the situations that move a chess on the chessboard
-            if(nowChess.buff_state != INTERFERRED){
+            if(nowChess.buff_state != INTERFERED){
                 addMove(rollPoint, nowChess.chessID, NOCARD);
                 std::cout << "add move a chess,chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
              }
@@ -136,7 +136,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
             switch (hadCard) {
             case ATTACK:{
                 for(int i = 1; i <= 4; i++) {
-                    if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERRED) {
+                    if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERED) {
                         addMove(rollPoint, my_chess[i].chessID, ATTACK);
                         std::cout << "attack " << my_chess[i].chessID << std::endl;
 
@@ -146,7 +146,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
             }
             case DEFENSE:{
                 for(int i = 1; i <= 4; i++) {
-                    if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERRED) {
+                    if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERED) {
                         addMove(rollPoint, my_chess[i].chessID, DEFENSE);
                         std::cout << "defense " << my_chess[i].chessID << std::endl;
                     }
@@ -165,7 +165,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
             }
             case ELIMINATE:{
                 for(int i = 0; i < 16; i++) {
-                    if(chessboard[i].color == side && (chessboard[i].buff_state == DEFENSED || chessboard[i].buff_state == INTERFERRED) ) {
+                    if(chessboard[i].color == side && (chessboard[i].buff_state == DEFENSED || chessboard[i].buff_state == INTERFERED) ) {
                         addMove(rollPoint, chessboard[i].chessID, ELIMINATE);
                         std::cout << "eliminate "<< chessboard[i].chessID << std::endl;
                     }

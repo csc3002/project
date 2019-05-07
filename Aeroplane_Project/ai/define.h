@@ -78,7 +78,7 @@
 
 // Define some buff states
 #define DEFENSED "defense"
-#define INTERFERRED "interferred"
+#define INTERFERED "interfered"
 
 // Define card
 #define NOCARD -1

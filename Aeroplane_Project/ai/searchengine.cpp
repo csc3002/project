@@ -178,7 +178,7 @@ void searchEngine::makeMove(CHESSMOVE * move, CHESS * chessboard,  int side){
     int chessID = move->chessID;
     int rollPoint = move->rollPoint;
 
-    if (chessID == 0 || chessboard[chessID-1].buff_state == INTERFERRED){     // if do not move, do not change the chessboard
+    if (chessID == 0 || chessboard[chessID-1].buff_state == INTERFERED){     // if do not move, do not change the chessboard
         return ;
     }
     else{                       // else, move chess
@@ -217,7 +217,7 @@ void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {
         for(int i = 0; i < 16; i++){
             enemyLocation = chessboard[i].currentCoor.code;
             if(chessboard[i].color != side && chessboard[i].currentCoor.region == OUTERLOOP &&
-               chessboard[i].buff_state != DEFENSED && (myLocation + 52 - enemyLocation )% 52 <= 3 && (enemyLocation + 52 - myLocation )% 52 <= 3) {
+               chessboard[i].buff_state != DEFENSED && ((myLocation + 52 - enemyLocation )% 52 <= 5 || (enemyLocation + 52 - myLocation )% 52 <= 5)) {
                 chessboard[i].currentCoor.region = APRON;
                 chessboard[i].currentCoor.code = OUTSIDE;
                 chessboard[i].buff_state = "";
@@ -233,7 +233,7 @@ void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {
         break;
     }
     case INTERFERE: {
-        chessboard[move->chessID-1].buff_state = INTERFERRED;
+        chessboard[move->chessID-1].buff_state = INTERFERED;
         chessboard[move->chessID-1].round_left += 16;
         break;
     }

@@ -73,13 +73,13 @@ int evaluator::evaluate(const CHESS oldChessboard[],const CHESS newChessboard[],
                 benefit += 200;
                 return benefit;
             }
-            else if(oldChess->buff_state != INTERFERRED && newChess->buff_state == INTERFERRED){
+            else if(oldChess->buff_state != INTERFERED && newChess->buff_state == INTERFERED){
                 benefit += 400;
                 return benefit;
             }
         }
         else{       // use eliminate to own chess
-            if(oldChess->buff_state == INTERFERRED  && oldChess->round_left > 1 && newChess->buff_state != INTERFERRED){
+            if(oldChess->buff_state == INTERFERED  && oldChess->round_left > 1 && newChess->buff_state != INTERFERED){
                 benefit += 400;
                 return benefit;
             }
