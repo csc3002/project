@@ -25,7 +25,6 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
 #include "Start_Scene.h"
-#include "End_Scene.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -100,6 +99,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set the design resolution
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC){
+    glview->setFrameSize(880, 880);
+    }
     auto frameSize = glview->getFrameSize();
     // if the frame's height is larger than the height of medium size.
     if (frameSize.height > mediumResolutionSize.height)

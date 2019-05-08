@@ -58,6 +58,7 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundChangeListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(machinegunAttackListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(winCheckListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(getChessListener, this);
     return true;
 }
 

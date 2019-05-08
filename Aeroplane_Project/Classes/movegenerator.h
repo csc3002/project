@@ -34,7 +34,7 @@ public:
  * -------------------------------------
  * Constructor and destructor of the class instance.
  */
-    moveGenerator(int offmode);
+    moveGenerator(int offmode, int advance);
     virtual ~moveGenerator();
 
 /*
@@ -58,18 +58,22 @@ public:
  * The method will write all possible moves into moveList.
  */
 
-    virtual int createPossibleMove(const CHESS chessboard[], int rollPoint, int side);
+    virtual int createPossibleMove(const CHESS chessboard[], int rollPoint, int side, int hadCard);
 
 
 //  This is the data structure which stores all possible moves.
 
-    CHESSMOVE moveList[5];
+    CHESSMOVE moveList[64];
 
 //  This variable indicates the condition of taking off.
 //  When dice roll is larger or equal to offMode, a plane
 //  can take off.
 
     int offMode = 6;
+
+//  This variable controls whether the advanced mode is on or off.
+//  Default setting is off (0).
+    int advanceMode = 0;
 
 
 /*
@@ -79,11 +83,11 @@ public:
 protected:
 /*
  * Method: addMove
- * Usage: addMove(rollPoint, chessID)
+ * Usage: addMove(rollPoint, chessID, aboutCard)
  * ----------------------------------
  * Add a valid chess move to the move list.
  */
-    void addMove(int rollPoint, int chessID);
+    void addMove(int rollPoint, int chessID, int aboutCard);
 
 //  This variable stores the number of move generated at this stage.
     int moveCount;

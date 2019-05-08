@@ -24,17 +24,20 @@ bool Dice::init() {
 
     // set custom event listeners
     auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
-	auto planeEndListener2 = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::AICall, this));
+	auto planeEndListener2 = EventListenerCustom::create("plane_end", CC_CALLBACK_0(Dice::AICall, this));
     auto planeStatusListener = EventListenerCustom::create("plane_status", CC_CALLBACK_1(Dice::setStatusArray, this));
     auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Dice::setTouchableFalse, this));
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Dice::skipTurn, this));
+    auto chessboardListener = EventListenerCustom::create("event_chess_pass", CC_CALLBACK_1(Dice::AIPass, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(chessboardListener, this);
     return true;
 }
 
@@ -92,7 +95,7 @@ int Dice::getrandom() {
 bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
     Vec2 ptClick = touch->getLocation();
     if (this->getBoundingBox().containsPoint(ptClick) && can_touch) {
-
+        log("%d", round);
         // skip if the player is nobody
         while (!playerArray[round]) {
             round = (round + 1) % 4;
@@ -135,7 +138,7 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
         EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
         eventRoundG.setUserData((void*)&round);
         _eventDispatcher->dispatchEvent(&eventRoundG);
-
+        log("%d", round);
         // if roll_num is not 6, the next player rolls the dice
         if (roll_num != 6) {
             round = (round + 1) % 4;
@@ -155,6 +158,7 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
             // tell the planes if the round changes
             EventCustom eventRoundChange = EventCustom("round_change");
             _eventDispatcher->dispatchEvent(&eventRoundChange);
+            log("%d", round);
         }
         return true;
     }
@@ -212,10 +216,59 @@ void Dice::skipTurn(EventCustom* event) {
     _eventDispatcher->dispatchEvent(&eventRoundChange);
 }
 
-void Dice::AICall(EventCustom* event) {
+void Dice::AICall() {
 	if (playerArray[round] == -1) {
+        can_touch = false;
 		EventCustom eventGetChess = EventCustom("event_get_chess");
 		eventGetChess.setUserData((void*)true);
 		_eventDispatcher->dispatchEvent(&eventGetChess);
 	}
+}
+
+void Dice::AIPass(EventCustom* event) {
+    auto chess = *(CHESS*)event->getUserData();
+    chessboard[chess.chessID] = chess;
+    ++chessboardStatus;
+    if (chessboardStatus == 16) {
+        chessboardStatus = 0;
+        int roundP = round;
+        
+        while (!playerArray[round]) {
+            round = (round + 1) % 4;
+        }
+        roll_num = getrandom();
+        
+        EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
+        eventRoundG.setUserData((void*)&round);
+        _eventDispatcher->dispatchEvent(&eventRoundG);
+        
+        // if roll_num is not 6, the next player rolls the dice
+        if (roll_num != 6) {
+            round = (round + 1) % 4;
+            
+            // skip if the player is nobody
+            while (!playerArray[round]) {
+                round = (round + 1) % 4;
+            }
+            
+            // pass round to the card slots
+            if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
+                EventCustom eventRoundS = EventCustom("event_round_to_slots");
+                eventRoundS.setUserData((void*)&round);
+                _eventDispatcher->dispatchEvent(&eventRoundS);
+            }
+            
+            // tell the planes if the round changes
+            EventCustom eventRoundChange = EventCustom("round_change");
+            _eventDispatcher->dispatchEvent(&eventRoundChange);
+        }
+        
+        EventCustom eventReceiveChessboard = EventCustom("event_receive_chessboard");
+        eventReceiveChessboard.setUserData((void*)chessboard);
+        _eventDispatcher->dispatchEvent(&eventReceiveChessboard);
+        int passArray[2] = {roll_num, roundP};
+        EventCustom eventReceivePoint = EventCustom("event_receive_point");
+        eventReceivePoint.setUserData((void*)passArray);
+        _eventDispatcher->dispatchEvent(&eventReceivePoint);
+    }
 }

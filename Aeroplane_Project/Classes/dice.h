@@ -9,6 +9,7 @@
 #define dice_h
 
 #include "cocos2d.h"
+#include "define.h"
 USING_NS_CC;
 
 class Dice: public cocos2d::Sprite{
@@ -19,6 +20,7 @@ public:
 	Sprite* sign;
     int statusArray[4];
     int playerArray[4];
+    CHESS chessboard[16];
     
     virtual bool init();
     
@@ -36,7 +38,12 @@ public:
     
     virtual void skipTurn(EventCustom* event);
 
-	virtual void AICall(EventCustom* event);
+	virtual void AICall();
+    
+    virtual void AIPass(EventCustom* event);
+
+private:
+    int chessboardStatus = 0;
 };
 
 #endif // dice_h

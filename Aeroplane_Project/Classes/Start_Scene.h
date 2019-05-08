@@ -27,7 +27,7 @@
 
 #include "cocos2d.h"
 
-class BeginScene: public cocos2d::Scene
+class BeginScene : public cocos2d::Scene
 {
 public:
     static cocos2d::Scene* createScene();
@@ -38,7 +38,7 @@ public:
 	int num_player;
 	int player[4];
 	int character[4];
-	cocos2d::MenuItemImage* option1; // start game option
+	cocos2d::MenuItemImage* option1; //start game option
 	cocos2d::MenuItemImage* option2; // help option
 	cocos2d::MenuItemImage* option3; // exit option
 	cocos2d::MenuItemImage* option_back; // back option in the menu
@@ -72,23 +72,23 @@ public:
 	cocos2d::Sprite* plane2;
 	cocos2d::Sprite* plane3;
 	cocos2d::Sprite* plane4;
-	
-	void BeginScene::addplayer(Ref* pSender, int index);
-	void BeginScene::addcomputer(Ref* pSender, int index);
-	void BeginScene::delplayer(Ref* pSender, int index);
-	void BeginScene::change_char(Ref* pSender, int index, int num);
-	void BeginScene::update(float dt);
-	void BeginScene::reset(Ref* pSender);
-	void BeginScene::player_show();
-	void Problem_show(Ref* pSender);
-
     // a selector callback
+	
+	void addplayer(Ref* pSender, int index);
+	void addcomputer(Ref* pSender, int index);
+	void delplayer(Ref* pSender, int index);
+	void change_char(Ref* pSender, int index, int num);
+	void update(float dt);
+	void reset(Ref* pSender);
+	void player_show();
+	void Problem_show(Ref* pSender);
+	void Problem_exit(Ref* pSender);
     void menuCloseCallback(cocos2d::Ref* pSender);
 	void refresh1(cocos2d::Ref* pSender);
 	void refresh_menu(cocos2d::Ref* pSender);
 	void refresh2(cocos2d::Ref* pSender);
 	void refresh3(cocos2d::Ref* pSender, bool mode);
-	void BeginScene::refresh2_1(Ref* pSender); // mode = true -> advanced, mode = false -> normal
+	void refresh2_1(Ref* pSender); //mode = true -> advanced, mode = false -> normal
 	void startGame(cocos2d::Ref* pSender, Scene* start_scene, bool online);
     
     // implement the "static create()" method manually

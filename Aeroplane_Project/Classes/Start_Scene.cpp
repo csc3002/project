@@ -53,7 +53,7 @@ bool BeginScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	auto  bg = Sprite::create("Start.png");
-	bg->setPosition(ccp(480,480));
+	bg->setPosition(Vec2(480,480));
 	bg->setScaleX((960 / bg->getContentSize().width));
 	bg->setScaleY((960 / bg->getContentSize().height));
 	this->addChild(bg, 0);
@@ -71,42 +71,42 @@ bool BeginScene::init()
 		"start1.png",
 		"start1.png",
 		CC_CALLBACK_1(BeginScene::refresh2 ,this));
-	option1->setPosition(ccp(480,585));
+	option1->setPosition(Vec2(480,585));
 	option1->setScale(2);
 	this->option1 = option1;
 	auto option2 = MenuItemImage::create(
 		"start2.png",
 		"start2.png",
 		CC_CALLBACK_1(BeginScene::refresh_menu, this));
-	option2->setPosition(ccp(480, 480));
+	option2->setPosition(Vec2(480, 480));
 	option2->setScale(2);
 	this->option2 = option2;
 	auto option3 = MenuItemImage::create(
 		"start3.png",
 		"start3.png",
 		CC_CALLBACK_1(BeginScene::menuCloseCallback, this));
-	option3->setPosition(ccp(480, 375));
+	option3->setPosition(Vec2(480, 375));
 	option3->setScale(2);
 	this->option3 = option3;
 	auto option_back = MenuItemImage::create(
 		"back.png",
 		"back.png",
 		CC_CALLBACK_1(BeginScene::refresh1, this));
-	option_back->setPosition(ccp(150, 100));
+	option_back->setPosition(Vec2(150, 100));
 	option_back->setScale(0);
 	this->option_back = option_back;
 	auto option_online = MenuItemImage::create(
 		"online_button.png",
 		"online_button.png",
 		CC_CALLBACK_1(BeginScene::Problem_show,this));
-	option_online->setPosition(ccp(480, 540));
+	option_online->setPosition(Vec2(480, 540));
 	option_online->setScale(0);
 	this->option_online = option_online;
 	auto option_offline = MenuItemImage::create(
 		"offline_button.png",
 		"offline_button.png",
 		CC_CALLBACK_1(BeginScene::refresh2_1,this));
-	option_offline->setPosition(ccp(480, 420));
+	option_offline->setPosition(Vec2(480, 420));
 	option_offline->setScale(0);
 	this->option_offline = option_offline;
 
@@ -114,7 +114,7 @@ bool BeginScene::init()
 		"advanced_button.png",
 		"advanced_button.png",
 		CC_CALLBACK_1(BeginScene::refresh3, this ,true));
-	option_advanced->setPosition(ccp(480, 540));
+	option_advanced->setPosition(Vec2(480, 540));
 	option_advanced->setScale(0);
 	this->option_advanced = option_advanced;
 
@@ -122,27 +122,27 @@ bool BeginScene::init()
 		"normal_button.png",
 		"normal_button.png",
 		CC_CALLBACK_1(BeginScene::refresh3, this, false));
-	option_normal->setPosition(ccp(480, 420));
+	option_normal->setPosition(Vec2(480, 420));
 	option_normal->setScale(0);
 	this->option_normal = option_normal;
 
 	auto choose_bg = Sprite::create("choose_bg.png");
 	this->addChild(choose_bg, 0);
 	this->choose_bg = choose_bg;
-	this->choose_bg->setPosition(ccp(480, 480));
+	this->choose_bg->setPosition(Vec2(480, 480));
 	this->choose_bg->setScale(0);
 
 	auto problem_bg = Sprite::create("Problem_bg.png");
 	this->addChild(problem_bg, 0);
 	this->problem_bg = problem_bg;
-	this->problem_bg->setPosition(ccp(480, 520));
+	this->problem_bg->setPosition(Vec2(480, 520));
 	this->problem_bg->setScale(0);
 
 	auto exit = MenuItemImage::create(
 		"OK.png",
 		"OK.png",
 		CC_CALLBACK_1(BeginScene::refresh2, this));
-	exit->setPosition(ccp(480, 480));
+	exit->setPosition(Vec2(480, 480));
 	exit->setScale(0);
 	this->exit = exit;
 	
@@ -150,34 +150,34 @@ bool BeginScene::init()
 		"reset.png",
 		"reset.png",
 		CC_CALLBACK_1(BeginScene::reset, this));
-	option_reset->setPosition(ccp(860, 25));
+	option_reset->setPosition(Vec2(860, 25));
 	option_reset->setScale(0);
 	this->option_reset = option_reset;
 
 	this->exit = exit;
 	this->player1 = Label::createWithTTF("", "fonts/Marker Felt.ttf", 36);
-	this->player1->setColor(ccc3(0, 0, 0));
+	this->player1->setColor(Color3B(0, 0, 0));
 	this->addChild(player1, 0);
 	this->player2 = Label::createWithTTF(" ", "fonts/Marker Felt.ttf", 36);
-	this->player2->setColor(ccc3(0, 0, 0));
+	this->player2->setColor(Color3B(0, 0, 0));
 	this->addChild(player2, 0);
 	this->player3 = Label::createWithTTF(" ", "fonts/Marker Felt.ttf", 36);
-	this->player3->setColor(ccc3(0, 0, 0));
+	this->player3->setColor(Color3B(0, 0, 0));
 	this->addChild(player3, 0);
 	this->player4 = Label::createWithTTF(" ", "fonts/Marker Felt.ttf", 36);
-	this->player4->setColor(ccc3(0, 0, 0));
+	this->player4->setColor(Color3B(0, 0, 0));
 	this->addChild(player4, 0);
 
 	this->test = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 36);
-	this->test->setColor(ccc3(0, 0, 0));
-	this->test->setPosition(ccp(70,400));
+	this->test->setColor(Color3B(0, 0, 0));
+	this->test->setPosition(Vec2(70,400));
 	this->test->setScale(0);
 	this->addChild(test, 0);
 
-	this->player1->setPosition(ccp(135, 560));
-	this->player2->setPosition(ccp(365, 560));
-	this->player3->setPosition(ccp(595, 560));
-	this->player4->setPosition(ccp(825, 560));
+	this->player1->setPosition(Vec2(135, 560));
+	this->player2->setPosition(Vec2(365, 560));
+	this->player3->setPosition(Vec2(595, 560));
+	this->player4->setPosition(Vec2(825, 560));
 	this->player1->setScale(0);
 	this->player2->setScale(0);
 	this->player3->setScale(0);
@@ -186,7 +186,7 @@ bool BeginScene::init()
 		"Add_Player.png",
 		"Add_Player.png",
 		CC_CALLBACK_1(BeginScene::addplayer, this , 1));
-	option_player_one->setPosition(ccp(135, 135));
+	option_player_one->setPosition(Vec2(135, 135));
 	option_player_one->setScale(0);
 	this->option_player_one = option_player_one;
 
@@ -195,49 +195,49 @@ bool BeginScene::init()
 		"Add_Computer.png",
 		"Add_Computer.png",
 		CC_CALLBACK_1(BeginScene::addcomputer, this, 1));
-	option_AI_1->setPosition(ccp(135, 80));
+	option_AI_1->setPosition(Vec2(135, 80));
 	option_AI_1->setScale(0);
 	this->option_AI_1 = option_AI_1;
 	auto option_player_two = MenuItemImage::create(
 		"Add_Player.png",
 		"Add_Player.png",
 		CC_CALLBACK_1(BeginScene::addplayer, this, 2));
-	option_player_two->setPosition(ccp(365, 135));
+	option_player_two->setPosition(Vec2(365, 135));
 	option_player_two->setScale(0);
 	this->option_player_two = option_player_two;
 	auto option_AI_2 = MenuItemImage::create(
 		"Add_Computer.png",
 		"Add_Computer.png",
 		CC_CALLBACK_1(BeginScene::addcomputer, this, 2));
-	option_AI_2->setPosition(ccp(365, 80));
+	option_AI_2->setPosition(Vec2(365, 80));
 	option_AI_2->setScale(0);
 	this->option_AI_2 = option_AI_2;
 	auto option_player_three = MenuItemImage::create(
 		"Add_Player.png",
 		"Add_Player.png",
 		CC_CALLBACK_1(BeginScene::addplayer, this, 3));
-	option_player_three->setPosition(ccp(595, 135));
+	option_player_three->setPosition(Vec2(595, 135));
 	option_player_three->setScale(0);
 	this->option_player_three = option_player_three;
 	auto option_AI_3 = MenuItemImage::create(
 		"Add_Computer.png",
 		"Add_Computer.png",
 		CC_CALLBACK_1(BeginScene::addcomputer, this, 3));
-	option_AI_3->setPosition(ccp(595, 80));
+	option_AI_3->setPosition(Vec2(595, 80));
 	option_AI_3->setScale(0);
 	this->option_AI_3 = option_AI_3;
 	auto option_player_four = MenuItemImage::create(
 		"Add_Player.png",
 		"Add_Player.png",
 		CC_CALLBACK_1(BeginScene::addplayer, this, 4));
-	option_player_four->setPosition(ccp(825, 135));
+	option_player_four->setPosition(Vec2(825, 135));
 	option_player_four->setScale(0);
 	this->option_player_four = option_player_four;
 	auto option_AI_4 = MenuItemImage::create(
 		"Add_Computer.png",
 		"Add_Computer.png",
 		CC_CALLBACK_1(BeginScene::addcomputer, this, 4));
-	option_AI_4->setPosition(ccp(825, 80));
+	option_AI_4->setPosition(Vec2(825, 80));
 	option_AI_4->setScale(0);
 	this->option_AI_4 = option_AI_4;
 	auto option_gamestart = MenuItemImage::create(
@@ -246,7 +246,7 @@ bool BeginScene::init()
 		CC_CALLBACK_1(BeginScene::startGame, this, start_scene, false));
 	this->gamestart = option_gamestart;
 	this->gamestart->setScale(0);
-	this->gamestart->setPosition(ccp(480,25));
+	this->gamestart->setPosition(Vec2(480,25));
 
 
 	// cancel button
@@ -254,7 +254,7 @@ bool BeginScene::init()
 		"cancel.png",
 		"cancel.png",
 		CC_CALLBACK_1(BeginScene::delplayer, this, 1));
-	cancel_1->setPosition(ccp(215, 520));
+	cancel_1->setPosition(Vec2(215, 520));
 	cancel_1->setScale(0);
 	this->cancel_1 = cancel_1;
 
@@ -262,7 +262,7 @@ bool BeginScene::init()
 		"cancel.png",
 		"cancel.png",
 		CC_CALLBACK_1(BeginScene::delplayer, this, 2));
-	cancel_2->setPosition(ccp(445, 520));
+	cancel_2->setPosition(Vec2(445, 520));
 	cancel_2->setScale(0);
 	this->cancel_2 = cancel_2;
 
@@ -270,7 +270,7 @@ bool BeginScene::init()
 		"cancel.png",
 		"cancel.png",
 		CC_CALLBACK_1(BeginScene::delplayer, this, 3));
-	cancel_3->setPosition(ccp(675, 520));
+	cancel_3->setPosition(Vec2(675, 520));
 	cancel_3->setScale(0);
 	this->cancel_3 = cancel_3;
 
@@ -278,31 +278,31 @@ bool BeginScene::init()
 		"cancel.png",
 		"cancel.png",
 		CC_CALLBACK_1(BeginScene::delplayer, this, 4));
-	cancel_4->setPosition(ccp(905, 520));
+	cancel_4->setPosition(Vec2(905, 520));
 	cancel_4->setScale(0);
 	this->cancel_4 = cancel_4;
 
 	auto plane1 = Sprite::create();
 	this->plane1 = plane1;
-	this->plane1->setPosition(ccp(135,335));
+	this->plane1->setPosition(Vec2(135,335));
 	this->plane1->setScale(0);
 	this->addChild(plane1, 1);
 
 	auto plane2 = Sprite::create();
 	this->plane2 = plane2;
-	this->plane2->setPosition(ccp(365, 335));
+	this->plane2->setPosition(Vec2(365, 335));
 	this->plane2->setScale(0);
 	this->addChild(plane2, 1);
 
 	auto plane3 = Sprite::create();
 	this->plane3 = plane3;
-	this->plane3->setPosition(ccp(595, 335));
+	this->plane3->setPosition(Vec2(595, 335));
 	this->plane3->setScale(0);
 	this->addChild(plane3, 1);
 
 	auto plane4 = Sprite::create();
 	this->plane4 = plane4;
-	this->plane4->setPosition(ccp(825, 335));
+	this->plane4->setPosition(Vec2(825, 335));
 	this->plane4->setScale(0);
 	this->addChild(plane4, 1);
 	if (closeItem == nullptr ||
@@ -338,16 +338,16 @@ void BeginScene::menuCloseCallback(Ref* pSender)
 
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
-}
 
+
+}
 void BeginScene::reset(Ref* pSender) {
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4;++i) {
 		this->player[i] = 0;
 		this->character[i] = 0;
 	}
 	this->num_player = 0;
 }
-
 void BeginScene::update(float dt)
 {	
 	if (this->num_player >= 2) {
@@ -358,7 +358,6 @@ void BeginScene::update(float dt)
 	}
 	this->player_show();
 }
-
 void BeginScene::player_show() {
 	if (this->player[0] == 1) {
 		this->player1->setString("Player 1");
@@ -448,7 +447,6 @@ void BeginScene::addplayer(Ref* pSender, int index)
 	this->player[index - 1] = 1;
 	
 }
-
 void BeginScene::addcomputer(Ref* pSender, int index)
 {
 	if (this->player[index - 1] == 0) {
@@ -456,18 +454,15 @@ void BeginScene::addcomputer(Ref* pSender, int index)
 	}
 	this->player[index - 1] = -1;
 }
-
 void BeginScene::delplayer(Ref* pSender, int index)
 {
 	this->num_player -= 1;
 	this->player[index - 1] = 0;
 }
-
 void BeginScene::change_char(Ref* pSender, int index, int num)
 {
 	this->character[index - 1] = num;
 }
-
 void BeginScene::refresh1(Ref* pSender)
 {
 	this->option1->setScale(2);
@@ -507,8 +502,8 @@ void BeginScene::refresh1(Ref* pSender)
 	
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-}
 
+}
 void BeginScene::refresh2(Ref* pSender)
 {
 	this->option1->setScale(0);
@@ -525,8 +520,8 @@ void BeginScene::refresh2(Ref* pSender)
 	//this->option_one_player->setScale(0);
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-}
 
+}
 void BeginScene::Problem_show(Ref* pSender) {
 	this->option_back->setScale(0);
 	this->option_offline->setScale(0);
@@ -534,8 +529,7 @@ void BeginScene::Problem_show(Ref* pSender) {
 	this->problem_bg->setScale(2);
 	this->exit->setScale(2);
 }
-
-void BeginScene::refresh2_1(Ref* pSender) // I forget to set the mode select
+void BeginScene::refresh2_1(Ref* pSender ) //I forget to set the mode select
 {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
@@ -551,8 +545,8 @@ void BeginScene::refresh2_1(Ref* pSender) // I forget to set the mode select
 	//this->option_one_player->setScale(0);
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-}
 
+}
 void BeginScene::refresh3(Ref* pSender, bool mode)
 {
 	this->advance_mode = mode;
@@ -560,7 +554,7 @@ void BeginScene::refresh3(Ref* pSender, bool mode)
 	this->option2->setScale(0);
 	this->option3->setScale(0);
 	this->option_back->setScale(1);
-	this->option_back->setPosition(ccp(100,25));
+	this->option_back->setPosition(Vec2(100,25));
 	this->option_reset->setScale(1);
 	this->option_offline->setScale(0);
 	this->option_online->setScale(0);
@@ -588,17 +582,18 @@ void BeginScene::refresh3(Ref* pSender, bool mode)
 	//this->option_one_player->setScale(0);
 	//this->option_two_player->setScale(0);
 	//this->option_three_player->setScale(0);
-}
 
+}
 void BeginScene::refresh_menu(Ref* pSender)
 {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);
-	this->option_back->setPosition(ccp(150, 100));
+	this->option_back->setPosition(Vec2(150, 100));
 	this->option_back->setScale(1.5);
-}
 
+
+}
 void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
 {
 	auto scene = HelloWorld::create();
@@ -609,6 +604,7 @@ void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
 		scene->players[i] = this->player[i];
 	}
 	scene->setPlane();
-	auto tran = TransitionFade::create(0.2, scene);
+	auto tran = TransitionFade::create(0.5, scene);
 	Director::getInstance()->replaceScene(tran);
+
 }
