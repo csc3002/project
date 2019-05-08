@@ -48,6 +48,7 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->roll_num = 0;
         sprite->round = 0;
         sprite->can_touch = true;
+        sprite->updated_num = 0;
         sprite->playerArray[0] = player0;
         sprite->playerArray[1] = player1;
         sprite->playerArray[2] = player2;
@@ -71,6 +72,7 @@ int Dice::getrandom() {
     // there first number is not random, so the function is called twice
     int roll_num = randomInteger(1, 6);
     roll_num = randomInteger(1, 6);
+    /*roll_num = 6;*/ // only for test, let the roll point be a fixed number
     if (roll_num == 1) {
         this->setTexture("dice1.png");
     }
@@ -182,15 +184,22 @@ void Dice::setTouchableFalse(EventCustom* event) {
 
 // callback function to set the status array of corresponding color
 void Dice::setStatusArray(EventCustom* event) {
+    ++updated_num;
     int* array = (int*)event->getUserData();
     statusArray[*(array + 1)] = *array;
+    cocos2d::log("%d %d %d %d %d", statusArray[0], statusArray[1], statusArray[2], statusArray[3], updated_num);
 
-    // if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
-    if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
-        can_touch = true;
-    }
-    else {
-        can_touch = false;
+    if (updated_num == 4) {
+
+        // if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
+        if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
+            can_touch = true;
+        }
+        statusArray[0] = 0;
+        statusArray[1] = 0;
+        statusArray[2] = 0;
+        statusArray[3] = 0;
+        updated_num = 0;
     }
 }
 

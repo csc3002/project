@@ -29,6 +29,7 @@ Win_Judge* Win_Judge::create() {
     Win_Judge* sprite = new Win_Judge();
     if (sprite->init()) {
         sprite->autorelease();
+        sprite->updated_num = 0;
     }
     else {
         delete sprite;
@@ -40,11 +41,19 @@ Win_Judge* Win_Judge::create() {
 
 // callback function to set the status array of corresponding color and check if the player wins
 void Win_Judge::setFinishStatusArray(EventCustom* event) {
+    ++updated_num;
     int* array = (int*)event->getUserData();
     finishStatusArray[*(array + 1)] = *array;
-    cocos2d::log("%d %d %d %d", finishStatusArray[0], finishStatusArray[1], finishStatusArray[2], finishStatusArray[3]);
-    if (finishStatusArray[0] && finishStatusArray[1] && finishStatusArray[2] && finishStatusArray[3]) {
-        endGame(*(array + 2));
+
+    if (updated_num == 4) {
+        if (finishStatusArray[0] && finishStatusArray[1] && finishStatusArray[2] && finishStatusArray[3]) {
+            endGame(*(array + 2));
+        }
+        finishStatusArray[0] = 0;
+        finishStatusArray[1] = 0;
+        finishStatusArray[2] = 0;
+        finishStatusArray[3] = 0;
+        updated_num = 0;
     }
 }
 

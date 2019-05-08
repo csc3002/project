@@ -427,7 +427,7 @@ void Planes::resetCard(EventCustom* event) {
     can_touch = false;
 }
 
-// decrease the duration of a buff/debuff
+// decrease the duration of a card effect
 void Planes::round_decrease(EventCustom* event) {
     if (status != "finished") {
         if (round_left != 0) {

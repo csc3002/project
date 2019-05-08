@@ -15,9 +15,10 @@ USING_NS_CC;
 class Dice: public cocos2d::Sprite{
 public:
     int roll_num;
-    bool can_touch;
     int round;
+    bool can_touch;
 	Sprite* sign;
+    int updated_num;
     int statusArray[4];
     int playerArray[4];
     CHESS chessboard[16];
