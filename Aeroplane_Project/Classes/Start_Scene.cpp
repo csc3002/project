@@ -341,7 +341,7 @@ void BeginScene::menuCloseCallback(Ref* pSender)
 }
 
 void BeginScene::reset(Ref* pSender) {
-	for (int i = 0; i < 4;i++) {
+	for (int i = 0; i < 4; ++i) {
 		this->player[i] = 0;
 		this->character[i] = 0;
 	}
@@ -605,7 +605,7 @@ void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
 	scene->online = online;
 	scene->is_advance_mode = this->advance_mode;
 	scene->update(0.1);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; ++i) {
 		scene->players[i] = this->player[i];
 	}
 	scene->setPlane();
