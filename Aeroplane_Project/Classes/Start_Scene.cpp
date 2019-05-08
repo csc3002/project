@@ -25,17 +25,14 @@
 #include "Start_Scene.h"
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
-
 USING_NS_CC;
 
-Scene* BeginScene::createScene()
-{
+Scene* BeginScene::createScene() {
     return BeginScene::create();
 }
 
 // Print useful error message instead of segfaulting when files are not there.
-static void problemLoading(const char* filename)
-{
+static void problemLoading(const char* filename) {
     printf("Error while loading: %s\n", filename);
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
@@ -49,14 +46,14 @@ bool BeginScene::init()
     {
         return false;
     }
-	this->num_player = 0;
+    this->num_player = 0;
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto  bg = Sprite::create("Start.png");
-	bg->setPosition(Vec2(480,480));
-	bg->setScaleX((960 / bg->getContentSize().width));
-	bg->setScaleY((960 / bg->getContentSize().height));
-	this->addChild(bg, 0);
+    auto bg = Sprite::create("Start.png");
+    bg->setPosition(Vec2(480, 480));
+    bg->setScaleX((960 / bg->getContentSize().width));
+    bg->setScaleY((960 / bg->getContentSize().height));
+    this->addChild(bg, 0);
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
     //    you may modify it.
@@ -70,8 +67,8 @@ bool BeginScene::init()
 	auto option1 = MenuItemImage::create(
 		"start1.png",
 		"start1.png",
-		CC_CALLBACK_1(BeginScene::refresh2 ,this));
-	option1->setPosition(Vec2(480,585));
+		CC_CALLBACK_1(BeginScene::refresh2, this));
+	option1->setPosition(Vec2(480, 585));
 	option1->setScale(2);
 	this->option1 = option1;
 	auto option2 = MenuItemImage::create(
@@ -98,14 +95,14 @@ bool BeginScene::init()
 	auto option_online = MenuItemImage::create(
 		"online_button.png",
 		"online_button.png",
-		CC_CALLBACK_1(BeginScene::Problem_show,this));
+		CC_CALLBACK_1(BeginScene::Problem_show, this));
 	option_online->setPosition(Vec2(480, 540));
 	option_online->setScale(0);
 	this->option_online = option_online;
 	auto option_offline = MenuItemImage::create(
 		"offline_button.png",
 		"offline_button.png",
-		CC_CALLBACK_1(BeginScene::refresh2_1,this));
+		CC_CALLBACK_1(BeginScene::refresh2_1, this));
 	option_offline->setPosition(Vec2(480, 420));
 	option_offline->setScale(0);
 	this->option_offline = option_offline;
@@ -113,7 +110,7 @@ bool BeginScene::init()
 	auto option_advanced = MenuItemImage::create(
 		"advanced_button.png",
 		"advanced_button.png",
-		CC_CALLBACK_1(BeginScene::refresh3, this ,true));
+		CC_CALLBACK_1(BeginScene::refresh3, this , true));
 	option_advanced->setPosition(Vec2(480, 540));
 	option_advanced->setScale(0);
 	this->option_advanced = option_advanced;
@@ -170,7 +167,7 @@ bool BeginScene::init()
 
 	this->test = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 36);
 	this->test->setColor(Color3B(0, 0, 0));
-	this->test->setPosition(Vec2(70,400));
+	this->test->setPosition(Vec2(70, 400));
 	this->test->setScale(0);
 	this->addChild(test, 0);
 
@@ -246,7 +243,7 @@ bool BeginScene::init()
 		CC_CALLBACK_1(BeginScene::startGame, this, start_scene, false));
 	this->gamestart = option_gamestart;
 	this->gamestart->setScale(0);
-	this->gamestart->setPosition(Vec2(480,25));
+	this->gamestart->setPosition(Vec2(480, 25));
 
 
 	// cancel button
@@ -284,7 +281,7 @@ bool BeginScene::init()
 
 	auto plane1 = Sprite::create();
 	this->plane1 = plane1;
-	this->plane1->setPosition(Vec2(135,335));
+	this->plane1->setPosition(Vec2(135, 335));
 	this->plane1->setScale(0);
 	this->addChild(plane1, 1);
 
@@ -305,7 +302,7 @@ bool BeginScene::init()
 	this->plane4->setPosition(Vec2(825, 335));
 	this->plane4->setScale(0);
 	this->addChild(plane4, 1);
-	if (closeItem == nullptr ||
+    if (closeItem == nullptr ||
         closeItem->getContentSize().width <= 0 ||
         closeItem->getContentSize().height <= 0)
     {
@@ -315,22 +312,20 @@ bool BeginScene::init()
     {
         float x = origin.x + visibleSize.width - closeItem->getContentSize().width/2;
         float y = origin.y + closeItem->getContentSize().height/2;
-        closeItem->setPosition(Vec2(x,y));
+        closeItem->setPosition(Vec2(x, y));
     }
 
     // create menu, it's an autorelease object
-	auto menu = Menu::create(option1, option2, option3, option_back, option_online, option_offline, option_advanced, option_normal, closeItem, option_player_one, option_AI_1, option_player_two, option_AI_2
-		, option_player_three, option_AI_3, option_player_four, option_AI_4, option_gamestart, exit, option_reset, cancel_1, cancel_2, cancel_3, cancel_4,
-		NULL);
+    auto menu = Menu::create(option1, option2, option3, option_back, option_online, option_offline, option_advanced, option_normal, closeItem, option_player_one, option_AI_1, option_player_two, option_AI_2,
+        option_player_three, option_AI_3, option_player_four, option_AI_4, option_gamestart, exit, option_reset, cancel_1, cancel_2, cancel_3, cancel_4,
+        NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
-	this->schedule(schedule_selector(BeginScene::update));
+    this->schedule(schedule_selector(BeginScene::update));
     return true;
 }
 
-
-void BeginScene::menuCloseCallback(Ref* pSender)
-{
+void BeginScene::menuCloseCallback(Ref* pSender) {
     //Close the cocos2d-x game scene and quit the application
     Director::getInstance()->end();
 
@@ -338,9 +333,8 @@ void BeginScene::menuCloseCallback(Ref* pSender)
 
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }
+
 void BeginScene::reset(Ref* pSender) {
 	for (int i = 0; i < 4;++i) {
 		this->player[i] = 0;
@@ -348,8 +342,8 @@ void BeginScene::reset(Ref* pSender) {
 	}
 	this->num_player = 0;
 }
-void BeginScene::update(float dt)
-{	
+
+void BeginScene::update(float dt) {	
 	if (this->num_player >= 2) {
 		this->gamestart->setScale(1.5);
 	}
@@ -358,6 +352,7 @@ void BeginScene::update(float dt)
 	}
 	this->player_show();
 }
+
 void BeginScene::player_show() {
 	if (this->player[0] == 1) {
 		this->player1->setString("Player 1");
@@ -439,32 +434,30 @@ void BeginScene::player_show() {
 	}
 }
 
-void BeginScene::addplayer(Ref* pSender, int index)
-{
+void BeginScene::addplayer(Ref* pSender, int index) {
 	if (this->player[index - 1] == 0) {
 		this->num_player += 1;
 	}	
 	this->player[index - 1] = 1;
-	
 }
-void BeginScene::addcomputer(Ref* pSender, int index)
-{
+
+void BeginScene::addcomputer(Ref* pSender, int index) {
 	if (this->player[index - 1] == 0) {
 		this->num_player += 1;
 	}
 	this->player[index - 1] = -1;
 }
-void BeginScene::delplayer(Ref* pSender, int index)
-{
+
+void BeginScene::delplayer(Ref* pSender, int index) {
 	this->num_player -= 1;
 	this->player[index - 1] = 0;
 }
-void BeginScene::change_char(Ref* pSender, int index, int num)
-{
+
+void BeginScene::change_char(Ref* pSender, int index, int num) {
 	this->character[index - 1] = num;
 }
-void BeginScene::refresh1(Ref* pSender)
-{
+
+void BeginScene::refresh1(Ref* pSender) {
 	this->option1->setScale(2);
 	this->option2->setScale(2);
 	this->option3->setScale(2);
@@ -497,15 +490,9 @@ void BeginScene::refresh1(Ref* pSender)
 	this->option_reset->setScale(0);
 	this->reset(this);
 	this->advance_mode = false;
-	//this->option_two_AI->setScale(0);
-	//this->option_three_AI->setScale(0);
-	
-	//this->option_two_player->setScale(0);
-	//this->option_three_player->setScale(0);
-
 }
-void BeginScene::refresh2(Ref* pSender)
-{
+
+void BeginScene::refresh2(Ref* pSender) {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);
@@ -514,14 +501,8 @@ void BeginScene::refresh2(Ref* pSender)
 	this->option_online->setScale(2);
 	this->problem_bg->setScale(0);
 	this->exit->setScale(0);
-	//this->option_one_AI->setScale(0);
-	//this->option_two_AI->setScale(0);
-	//this->option_three_AI->setScale(0);
-	//this->option_one_player->setScale(0);
-	//this->option_two_player->setScale(0);
-	//this->option_three_player->setScale(0);
-
 }
+
 void BeginScene::Problem_show(Ref* pSender) {
 	this->option_back->setScale(0);
 	this->option_offline->setScale(0);
@@ -529,8 +510,8 @@ void BeginScene::Problem_show(Ref* pSender) {
 	this->problem_bg->setScale(2);
 	this->exit->setScale(2);
 }
-void BeginScene::refresh2_1(Ref* pSender ) //I forget to set the mode select
-{
+
+void BeginScene::refresh2_1(Ref* pSender ) {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);
@@ -539,22 +520,15 @@ void BeginScene::refresh2_1(Ref* pSender ) //I forget to set the mode select
 	this->option_online->setScale(0);
 	this->option_advanced->setScale(2);
 	this->option_normal->setScale(2);
-	//this->option_one_AI->setScale(0);
-	//this->option_two_AI->setScale(0);
-	//this->option_three_AI->setScale(0);
-	//this->option_one_player->setScale(0);
-	//this->option_two_player->setScale(0);
-	//this->option_three_player->setScale(0);
-
 }
-void BeginScene::refresh3(Ref* pSender, bool mode)
-{
+
+void BeginScene::refresh3(Ref* pSender, bool mode) {
 	this->advance_mode = mode;
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);
 	this->option_back->setScale(1);
-	this->option_back->setPosition(Vec2(100,25));
+	this->option_back->setPosition(Vec2(100, 25));
 	this->option_reset->setScale(1);
 	this->option_offline->setScale(0);
 	this->option_online->setScale(0);
@@ -573,29 +547,17 @@ void BeginScene::refresh3(Ref* pSender, bool mode)
 	this->option_AI_3->setScale(1.5);
 	this->option_player_four->setScale(1.5);
 	this->option_AI_4->setScale(1.5);
-	
-	
-	//this->test->setScale(1);
-	//this->option_one_AI->setScale(0);
-	//this->option_two_AI->setScale(0);
-	//this->option_three_AI->setScale(0);
-	//this->option_one_player->setScale(0);
-	//this->option_two_player->setScale(0);
-	//this->option_three_player->setScale(0);
-
 }
-void BeginScene::refresh_menu(Ref* pSender)
-{
+
+void BeginScene::refresh_menu(Ref* pSender) {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);
 	this->option_back->setPosition(Vec2(150, 100));
 	this->option_back->setScale(1.5);
-
-
 }
-void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
-{
+
+void BeginScene::startGame(Ref* pSender, Scene* start_scene, bool online) {
 	auto scene = HelloWorld::create();
 	scene->online = online;
 	scene->is_advance_mode = this->advance_mode;
@@ -606,5 +568,4 @@ void BeginScene::startGame(Ref* pSender,Scene* start_scene, bool online)
 	scene->setPlane();
 	auto tran = TransitionFade::create(0.5, scene);
 	Director::getInstance()->replaceScene(tran);
-
 }
