@@ -17,30 +17,30 @@ public:
     int roll_num;
     int round;
     bool can_touch;
-	Sprite* sign;
+    Sprite* sign;
     int updated_num;
     int statusArray[4];
     int playerArray[4];
     CHESS chessboard[16];
-    
+
     virtual bool init();
-    
+
     static Dice* create(int player0, int player1, int player2, int player3);
-    
+
     int getrandom();
-    
+
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
-    
+
     virtual void setTouchable(EventCustom* event);
 
     virtual void setTouchableFalse(EventCustom* event);
-    
+
     virtual void setStatusArray(EventCustom* event);
-    
+
     virtual void skipTurn(EventCustom* event);
 
-	virtual void AICall();
-    
+    virtual void AICall();
+
     virtual void AIPass(EventCustom* event);
 
 private:
