@@ -105,6 +105,7 @@ bool EndScene::init()
         float x = visibleSize.width / 2;
         float y = visibleSize.height / 4;
         exitItem->setPosition(Vec2(x, y));
+        exitItem->setScale(2);
     }
 
     // create exit menu, it's an autorelease object
