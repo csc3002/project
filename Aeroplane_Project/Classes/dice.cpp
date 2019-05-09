@@ -7,7 +7,6 @@
 
 #include "dice.h"
 #include "random.h"
-
 USING_NS_CC;
 
 // initiate the dice
@@ -24,17 +23,20 @@ bool Dice::init() {
 
     // set custom event listeners
     auto planeEndListener = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::setTouchable, this));
-	auto planeEndListener2 = EventListenerCustom::create("plane_end", CC_CALLBACK_1(Dice::AICall, this));
+    auto planeEndListener2 = EventListenerCustom::create("plane_end", CC_CALLBACK_0(Dice::AICall, this));
     auto planeStatusListener = EventListenerCustom::create("plane_status", CC_CALLBACK_1(Dice::setStatusArray, this));
     auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Dice::setTouchableFalse, this));
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Dice::skipTurn, this));
+    auto chessboardListener = EventListenerCustom::create("event_chess_pass", CC_CALLBACK_1(Dice::AIPass, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeStatusListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(chessboardListener, this);
     return true;
 }
 
@@ -45,14 +47,15 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->roll_num = 0;
         sprite->round = 0;
         sprite->can_touch = true;
+        sprite->updated_num = 0;
         sprite->playerArray[0] = player0;
         sprite->playerArray[1] = player1;
         sprite->playerArray[2] = player2;
         sprite->playerArray[3] = player3;
-		sprite->sign = Sprite::create();
-		sprite->sign->setPosition(Vec2(44, -50));
-		sprite->sign->setScale(0.1);
-		sprite->addChild(sprite->sign);
+        sprite->sign = Sprite::create();
+        sprite->sign->setPosition(Vec2(44, -50));
+        sprite->sign->setScale(0.1);
+        sprite->addChild(sprite->sign);
     }
     else {
         delete sprite;
@@ -68,6 +71,7 @@ int Dice::getrandom() {
     // there first number is not random, so the function is called twice
     int roll_num = randomInteger(1, 6);
     roll_num = randomInteger(1, 6);
+    /*roll_num = 6;*/ // only for test, let the roll point be a fixed number
     if (roll_num == 1) {
         this->setTexture("dice1.png");
     }
@@ -92,7 +96,7 @@ int Dice::getrandom() {
 bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
     Vec2 ptClick = touch->getLocation();
     if (this->getBoundingBox().containsPoint(ptClick) && can_touch) {
-
+        log("%d", round);
         // skip if the player is nobody
         while (!playerArray[round]) {
             round = (round + 1) % 4;
@@ -103,24 +107,24 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 
         // pass touchable to corresponding planes
         EventCustom eventClick = EventCustom("roll_click_blue");
-		switch (round) {
-		case 0: // case blue
-			eventClick = EventCustom("roll_click_blue");
-			sign->setTexture("plane_blue.png");
-			break;
-		case 1: // case green
-			eventClick = EventCustom("roll_click_green");
-			sign->setTexture("plane_green.png");
-			break;
-		case 2: // case red
-			eventClick = EventCustom("roll_click_red");
-			sign->setTexture("plane_red.png");
-			break;
-		case 3: // case yellow
-			eventClick = EventCustom("roll_click_yellow");
-			sign->setTexture("plane_yellow.png");
-			break;
-		}
+        switch (round) {
+        case 0: // case blue
+            eventClick = EventCustom("roll_click_blue");
+            sign->setTexture("plane_blue.png");
+            break;
+        case 1: // case green
+            eventClick = EventCustom("roll_click_green");
+            sign->setTexture("plane_green.png");
+            break;
+        case 2: // case red
+            eventClick = EventCustom("roll_click_red");
+            sign->setTexture("plane_red.png");
+            break;
+        case 3: // case yellow
+            eventClick = EventCustom("roll_click_yellow");
+            sign->setTexture("plane_yellow.png");
+            break;
+        }
         eventClick.setUserData((void*)true);
         _eventDispatcher->dispatchEvent(&eventClick);
 
@@ -135,7 +139,7 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
         EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
         eventRoundG.setUserData((void*)&round);
         _eventDispatcher->dispatchEvent(&eventRoundG);
-
+        log("%d", round);
         // if roll_num is not 6, the next player rolls the dice
         if (roll_num != 6) {
             round = (round + 1) % 4;
@@ -155,6 +159,7 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
             // tell the planes if the round changes
             EventCustom eventRoundChange = EventCustom("round_change");
             _eventDispatcher->dispatchEvent(&eventRoundChange);
+            log("%d", round);
         }
         return true;
     }
@@ -178,15 +183,21 @@ void Dice::setTouchableFalse(EventCustom* event) {
 
 // callback function to set the status array of corresponding color
 void Dice::setStatusArray(EventCustom* event) {
+    ++updated_num;
     int* array = (int*)event->getUserData();
     statusArray[*(array + 1)] = *array;
 
-    // if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
-    if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
-        can_touch = true;
-    }
-    else {
-        can_touch = false;
+    if (updated_num == 4) {
+
+        // if all the planes of corresponding color are untouchable, skip the color and reset the touchablity of dice
+        if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
+            can_touch = true;
+        }
+        statusArray[0] = 0;
+        statusArray[1] = 0;
+        statusArray[2] = 0;
+        statusArray[3] = 0;
+        updated_num = 0;
     }
 }
 
@@ -212,10 +223,59 @@ void Dice::skipTurn(EventCustom* event) {
     _eventDispatcher->dispatchEvent(&eventRoundChange);
 }
 
-void Dice::AICall(EventCustom* event) {
-	if (playerArray[round] == -1) {
-		EventCustom eventGetChess = EventCustom("event_get_chess");
-		eventGetChess.setUserData((void*)true);
-		_eventDispatcher->dispatchEvent(&eventGetChess);
-	}
+void Dice::AICall() {
+    if (playerArray[round] == -1) {
+        can_touch = false;
+        EventCustom eventGetChess = EventCustom("event_get_chess");
+        eventGetChess.setUserData((void*)true);
+        _eventDispatcher->dispatchEvent(&eventGetChess);
+    }
+}
+
+void Dice::AIPass(EventCustom* event) {
+    auto chess = *(CHESS*)event->getUserData();
+    chessboard[chess.chessID] = chess;
+    ++chessboardStatus;
+    if (chessboardStatus == 16) {
+        chessboardStatus = 0;
+        int roundP = round;
+        
+        while (!playerArray[round]) {
+            round = (round + 1) % 4;
+        }
+        roll_num = getrandom();
+        
+        EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
+        eventRoundG.setUserData((void*)&round);
+        _eventDispatcher->dispatchEvent(&eventRoundG);
+        
+        // if roll_num is not 6, the next player rolls the dice
+        if (roll_num != 6) {
+            round = (round + 1) % 4;
+            
+            // skip if the player is nobody
+            while (!playerArray[round]) {
+                round = (round + 1) % 4;
+            }
+            
+            // pass round to the card slots
+            if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
+                EventCustom eventRoundS = EventCustom("event_round_to_slots");
+                eventRoundS.setUserData((void*)&round);
+                _eventDispatcher->dispatchEvent(&eventRoundS);
+            }
+            
+            // tell the planes if the round changes
+            EventCustom eventRoundChange = EventCustom("round_change");
+            _eventDispatcher->dispatchEvent(&eventRoundChange);
+        }
+        
+        EventCustom eventReceiveChessboard = EventCustom("event_receive_chessboard");
+        eventReceiveChessboard.setUserData((void*)chessboard);
+        _eventDispatcher->dispatchEvent(&eventReceiveChessboard);
+        int passArray[2] = {roll_num, roundP};
+        EventCustom eventReceivePoint = EventCustom("event_receive_point");
+        eventReceivePoint.setUserData((void*)passArray);
+        _eventDispatcher->dispatchEvent(&eventReceivePoint);
+    }
 }

@@ -38,9 +38,9 @@ public:
 	int players[4];
 	cocos2d::Label* Ad_Mode;
 	cocos2d::Label* Online_Mode;
-	void HelloWorld::update(float dt);
+	void update(float dt);
     virtual bool init();
-	void HelloWorld::setPlane();
+	void setPlane();
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
     virtual void onTouchMoved(cocos2d::Touch*, cocos2d::Event*);

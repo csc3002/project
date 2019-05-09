@@ -45,7 +45,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
     auto winCheckListener = EventListenerCustom::create("win_check", CC_CALLBACK_1(Planes::submit_win, this));
-	auto getChessListener = EventListenerCustom::create("eventGetChess", CC_CALLBACK_0(Planes::get_chess, this));
+    auto getChessListener = EventListenerCustom::create("eventGetChess", CC_CALLBACK_0(Planes::get_chess, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -58,6 +58,7 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundChangeListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(machinegunAttackListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(winCheckListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(getChessListener, this);
     return true;
 }
 
@@ -426,7 +427,7 @@ void Planes::resetCard(EventCustom* event) {
     can_touch = false;
 }
 
-// decrease the duration of a buff/debuff
+// decrease the duration of a card effect
 void Planes::round_decrease(EventCustom* event) {
     if (status != "finished") {
         if (round_left != 0) {
@@ -507,28 +508,28 @@ void Planes::submit_win(EventCustom* event) {
 }
 
 void Planes::get_chess() {
-	CHESS chess;
-	chess.color = (this->color + 2) % 4;
-	chess.chessID = (chess.color * 4 + this->id + 1);
-	chess.buff_state = this->buff;
-	chess.round_left = this->round_left;
-	if (status == "ground") {
-		chess.currentCoor.region = APRON;
-		chess.currentCoor.code = OUTSIDE;
-	} else if (status == "taking off") {
-		chess.currentCoor.region = OFF;
-		chess.currentCoor.code = OUTSIDE;
-	} else if (status == "outer") {
-		chess.currentCoor.region = OUTERLOOP;
-		chess.currentCoor.code = (position + 42) % 52;
-	} else if (status == "inner") {
-		chess.currentCoor.region = TRACK;
-		chess.currentCoor.code = position + 1;
-	} else if (status == "finished") {
-		chess.currentCoor.region = WIN;
-		chess.currentCoor.code = OUTSIDE;
-	}
-	EventCustom eventChessPass = EventCustom("event_chess_pass");
-	eventChessPass.setUserData((void*)&chess);
-	_eventDispatcher->dispatchEvent(&eventChessPass);
+    CHESS chess;
+    chess.color = (this->color + 2) % 4;
+    chess.chessID = (chess.color * 4 + this->id + 1);
+    chess.buff_state = this->buff;
+    chess.round_left = this->round_left;
+    if (status == "ground") {
+        chess.currentCoor.region = APRON;
+        chess.currentCoor.code = OUTSIDE;
+    } else if (status == "taking off") {
+        chess.currentCoor.region = OFF;
+        chess.currentCoor.code = OUTSIDE;
+    } else if (status == "outer") {
+        chess.currentCoor.region = OUTERLOOP;
+        chess.currentCoor.code = (position + 42) % 52;
+    } else if (status == "inner") {
+        chess.currentCoor.region = TRACK;
+        chess.currentCoor.code = position + 1;
+    } else if (status == "finished") {
+        chess.currentCoor.region = WIN;
+        chess.currentCoor.code = OUTSIDE;
+    }
+    EventCustom eventChessPass = EventCustom("event_chess_pass");
+    eventChessPass.setUserData((void*)&chess);
+    _eventDispatcher->dispatchEvent(&eventChessPass);
 }

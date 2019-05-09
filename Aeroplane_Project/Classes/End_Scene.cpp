@@ -22,19 +22,24 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ //
+ //  End_Scene.cpp
+ //  Aeroplane_Project
+ //
+ //  Created by Re-Entry on 2019/5/5.
+ //
+
 #include "End_Scene.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
-Scene* EndScene::createScene()
-{
+Scene* EndScene::createScene() {
     return EndScene::create();
 }
 
 // Print useful error message instead of segfaulting when files are not there.
-static void problemLoading(const char* filename)
-{
+static void problemLoading(const char* filename) {
     printf("Error while loading: %s\n", filename);
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
@@ -105,6 +110,7 @@ bool EndScene::init()
         float x = visibleSize.width / 2;
         float y = visibleSize.height / 4;
         exitItem->setPosition(Vec2(x, y));
+        exitItem->setScale(2);
     }
 
     // create exit menu, it's an autorelease object

@@ -13,6 +13,7 @@ USING_NS_CC;
 
 class Win_Judge: public cocos2d::Sprite {
 public:
+    int updated_num;                                       // whether finishStatusArray should be reset
     int finishStatusArray[4];                              // whether the plane has finished, 0 = not finished, 1 = finished
 
     virtual bool init();

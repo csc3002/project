@@ -76,7 +76,17 @@
 #define IsBlockBlue(x) (x % 4 == 2)  //judge whether the block is blue
 #define IsBlockGreen(x) (x % 4 == 3)  //judge whether the block is green
 
-/* TODO: define some buff states */
+// Define some buff states
+#define DEFENSED "defense"
+#define INTERFERED "interfered"
+
+// Define card
+#define NOCARD -1
+#define DRAW 0
+#define ATTACK 1
+#define DEFENSE 2
+#define INTERFERE 3
+#define ELIMINATE 4
 
 // Define the structure representing the coordinate
 
@@ -90,6 +100,7 @@ typedef struct _coordinate {
 typedef struct _chessmove {
     int chessID;         // the ID of chess being moved
     int rollPoint;       // roll point
+    int aboutCard;
 } CHESSMOVE;
 
 // Define the structure representing a chess
@@ -98,8 +109,8 @@ typedef struct _chess {
     int chessID;                // the ID of the chess
     int color;               // the color of the chess
     COORDINATE currentCoor;     // the current coordinate of the chess
-    std::string buff_state;
-    int round_left;
+    std::string buff_state = "";
+    int round_left = 0;
 
 } CHESS;
 

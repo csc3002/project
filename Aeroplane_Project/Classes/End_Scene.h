@@ -22,6 +22,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ //
+ //  End_Scene.h
+ //  Aeroplane_Project
+ //
+ //  Created by Re-Entry on 2019/5/5.
+ //
+
 #ifndef __END_SCENE_H__
 #define __END_SCENE_H__
 
@@ -33,7 +40,7 @@ public:
 
     virtual bool init();
 
-    int winner_color;
+    int winner_color;                                      // who wins
 
     virtual void addLabel();
 

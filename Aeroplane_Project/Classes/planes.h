@@ -65,7 +65,7 @@ public:
 
     virtual void submit_win(EventCustom* event);
 
-	virtual void get_chess();
+    virtual void get_chess();
 };
 
 #endif // planes_h

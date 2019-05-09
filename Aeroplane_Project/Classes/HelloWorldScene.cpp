@@ -79,17 +79,14 @@ bool HelloWorld::init() {
     // this->is_advance_mode = true;
 
     // initiate players and planes
-
     // players: 1 = human, -1 = ai, 0 = nobody
-	// init : Four Human Players
-	
 
 	auto label = Label::createWithTTF("Mode: Normal", "fonts/Marker Felt.ttf", 36);
-	label->setColor(ccc3(0, 0, 0));
+	label->setColor(Color3B(0, 0, 0));
 	label->setPosition(Vec2(320, 900));
 	this->addChild(label, 1);
 	auto label2 = Label::createWithTTF("Mode: Offline", "fonts/Marker Felt.ttf", 36);
-	label2->setColor(ccc3(0, 0, 0));
+	label2->setColor(Color3B(0, 0, 0));
 	label2->setPosition(Vec2(640, 900));
 	this->addChild(label2, 1);
 	this->Ad_Mode = label;
