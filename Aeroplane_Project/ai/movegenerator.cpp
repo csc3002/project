@@ -55,7 +55,7 @@ int moveGenerator::roll()
 
 
 /*
- * Implementation note: createmy_chessMove
+ * Implementation note: createPossibleMove
  * ----------------------------------------
  * Notice that this function will NOT change the current chessboard.
  * Also this method does not check how many times does the dice roll.
@@ -124,6 +124,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         }
     }
 
+    // advance mode move generating here
     if (advanceMode){
         // generate draw card if possible
         if(rollPoint == 1 || rollPoint == 6) {

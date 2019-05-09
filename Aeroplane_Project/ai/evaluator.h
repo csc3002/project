@@ -1,7 +1,7 @@
 /*
  * File: evaluator.h
  * -----------------
- * This is the head file of simple evaluator.The main method evaluate() just
+ * This is the head file of evaluator.The main method evaluate() just
  * evaluate the value of a move.
  */
 

@@ -53,8 +53,9 @@ public:
  * Usage: int moveCount = createPossibleMove(chessboard[16], rollPoint[3], side)
  * ------------------------------------------------------------------------------------
  * This function can generate all possible moves of a player and return the number of moves.
- * It has 3 parameters. chessboard[] is an array which contains the current chessboard.
- * rollPoint is the roll point of current player. side is the color of the player.
+ * It has 4 parameters. chessboard[] is an array which contains the current chessboard.
+ * rollPoint is the roll point of current player. side is the color of the player. hadCard
+ * is the information about the card this player currently hold.
  * The method will write all possible moves into moveList.
  */
 
