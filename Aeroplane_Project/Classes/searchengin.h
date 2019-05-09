@@ -60,8 +60,6 @@ public:
 
 //  This variable preserves the roll point
     int rollPoint;
-// Testing variable:jinx count
-    int jinxCount = 0;
 // The card this player have
     int myCard = NOCARD;
 

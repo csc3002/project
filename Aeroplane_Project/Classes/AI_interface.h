@@ -9,7 +9,8 @@ USING_NS_CC;
 
 class AI_player: public searchEngine, public Node{
 public:
-    void create();
+    bool init();
+    static AI_player* create();
     CHESS chessboard[16];
     int roll_num;
     int round;

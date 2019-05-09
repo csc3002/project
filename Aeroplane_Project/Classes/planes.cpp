@@ -45,7 +45,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
     auto winCheckListener = EventListenerCustom::create("win_check", CC_CALLBACK_1(Planes::submit_win, this));
-    auto getChessListener = EventListenerCustom::create("eventGetChess", CC_CALLBACK_0(Planes::get_chess, this));
+    auto getChessListener = EventListenerCustom::create("event_get_chess", CC_CALLBACK_0(Planes::get_chess, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -390,7 +390,7 @@ void Planes::submit_status(EventCustom* event) {
     if (color == *(int*)event->getUserData()) {
         EventCustom eventPlaneStatus = EventCustom("plane_status");
         int statusArray[2] = {1, id};
-        if ((roll != 6 && status == "ground") || status == "finished" || buff == "stopaction") {
+        if ((roll != 6 && status == "ground") || status == "finished") {
             statusArray[0] = 0;
         }
         eventPlaneStatus.setUserData((int*)statusArray);
@@ -529,7 +529,9 @@ void Planes::get_chess() {
         chess.currentCoor.region = WIN;
         chess.currentCoor.code = OUTSIDE;
     }
+    log("chess PASS %d", chess.chessID);
     EventCustom eventChessPass = EventCustom("event_chess_pass");
     eventChessPass.setUserData((void*)&chess);
     _eventDispatcher->dispatchEvent(&eventChessPass);
+
 }

@@ -18,8 +18,7 @@ searchEngine::searchEngine()
 
 // destructor should remove the move generator and evaluator
 searchEngine::~searchEngine(){
-    delete pMG;
-    delete pEval;
+
 }
 
 /*
@@ -42,10 +41,10 @@ void searchEngine::play(CHESS chessboard[], int side){
     int rollCount = 0;      // count the times of rolling
     int count = 0;          // count the current number of moves
     while(rollCount < 3){   // dice can only be rolled 3 times
-        rollPoint = pMG->roll();
+        this->rollPoint = pMG->roll();
         rollCount ++;
         std::cout << "-------------------Adding moves-------------------" << std::endl;
-        count = pMG->createPossibleMove(cur_Chessboard, rollPoint, side, myCard);
+        count = pMG->createPossibleMove(cur_Chessboard, this->rollPoint, side, myCard);
 
         if(count != 1){     // search move only when it is able to move a chess
             searchAGoodMove(count, side, myCard);
@@ -64,7 +63,7 @@ void searchEngine::play(CHESS chessboard[], int side){
             }
         }
 
-        if(!isGameOver(cur_Chessboard) && rollPoint == 6)   // if the game is not over and rolling point is 6, continue to roll
+        if(!isGameOver(cur_Chessboard) && this->rollPoint == 6)   // if the game is not over and rolling point is 6, continue to roll
             continue;
         else
             break;

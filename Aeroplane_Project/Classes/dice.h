@@ -42,6 +42,8 @@ public:
     virtual void AICall();
 
     virtual void AIPass(EventCustom* event);
+    
+    virtual void cardPass(EventCustom* event);
 
 private:
     int chessboardStatus = 0;

@@ -16,7 +16,6 @@
 #define WIN "win"
 
 // Define chess id
-#define ALLBACK -1
 #define NOCHESS 0
 #define RED1 1
 #define RED2 2
@@ -113,6 +112,7 @@ typedef struct _chess {
     int round_left = 0;
 
 } CHESS;
+
 
 
 #endif // DEFINE_H

@@ -29,6 +29,8 @@ public:
     virtual void setTouchable(EventCustom* event);
 
     virtual void setTouchableFalse(EventCustom* event);
+    
+    virtual void passCard(EventCustom* event);
 };
 
 #endif // card_slot_h
