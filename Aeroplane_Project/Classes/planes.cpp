@@ -45,7 +45,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
     auto winCheckListener = EventListenerCustom::create("win_check", CC_CALLBACK_1(Planes::submit_win, this));
-    auto getChessListener = EventListenerCustom::create("event_get_chess", CC_CALLBACK_0(Planes::get_chess, this));
+    auto getChessListener = EventListenerCustom::create("eventGetChess", CC_CALLBACK_0(Planes::get_chess, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -282,29 +282,37 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                         }
                     }
                 }
+
+                // events after the plane stops moving
+                auto afterMove = [&] () {
+
+                    // tell the dice that the action ends and let it touchable
+                    EventCustom eventPlaneEnd = EventCustom("plane_end");
+                    eventPlaneEnd.setUserData((bool*)true);
+                    _eventDispatcher->dispatchEvent(&eventPlaneEnd);
+                    cocos2d::log("iii");
+
+                    // tell other planes its position
+                    EventCustom eventPlanePosition = EventCustom("plane_position");
+                    int PositionArray[3] = { color, position, 0 };
+                    if (status == "outer") {
+                        PositionArray[2] = 1;
+                    }
+                    eventPlanePosition.setUserData((int*)PositionArray);
+                    _eventDispatcher->dispatchEvent(&eventPlanePosition);
+
+                    // ask planes to send whether they have finished
+                    EventCustom eventWinCheck = EventCustom("win_check");
+                    eventWinCheck.setUserData((void*)&color);
+                    _eventDispatcher->dispatchEvent(&eventWinCheck);
+                };
+                auto do_after_move = CallFunc::create(afterMove);
+
                 // run the sequence
-                auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], nullptr);
+                // do_after_move is only executed after the plane stops moving
+                auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
                 this->runAction(sequence);
             }
-
-            // tell the dice that the action ends and let it touchable
-            EventCustom eventPlaneEnd = EventCustom("plane_end");
-            eventPlaneEnd.setUserData((bool*)true);
-            _eventDispatcher->dispatchEvent(&eventPlaneEnd);
-
-            // tell other planes its position
-            EventCustom eventPlanePosition = EventCustom("plane_position");
-            int PositionArray[3] = {color, position, 0};
-            if (status == "outer") {
-                PositionArray[2] = 1;
-            }
-            eventPlanePosition.setUserData((int*)PositionArray);
-            _eventDispatcher->dispatchEvent(&eventPlanePosition);
-
-            // ask planes to send whether they have finished
-            EventCustom eventWinCheck = EventCustom("win_check");
-            eventWinCheck.setUserData((void*)&color);
-            _eventDispatcher->dispatchEvent(&eventWinCheck);
         }
 
         // use cards
@@ -390,7 +398,7 @@ void Planes::submit_status(EventCustom* event) {
     if (color == *(int*)event->getUserData()) {
         EventCustom eventPlaneStatus = EventCustom("plane_status");
         int statusArray[2] = {1, id};
-        if ((roll != 6 && status == "ground") || status == "finished") {
+        if ((roll != 6 && status == "ground") || status == "finished" || buff == "stopaction") {
             statusArray[0] = 0;
         }
         eventPlaneStatus.setUserData((int*)statusArray);
@@ -529,9 +537,7 @@ void Planes::get_chess() {
         chess.currentCoor.region = WIN;
         chess.currentCoor.code = OUTSIDE;
     }
-    log("chess PASS %d", chess.chessID);
     EventCustom eventChessPass = EventCustom("event_chess_pass");
     eventChessPass.setUserData((void*)&chess);
     _eventDispatcher->dispatchEvent(&eventChessPass);
-
 }

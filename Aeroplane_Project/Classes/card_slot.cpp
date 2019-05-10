@@ -23,22 +23,21 @@ bool Card_Slot::init() {
     auto generatorClickListener = EventListenerCustom::create("generator_click", CC_CALLBACK_1(Card_Slot::setCard, this));
     auto roundListener = EventListenerCustom::create("event_round_to_slots", CC_CALLBACK_1(Card_Slot::setTouchable, this));
     auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Card_Slot::setTouchableFalse, this));
-    auto getCardListener = EventListenerCustom::create("event_get_card", CC_CALLBACK_1(Card_Slot::passCard, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(generatorClickListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(rollPTListener, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(getCardListener, this);
     return true;
 }
 
-Card_Slot* Card_Slot::create(int _color, int _player_count) {
+Card_Slot* Card_Slot::create(int _color, int _player_count, int _player_type) {
     Card_Slot* sprite = new Card_Slot();
     if (sprite->init()) {
         sprite->autorelease();
         sprite->color = _color;
+        sprite->player_type = _player_type;
         sprite->card_num = 0;
         sprite->player_count = _player_count;
         sprite->can_touch = false;
@@ -53,7 +52,7 @@ Card_Slot* Card_Slot::create(int _color, int _player_count) {
 
 bool Card_Slot::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
     Vec2 ptClick = touch->getLocation();
-    if (this->getBoundingBox().containsPoint(ptClick) && can_touch && card_num) {
+    if (this->getBoundingBox().containsPoint(ptClick) && can_touch && player_type == 1 && card_num) {
 
         // set the number of effective rounds
         int round_num = 0;
@@ -118,13 +117,4 @@ void Card_Slot::setTouchable(EventCustom* event) {
 // callback function to set the touchability to false
 void Card_Slot::setTouchableFalse(EventCustom* event) {
     can_touch = false;
-}
-
-void Card_Slot::passCard(EventCustom* event) {
-    int round = *(int*)event->getUserData();
-    if (round == color) {
-        EventCustom eventPassCard= EventCustom("event_pass_card");
-        eventPassCard.setUserData((int*)&card_num);
-        _eventDispatcher->dispatchEvent(&eventPassCard);
-    }
 }

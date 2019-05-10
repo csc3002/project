@@ -30,9 +30,6 @@
 #include "card_generator.h"
 #include "card_slot.h"
 #include "win_judge.h"
-#include "AI_interface.h"
-#include "evaluator.h"
-#include "movegenerator.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -53,12 +50,7 @@ bool HelloWorld::init() {
     {
         return false;
     }
-    
-    moveGenerator * mg = new moveGenerator(6,0);
-    evaluator * eval = new evaluator();
-    auto AI_player = AI_player::create();
-    AI_player->setEvaluator(eval);
-    AI_player->setMoveGenerator(mg);
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -103,7 +95,6 @@ bool HelloWorld::init() {
 	this->addChild(labelTouchInfo, 1);
 	this->addChild(bg, 0);
 	this->schedule(schedule_selector(HelloWorld::update));
-    this->addChild(AI_player,0);
 	return true;
 }
 
@@ -173,16 +164,16 @@ void HelloWorld::setPlane() {
 	// initiate card generator and card slots
 	auto card_generator = Card_Generator::create();
 
-	auto card_slot_blue = Card_Slot::create(0, number_of_players);
+	auto card_slot_blue = Card_Slot::create(0, number_of_players, players[0]);
 	card_slot_blue->setPosition(Vec2(50, 50));
 
-	auto card_slot_green = Card_Slot::create(1, number_of_players);
+	auto card_slot_green = Card_Slot::create(1, number_of_players, players[1]);
 	card_slot_green->setPosition(Vec2(50, 910));
 
-	auto card_slot_red = Card_Slot::create(2, number_of_players);
+	auto card_slot_red = Card_Slot::create(2, number_of_players, players[2]);
 	card_slot_red->setPosition(Vec2(910, 910));
 
-	auto card_slot_yellow = Card_Slot::create(3, number_of_players);
+	auto card_slot_yellow = Card_Slot::create(3, number_of_players, players[3]);
 	card_slot_yellow->setPosition(Vec2(910, 50));
 
 	// add child
