@@ -30,6 +30,9 @@
 #include "card_generator.h"
 #include "card_slot.h"
 #include "win_judge.h"
+#include "AI_interface.h"
+#include "evaluator.h"
+#include "movegenerator.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -50,6 +53,12 @@ bool HelloWorld::init() {
     {
         return false;
     }
+
+    moveGenerator * mg = new moveGenerator(6, 0);
+    evaluator * eval = new evaluator();
+    auto AI_player = AI_player::create();
+    AI_player->setEvaluator(eval);
+    AI_player->setMoveGenerator(mg);
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -95,6 +104,7 @@ bool HelloWorld::init() {
 	this->addChild(labelTouchInfo, 1);
 	this->addChild(bg, 0);
 	this->schedule(schedule_selector(HelloWorld::update));
+    this->addChild(AI_player, 0);
 	return true;
 }
 

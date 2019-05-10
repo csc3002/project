@@ -23,12 +23,14 @@ bool Card_Slot::init() {
     auto generatorClickListener = EventListenerCustom::create("generator_click", CC_CALLBACK_1(Card_Slot::setCard, this));
     auto roundListener = EventListenerCustom::create("event_round_to_slots", CC_CALLBACK_1(Card_Slot::setTouchable, this));
     auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Card_Slot::setTouchableFalse, this));
+    auto getCardListener = EventListenerCustom::create("event_get_card", CC_CALLBACK_1(Card_Slot::passCard, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(generatorClickListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(rollPTListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(getCardListener, this);
     return true;
 }
 
@@ -117,4 +119,13 @@ void Card_Slot::setTouchable(EventCustom* event) {
 // callback function to set the touchability to false
 void Card_Slot::setTouchableFalse(EventCustom* event) {
     can_touch = false;
+}
+
+void Card_Slot::passCard(EventCustom* event) {
+    int round = *(int*)event->getUserData();
+    if (round == color) {
+        EventCustom eventPassCard = EventCustom("event_pass_card");
+        eventPassCard.setUserData((int*)&card_num);
+        _eventDispatcher->dispatchEvent(&eventPassCard);
+    }
 }
