@@ -38,11 +38,11 @@ void searchEngine::play(CHESS chessboard[], int side){
         return ;
     }
     memcpy(cur_Chessboard, chessboard, sizeof(cur_Chessboard));     // copy the outer chessboard to the current one
-    int rollCount = 0;      // count the times of rolling
+    //int rollCount = 0;      // count the times of rolling
     int count = 0;          // count the current number of moves
-    while(rollCount < 3){   // dice can only be rolled 3 times
+    while(true){   // dice can be rolled n times if keep rolling out 6
         this->rollPoint = pMG->roll();
-        rollCount ++;
+        //rollCount ++;
         std::cout << "-------------------Adding moves-------------------" << std::endl;
         count = pMG->createPossibleMove(cur_Chessboard, this->rollPoint, side, myCard);
 
