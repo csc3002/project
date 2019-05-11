@@ -133,28 +133,30 @@ void Card_Slot::passCard(EventCustom* event) {
 }
 
 void Card_Slot::AIUseCard(EventCustom* event) {
-    int round_num = 0;
-    if (card_num == 2) {
-        round_num = player_count * 5 + 1;
+    int* array = (int*)event->getUserData();
+    int id = array[1];
+    if (color == array[0]){
+        int round_num = 0;
+        if (card_num == 2) {
+            round_num = player_count * 5 + 1;
+        }
+        if (card_num == 3) {
+            round_num = player_count * 4 + 1;
+        }
+        
+        // set the scope of target
+        int can_target_be_opponent = 1;
+        if (card_num == 1) {
+            can_target_be_opponent = 0;
+        }
+        // pass the card number and effective rounds to ALL planes
+        EventCustom eventClick = EventCustom("AI_slot_click");
+        int cardInfoArray[5] = {card_num, round_num, can_target_be_opponent, color, id};
+        eventClick.setUserData((int*)cardInfoArray);
+        _eventDispatcher->dispatchEvent(&eventClick);
+        
+        // the card will be consumed after a click
+        card_num = 0;
+        this->setTexture("none.png");
     }
-    if (card_num == 3) {
-        round_num = player_count * 4 + 1;
-    }
-    
-    // set the scope of target
-    int can_target_be_opponent = 1;
-    if (card_num == 1) {
-        can_target_be_opponent = 0;
-    }
-    
-    int id = *(int*)event->getUserData();
-    // pass the card number and effective rounds to ALL planes
-    EventCustom eventClick = EventCustom("AI_slot_click");
-    int cardInfoArray[5] = {card_num, round_num, can_target_be_opponent, color, id};
-    eventClick.setUserData((int*)cardInfoArray);
-    _eventDispatcher->dispatchEvent(&eventClick);
-    
-    // the card will be consumed after a click
-    card_num = 0;
-    this->setTexture("none.png");
 }

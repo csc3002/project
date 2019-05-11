@@ -269,12 +269,12 @@ void Dice::AICall() {
     if (playerArray[round] == -1) {
         log("ai");
         can_touch = false;
-        EventCustom eventGetChess = EventCustom("event_get_chess");
-        eventGetChess.setUserData((void*)true);
-        _eventDispatcher->dispatchEvent(&eventGetChess);
         EventCustom eventGetCard = EventCustom("event_get_card");
         eventGetCard.setUserData((int*)&round);
         _eventDispatcher->dispatchEvent(&eventGetCard);
+        EventCustom eventGetChess = EventCustom("event_get_chess");
+        eventGetChess.setUserData((void*)true);
+        _eventDispatcher->dispatchEvent(&eventGetChess);
     } else {
         log("human");
     }
@@ -328,9 +328,11 @@ void Dice::AIDraw() {
 
 void Dice::AIUseCard(EventCustom* event) {
     int chessID = *(int*)event->getUserData();
+    int color = ((chessID - 1) / 4 + 2) % 4;
     int id = (chessID - 1) % 4;
+    int ColorIDArray[2] = {color, id};
     EventCustom eventAIMove2Slot = EventCustom("AI_UseCard_2_Slot");
-    eventAIMove2Slot.setUserData((int*)&id);
+    eventAIMove2Slot.setUserData((int*)ColorIDArray);
     _eventDispatcher->dispatchEvent(&eventAIMove2Slot);
     can_touch = true;
 }

@@ -36,6 +36,7 @@ void AI_player::savePoint(EventCustom* event) {
     rollPoint = array[0];
     side = (array[1] + 2) % 4;
     log("save point");
+    AIPlay();
 }
 
 void AI_player::saveCard(EventCustom* event) {
@@ -43,7 +44,6 @@ void AI_player::saveCard(EventCustom* event) {
     myCard = card_num;
     if (myCard == 0) {myCard = -1;}
     log("save card");
-    AIPlay();
 }
 
 void AI_player::AIPlay() {
