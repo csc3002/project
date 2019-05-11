@@ -283,7 +283,7 @@ void Dice::AICall() {
 void Dice::AIPass(EventCustom* event) {
     log("AI PASS1");
     auto chess = *(CHESS*)event->getUserData();
-    chessboard[chess.chessID] = chess;
+    chessboard[chess.chessID-1] = chess;
     ++chessboardStatus;
     if (chessboardStatus == 4 * playerCount) {
         chessboardStatus = 0;

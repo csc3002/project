@@ -52,7 +52,7 @@ void AI_player::AIPlay() {
     }
     int count = 0;          // count the current number of moves
     count = pMG->createPossibleMove(chessboard, rollPoint, side, myCard);
-    if (count == 2) {
+    if (count == 1) {
         log("ai nomove");
         EventCustom eventAINoMove = EventCustom("AI_NoMove");
         _eventDispatcher->dispatchEvent(&eventAINoMove);
