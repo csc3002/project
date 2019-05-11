@@ -147,13 +147,13 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             eventPlaneClick.setUserData((bool*)false);
             _eventDispatcher->dispatchEvent(&eventPlaneClick);
 
+            // create an action array, delay works as a placeholder
+            auto delay = DelayTime::create(0.01f);
+            ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
+
             // action
             if (buff != "stopaction") {
-
-                // create an action array, delay works as a placeholder
-                auto delay = DelayTime::create(0.01f);
-                ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
-                    delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
 
                 // direction of the plane, true = forward, false = go back in the final runway
                 bool go_forward = true;
@@ -286,37 +286,37 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                         }
                     }
                 }
-
-                // events after the plane stops moving
-                auto afterMove = [&] () {
-
-                    // tell the dice that the action ends and let it touchable
-                    EventCustom eventPlaneEnd = EventCustom("plane_end");
-                    eventPlaneEnd.setUserData((bool*)true);
-                    _eventDispatcher->dispatchEvent(&eventPlaneEnd);
-                    cocos2d::log("iii");
-
-                    // tell other planes its position
-                    EventCustom eventPlanePosition = EventCustom("plane_position");
-                    int PositionArray[3] = { color, position, 0 };
-                    if (status == "outer") {
-                        PositionArray[2] = 1;
-                    }
-                    eventPlanePosition.setUserData((int*)PositionArray);
-                    _eventDispatcher->dispatchEvent(&eventPlanePosition);
-
-                    // ask planes to send whether they have finished
-                    EventCustom eventWinCheck = EventCustom("win_check");
-                    eventWinCheck.setUserData((void*)&color);
-                    _eventDispatcher->dispatchEvent(&eventWinCheck);
-                };
-                auto do_after_move = CallFunc::create(afterMove);
-
-                // run the sequence
-                // do_after_move is only executed after the plane stops moving
-                auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
-                this->runAction(sequence);
             }
+            // events after the plane stops moving
+            auto afterMove = [&] () {
+
+                // tell the dice that the action ends and let it touchable
+                EventCustom eventPlaneEnd = EventCustom("plane_end");
+                eventPlaneEnd.setUserData((bool*)true);
+                _eventDispatcher->dispatchEvent(&eventPlaneEnd);
+                cocos2d::log("iii");
+
+                // tell other planes its position
+                EventCustom eventPlanePosition = EventCustom("plane_position");
+                int PositionArray[3] = { color, position, 0 };
+                if (status == "outer") {
+                    PositionArray[2] = 1;
+                }
+                eventPlanePosition.setUserData((int*)PositionArray);
+                _eventDispatcher->dispatchEvent(&eventPlanePosition);
+
+                // ask planes to send whether they have finished
+                EventCustom eventWinCheck = EventCustom("win_check");
+                eventWinCheck.setUserData((void*)&color);
+                _eventDispatcher->dispatchEvent(&eventWinCheck);
+            };
+            auto do_after_move = CallFunc::create(afterMove);
+
+            // run the sequence
+            // do_after_move is only executed after the plane stops moving
+            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
+            this->runAction(sequence);
+            
         }
 
         // use cards
