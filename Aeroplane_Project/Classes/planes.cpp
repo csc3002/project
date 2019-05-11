@@ -772,7 +772,7 @@ void Planes::AIUseCard(EventCustom* event) {
                 _eventDispatcher->dispatchEvent(&machinegunAttack);
             }
             else if (cardInfoArray[0] == 2 && buff != "stopaction") {
-                buff = card;
+                buff = "protection";
                 round_left = cardInfoArray[1];
                 if (color == 0) {
                     this->setTexture("plane_shield_blue.png");
@@ -788,7 +788,7 @@ void Planes::AIUseCard(EventCustom* event) {
                 }
             }
             else if (cardInfoArray[0] == 3 && buff != "protection") {
-                buff = card;
+                buff = "stopaction";
                 round_left = cardInfoArray[1];
                 if (color == 0) {
                     this->setTexture("plane_disturb_blue.png");
