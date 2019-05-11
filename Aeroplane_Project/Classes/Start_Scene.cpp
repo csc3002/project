@@ -524,6 +524,7 @@ void BeginScene::refresh2_1(Ref* pSender ) {
 
 void BeginScene::refresh3(Ref* pSender, int mode) {
 	this->advance_mode = mode;
+    log("%d", advance_mode);
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);

@@ -53,12 +53,7 @@ bool HelloWorld::init() {
     {
         return false;
     }
-
-    moveGenerator * mg = new moveGenerator(6, is_advance_mode);
-    evaluator * eval = new evaluator();
-    auto AI_player = AI_player::create();
-    AI_player->setEvaluator(eval);
-    AI_player->setMoveGenerator(mg);
+//    log("%d", is_advance_mode);
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -104,7 +99,6 @@ bool HelloWorld::init() {
 	this->addChild(labelTouchInfo, 1);
 	this->addChild(bg, 0);
 	this->schedule(schedule_selector(HelloWorld::update));
-    this->addChild(AI_player, 0);
 	return true;
 }
 
@@ -214,7 +208,7 @@ void HelloWorld::setPlane() {
 		this->addChild(yellow_plane_2, 10);
 		this->addChild(yellow_plane_3, 10);
 	}
-
+    log("%d", this->is_advance_mode);
 	if (this->is_advance_mode) {
 		this->addChild(card_generator, 1);
 		if (players[0]) {
@@ -230,9 +224,15 @@ void HelloWorld::setPlane() {
 			this->addChild(card_slot_yellow, 1);
 		}
 	}
+    
+    moveGenerator * mg = new moveGenerator(6, is_advance_mode);
+    evaluator * eval = new evaluator();
+    auto AI_player = AI_player::create();
+    AI_player->setEvaluator(eval);
+    AI_player->setMoveGenerator(mg);
 	this->addChild(dice, 1);
     this->addChild(win_judge, 1);
-	
+    this->addChild(AI_player, 0);
 }
 
 void HelloWorld::update(float dt) {

@@ -51,6 +51,7 @@ void AI_player::AIPlay() {
         return;
     }
     int count = 0;          // count the current number of moves
+    memcpy(cur_Chessboard, chessboard, sizeof(cur_Chessboard));
     count = pMG->createPossibleMove(chessboard, rollPoint, side, myCard);
     if (count == 1) {
         log("ai nomove");

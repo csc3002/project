@@ -290,7 +290,9 @@ void Dice::AIPass(EventCustom* event) {
 
         roll_num = randomInteger(1, 6);
         roll_num = randomInteger(1, 6);
-        
+        EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
+        eventRoundG.setUserData((void*)&round);
+        _eventDispatcher->dispatchEvent(&eventRoundG);
         EventCustom eventReceiveChessboard = EventCustom("event_receive_chessboard");
         eventReceiveChessboard.setUserData((void*)chessboard);
         _eventDispatcher->dispatchEvent(&eventReceiveChessboard);
@@ -322,7 +324,6 @@ void Dice::AIDraw() {
     AIDiceAnimation();
     EventCustom eventAIDraw2Generator = EventCustom("AI_Draw_2_Generator");
     _eventDispatcher->dispatchEvent(&eventAIDraw2Generator);
-    can_touch = true;
 }
 
 void Dice::AIUseCard(EventCustom* event) {
@@ -343,7 +344,6 @@ void Dice::AIMove(EventCustom* event) {
     EventCustom eventAIMove2Plane = EventCustom("AI_Move_2_Plane");
     eventAIMove2Plane.setUserData((int*)ColorIDArray);
     _eventDispatcher->dispatchEvent(&eventAIMove2Plane);
-    can_touch = true;
 }
 
 void Dice::AIDiceAnimation() {
