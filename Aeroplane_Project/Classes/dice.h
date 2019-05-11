@@ -19,6 +19,7 @@ public:
     int playerCount;
     bool can_touch;
     Sprite* sign;
+    Sprite* sign2;
     int updated_num;
     int statusArray[4];
     int playerArray[4];
@@ -40,6 +41,8 @@ public:
     virtual void setStatusArray(EventCustom* event);
 
     virtual void skipTurn(EventCustom* event);
+    
+    virtual void AISkipTurn();
 
 //    virtual void AICall2(float dt);
     

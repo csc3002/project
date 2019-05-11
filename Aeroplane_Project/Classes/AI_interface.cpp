@@ -75,7 +75,7 @@ void AI_player::AIPlay() {
     }
     else if (bestMove->aboutCard == NOCARD) {
         log("ai move");
-        log("%d %d %d", bestMove->chessID, bestMove->rollPoint, bestMove->aboutCard);
+        log("chessid %d rollpoint %d aboutcard %d", bestMove->chessID, bestMove->rollPoint, bestMove->aboutCard);
         EventCustom eventAIMove = EventCustom("AI_Move");
         eventAIMove.setUserData((int*)&(bestMove->chessID));
         _eventDispatcher->dispatchEvent(&eventAIMove);

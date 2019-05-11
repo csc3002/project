@@ -135,7 +135,7 @@ void Card_Slot::passCard(EventCustom* event) {
 void Card_Slot::AIUseCard(EventCustom* event) {
     int* array = (int*)event->getUserData();
     int id = array[1];
-    if (color == array[0]){
+    if (color == array[2]){
         int round_num = 0;
         if (card_num == 2) {
             round_num = player_count * 5 + 1;
@@ -151,7 +151,8 @@ void Card_Slot::AIUseCard(EventCustom* event) {
         }
         // pass the card number and effective rounds to ALL planes
         EventCustom eventClick = EventCustom("AI_slot_click");
-        int cardInfoArray[5] = {card_num, round_num, can_target_be_opponent, color, id};
+        log("card_num, round_num, can_target_be_opponent, array[0], id, %d %d %d %d %d", card_num, round_num, can_target_be_opponent, array[0], id);
+        int cardInfoArray[5] = {card_num, round_num, can_target_be_opponent, array[0], id};
         eventClick.setUserData((int*)cardInfoArray);
         _eventDispatcher->dispatchEvent(&eventClick);
         

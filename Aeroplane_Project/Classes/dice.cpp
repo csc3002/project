@@ -32,6 +32,7 @@ bool Dice::init() {
     auto AIDrawListener = EventListenerCustom::create("AI_Draw", CC_CALLBACK_0(Dice::AIDraw, this));
     auto AIUseCardListener = EventListenerCustom::create("AI_UseCard", CC_CALLBACK_1(Dice::AIUseCard, this));
     auto AIMoveListener = EventListenerCustom::create("AI_Move", CC_CALLBACK_1(Dice::AIMove, this));
+    auto resetCardListener = EventListenerCustom::create("AI_reset_card", CC_CALLBACK_0(Dice::AISkipTurn, this));
     
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeEndListener, this);
@@ -45,6 +46,7 @@ bool Dice::init() {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(AIDrawListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(AIUseCardListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(AIMoveListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(resetCardListener, this);
     return true;
 }
 
@@ -70,7 +72,11 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->sign = Sprite::create();
         sprite->sign->setPosition(Vec2(44, -50));
         sprite->sign->setScale(0.1);
+        sprite->sign2 = Sprite::create();
+        sprite->sign2->setPosition(Vec2(44, -100));
+        sprite->sign2->setScale(0.1);
         sprite->addChild(sprite->sign);
+        sprite->addChild(sprite->sign2);
         
         Animation* animation = Animation::create();
         for(int i =1; i <= 6; i++) {
@@ -166,6 +172,21 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
                 // skip if the player is nobody
                 while (!playerArray[round]) {
                     round = (round + 1) % 4;
+                }
+                
+                switch (round) {
+                    case 0: // case blue
+                        sign2->setTexture("plane_blue.png");
+                        break;
+                    case 1: // case green
+                        sign2->setTexture("plane_green.png");
+                        break;
+                    case 2: // case red
+                        sign2->setTexture("plane_red.png");
+                        break;
+                    case 3: // case yellow
+                        sign2->setTexture("plane_yellow.png");
+                        break;
                 }
                 
                 if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
@@ -266,6 +287,7 @@ void Dice::skipTurn(EventCustom* event) {
 
 void Dice::AICall() {
     log("playerArray[round] %d", playerArray[round]);
+    log("player %d", round);
     if (playerArray[round] == -1) {
         log("ai");
         can_touch = false;
@@ -281,7 +303,7 @@ void Dice::AICall() {
 }
 
 void Dice::AIPass(EventCustom* event) {
-    log("AI PASS1");
+//    log("AI PASS1");
     auto chess = *(CHESS*)event->getUserData();
     chessboard[chess.chessID-1] = chess;
     ++chessboardStatus;
@@ -311,6 +333,20 @@ void Dice::AIPass(EventCustom* event) {
             // tell the planes if the round changes
             EventCustom eventRoundChange = EventCustom("round_change");
             _eventDispatcher->dispatchEvent(&eventRoundChange);
+            switch (round) {
+                case 0: // case blue
+                    sign2->setTexture("plane_blue.png");
+                    break;
+                case 1: // case green
+                    sign2->setTexture("plane_green.png");
+                    break;
+                case 2: // case red
+                    sign2->setTexture("plane_red.png");
+                    break;
+                case 3: // case yellow
+                    sign2->setTexture("plane_yellow.png");
+                    break;
+            }
         }
     }
 }
@@ -328,9 +364,10 @@ void Dice::AIDraw() {
 
 void Dice::AIUseCard(EventCustom* event) {
     int chessID = *(int*)event->getUserData();
+    log("chessID %d", chessID);
     int color = ((chessID - 1) / 4 + 2) % 4;
     int id = (chessID - 1) % 4;
-    int ColorIDArray[2] = {color, id};
+    int ColorIDArray[3] = {color, id, round};
     EventCustom eventAIMove2Slot = EventCustom("AI_UseCard_2_Slot");
     eventAIMove2Slot.setUserData((int*)ColorIDArray);
     _eventDispatcher->dispatchEvent(&eventAIMove2Slot);
@@ -360,6 +397,20 @@ void Dice::AIDiceAnimation() {
     char str[15];
     sprintf(str, "dice%d.png", roll_num);
     this->setTexture(str);
+}
+
+void Dice::AISkipTurn() {
+    // reset the touchablity of dice
+    can_touch = true;
+    
+    // pass round to the card slots
+    EventCustom eventRoundS = EventCustom("event_round_to_slots");
+    eventRoundS.setUserData((void*)&round);
+    _eventDispatcher->dispatchEvent(&eventRoundS);
+    
+    // tell the planes if the round changes
+    EventCustom eventRoundChange = EventCustom("round_change");
+    _eventDispatcher->dispatchEvent(&eventRoundChange);
 }
 //EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
 //eventRoundG.setUserData((void*)&round);

@@ -43,6 +43,7 @@ bool Planes::init(int _init_rotation, string icon) {
     auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Planes::setCard, this));
     auto AIslotListener = EventListenerCustom::create("AI_slot_click", CC_CALLBACK_1(Planes::AIUseCard, this));
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Planes::resetCard, this));
+    auto resetCardListener = EventListenerCustom::create("AI_reset_card", CC_CALLBACK_1(Planes::resetCard, this));
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
     auto winCheckListener = EventListenerCustom::create("win_check", CC_CALLBACK_1(Planes::submit_win, this));
@@ -55,6 +56,7 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeClickListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planePositionListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(resetCardListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(AIslotListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
@@ -289,13 +291,13 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             }
             // events after the plane stops moving
             auto afterMove = [&] () {
-
+                
                 // tell the dice that the action ends and let it touchable
                 EventCustom eventPlaneEnd = EventCustom("plane_end");
                 eventPlaneEnd.setUserData((bool*)true);
                 _eventDispatcher->dispatchEvent(&eventPlaneEnd);
                 cocos2d::log("iii");
-
+                
                 // tell other planes its position
                 EventCustom eventPlanePosition = EventCustom("plane_position");
                 int PositionArray[3] = { color, position, 0 };
@@ -304,19 +306,18 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                 }
                 eventPlanePosition.setUserData((int*)PositionArray);
                 _eventDispatcher->dispatchEvent(&eventPlanePosition);
-
+                
                 // ask planes to send whether they have finished
                 EventCustom eventWinCheck = EventCustom("win_check");
                 eventWinCheck.setUserData((void*)&color);
                 _eventDispatcher->dispatchEvent(&eventWinCheck);
             };
             auto do_after_move = CallFunc::create(afterMove);
-
+            
             // run the sequence
             // do_after_move is only executed after the plane stops moving
             auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
             this->runAction(sequence);
-            
         }
 
         // use cards
@@ -523,7 +524,13 @@ void Planes::get_chess() {
     CHESS chess;
     chess.color = (this->color + 2) % 4;
     chess.chessID = (chess.color * 4 + this->id + 1);
-    chess.buff_state = this->buff;
+    if (buff == "none") {
+        chess.buff_state = "";
+    } else if (buff == "protection") {
+        chess.buff_state = "defense";
+    } else if (buff == "stopaction") {
+        chess.buff_state = "interfered";
+    }
     chess.round_left = this->round_left;
     if (status == "ground") {
         chess.currentCoor.region = APRON;
@@ -541,7 +548,7 @@ void Planes::get_chess() {
         chess.currentCoor.region = WIN;
         chess.currentCoor.code = OUTSIDE;
     }
-    log("chess PASS %d", chess.chessID);
+//    log("chess PASS %d", chess.chessID);
     EventCustom eventChessPass = EventCustom("event_chess_pass");
     eventChessPass.setUserData((void*)&chess);
     _eventDispatcher->dispatchEvent(&eventChessPass);
@@ -551,23 +558,22 @@ void Planes::AIMove(EventCustom* event) {
     
     int* array = (int*)event->getUserData();
     if (color == array[0] && id == array[1]) {
-        log ("do AI move");
+        log ("do AI move %d %d %s %s", color, id, buff.c_str(), card.c_str());
         roll = array[2];
         if (card == "none") {
             can_touch = false;
-            
+            log("begin move");
             // to tell other planes that this plane has been click and let them untouchable
             EventCustom eventPlaneClick = EventCustom("plane_click");
             eventPlaneClick.setUserData((bool*)false);
             _eventDispatcher->dispatchEvent(&eventPlaneClick);
             
+            // create an action array, delay works as a placeholder
+            auto delay = DelayTime::create(0.01f);
+            ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
             // action
             if (buff != "stopaction") {
-                
-                // create an action array, delay works as a placeholder
-                auto delay = DelayTime::create(0.01f);
-                ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
-                    delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
                 
                 // direction of the plane, true = forward, false = go back in the final runway
                 bool go_forward = true;
@@ -700,59 +706,59 @@ void Planes::AIMove(EventCustom* event) {
                         }
                     }
                 }
-                
-                // events after the plane stops moving
-                auto afterMove = [&] () {
-                    
-                    // tell the dice that the action ends and let it touchable
-                    EventCustom eventPlaneEnd = EventCustom("plane_end");
-                    eventPlaneEnd.setUserData((bool*)true);
-                    _eventDispatcher->dispatchEvent(&eventPlaneEnd);
-                    cocos2d::log("iii");
-                    
-                    // tell other planes its position
-                    EventCustom eventPlanePosition = EventCustom("plane_position");
-                    int PositionArray[3] = { color, position, 0 };
-                    if (status == "outer") {
-                        PositionArray[2] = 1;
-                    }
-                    eventPlanePosition.setUserData((int*)PositionArray);
-                    _eventDispatcher->dispatchEvent(&eventPlanePosition);
-                    
-                    // ask planes to send whether they have finished
-                    EventCustom eventWinCheck = EventCustom("win_check");
-                    eventWinCheck.setUserData((void*)&color);
-                    _eventDispatcher->dispatchEvent(&eventWinCheck);
-                };
-                auto do_after_move = CallFunc::create(afterMove);
-                
-                // run the sequence
-                // do_after_move is only executed after the plane stops moving
-                auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
-                this->runAction(sequence);
             }
+            
+            // events after the plane stops moving
+            auto afterMove = [&] () {
+                
+                // tell the dice that the action ends and let it touchable
+                EventCustom eventPlaneEnd = EventCustom("plane_end");
+                eventPlaneEnd.setUserData((bool*)true);
+                _eventDispatcher->dispatchEvent(&eventPlaneEnd);
+                cocos2d::log("iii");
+                
+                // tell other planes its position
+                EventCustom eventPlanePosition = EventCustom("plane_position");
+                int PositionArray[3] = { color, position, 0 };
+                if (status == "outer") {
+                    PositionArray[2] = 1;
+                }
+                eventPlanePosition.setUserData((int*)PositionArray);
+                _eventDispatcher->dispatchEvent(&eventPlanePosition);
+                
+                // ask planes to send whether they have finished
+                EventCustom eventWinCheck = EventCustom("win_check");
+                eventWinCheck.setUserData((void*)&color);
+                _eventDispatcher->dispatchEvent(&eventWinCheck);
+            };
+            auto do_after_move = CallFunc::create(afterMove);
+            
+            // run the sequence
+            // do_after_move is only executed after the plane stops moving
+            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
+            this->runAction(sequence);
         }
     }
 }
 
 void Planes::AIUseCard(EventCustom* event) {
     int* cardInfoArray = (int*)event->getUserData();
-    if (cardInfoArray[0] == 1) {
-        card = "machinegun";
-    }
-    else if (cardInfoArray[0] == 2) {
-        card = "protection";
-    }
-    else if (cardInfoArray[0] == 3) {
-        card = "stopaction";
-    }
-    else if (cardInfoArray[0] == 4) {
-        card = "neutralize";
-    }
-    round_left_of_card = cardInfoArray[1];
+//    if (cardInfoArray[0] == 1) {
+//        card = "machinegun";
+//    }
+//    else if (cardInfoArray[0] == 2) {
+//        card = "protection";
+//    }
+//    else if (cardInfoArray[0] == 3) {
+//        card = "stopaction";
+//    }
+//    else if (cardInfoArray[0] == 4) {
+//        card = "neutralize";
+//    }
+//    round_left_of_card = cardInfoArray[1];
     if (color == cardInfoArray[3] && id == cardInfoArray[4]) {
         if (status != "finished") {
-            if (card == "machinegun" && buff != "stopaction") {
+            if (cardInfoArray[0] == 1 && buff != "stopaction") {
                 int attackArray[13] = {-50, -50, -50, -50, -50, -50, -50, -50, -50, -50, -50, -50, 0};
                 for (int i = 0; i < 11; ++i) {
                     attackArray[i] = (position + 52 - 5 + i) % 52;
@@ -765,9 +771,9 @@ void Planes::AIUseCard(EventCustom* event) {
                 machinegunAttack.setUserData((int*)attackArray);
                 _eventDispatcher->dispatchEvent(&machinegunAttack);
             }
-            else if (card == "protection" && buff != "stopaction") {
+            else if (cardInfoArray[0] == 2 && buff != "stopaction") {
                 buff = card;
-                round_left = round_left_of_card;
+                round_left = cardInfoArray[1];
                 if (color == 0) {
                     this->setTexture("plane_shield_blue.png");
                 }
@@ -781,9 +787,9 @@ void Planes::AIUseCard(EventCustom* event) {
                     this->setTexture("plane_shield_yellow.png");
                 }
             }
-            else if (card == "stopaction" && buff != "protection") {
+            else if (cardInfoArray[0] == 3 && buff != "protection") {
                 buff = card;
-                round_left = round_left_of_card;
+                round_left = cardInfoArray[1];
                 if (color == 0) {
                     this->setTexture("plane_disturb_blue.png");
                 }
@@ -797,7 +803,7 @@ void Planes::AIUseCard(EventCustom* event) {
                     this->setTexture("plane_disturb_yellow.png");
                 }
             }
-            else if (card == "neutralize") {
+            else if (cardInfoArray[0] == 4) {
                 buff = "none";
                 round_left = 0;
                 set_texture_to_default();
@@ -806,7 +812,7 @@ void Planes::AIUseCard(EventCustom* event) {
         card = "none";
         round_left_of_card = 0;
         can_touch = false;
-        EventCustom eventUseCard = EventCustom("use_card");
-        _eventDispatcher->dispatchEvent(&eventUseCard);
+        EventCustom eventAIResetCard = EventCustom("AI_reset_card");
+        _eventDispatcher->dispatchEvent(&eventAIResetCard);
     }
 }
