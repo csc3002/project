@@ -41,11 +41,13 @@ bool Planes::init(int _init_rotation, string icon) {
     auto planePositionListener = EventListenerCustom::create("plane_position", CC_CALLBACK_1(Planes::ram_judge, this));
     auto roundListener = EventListenerCustom::create("event_round_to_generator_and_planes", CC_CALLBACK_1(Planes::submit_status, this));
     auto slotListener = EventListenerCustom::create("slot_click", CC_CALLBACK_1(Planes::setCard, this));
+    auto AIslotListener = EventListenerCustom::create("AI_slot_click", CC_CALLBACK_1(Planes::AIUseCard, this));
     auto cardListener = EventListenerCustom::create("use_card", CC_CALLBACK_1(Planes::resetCard, this));
     auto roundChangeListener = EventListenerCustom::create("round_change", CC_CALLBACK_1(Planes::round_decrease, this));
     auto machinegunAttackListener = EventListenerCustom::create("machinegun_attack", CC_CALLBACK_1(Planes::machinegun_attack_judge, this));
     auto winCheckListener = EventListenerCustom::create("win_check", CC_CALLBACK_1(Planes::submit_win, this));
     auto getChessListener = EventListenerCustom::create("event_get_chess", CC_CALLBACK_0(Planes::get_chess, this));
+    auto AIMoveListener = EventListenerCustom::create("AI_Move_2_Plane", CC_CALLBACK_1(Planes::AIMove, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -54,11 +56,13 @@ bool Planes::init(int _init_rotation, string icon) {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planePositionListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(slotListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(AIslotListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundChangeListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(machinegunAttackListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(winCheckListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(getChessListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(AIMoveListener, this);
     return true;
 }
 
@@ -541,4 +545,268 @@ void Planes::get_chess() {
     EventCustom eventChessPass = EventCustom("event_chess_pass");
     eventChessPass.setUserData((void*)&chess);
     _eventDispatcher->dispatchEvent(&eventChessPass);
+}
+
+void Planes::AIMove(EventCustom* event) {
+    
+    int* array = (int*)event->getUserData();
+    if (color == array[0] && id == array[1]) {
+        log ("do AI move");
+        roll = array[2];
+        if (card == "none") {
+            can_touch = false;
+            
+            // to tell other planes that this plane has been click and let them untouchable
+            EventCustom eventPlaneClick = EventCustom("plane_click");
+            eventPlaneClick.setUserData((bool*)false);
+            _eventDispatcher->dispatchEvent(&eventPlaneClick);
+            
+            // action
+            if (buff != "stopaction") {
+                
+                // create an action array, delay works as a placeholder
+                auto delay = DelayTime::create(0.01f);
+                ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+                    delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
+                
+                // direction of the plane, true = forward, false = go back in the final runway
+                bool go_forward = true;
+                jumped = false;
+                
+                for (int i = 0; i < roll; ++i) {
+                    // at the airport
+                    if (status == "ground") {
+                        auto start = MoveTo::create(0.2, take_off_pt);
+                        this->runAction(start);
+                        status = "taking off";
+                        break;
+                    }
+                    // at take-off point
+                    else if (status == "taking off") {
+                        auto take_off = MoveTo::create(0.2, outer[enter_pt]);
+                        act[i] = take_off->clone();
+                        status = "outer";
+                        position = enter_pt;
+                    }
+                    // at outer runway
+                    else if (status == "outer" && position != turn_pt) {
+                        position = (position + 1) % 52;
+                        auto outer_go = MoveTo::create(0.2, outer[position]);
+                        act[i] = outer_go->clone();
+                        // when stop at the fly point
+                        if (status == "outer" && position == fly_start && i == roll - 1) {
+                            position = fly_end;
+                            auto fly = MoveTo::create(0.5, outer[fly_end]);
+                            act[6] = fly->clone();
+                        }
+                        // when stop at the same color point
+                        else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
+                            for (int i = 0; i < 4; ++i) {
+                                position = (position + 1) % 52;
+                                auto jump = MoveTo::create(0.2, outer[position]);
+                                act[7 + i] = jump->clone();
+                            }
+                            jumped = true;
+                        }
+                        // when stop at the fly point after jump
+                        if (status == "outer" && position == fly_start && i == roll - 1) {
+                            position = fly_end;
+                            auto fly = MoveTo::create(0.5, outer[fly_end]);
+                            act[11] = fly->clone();
+                        }
+                        // when stop at the same colop point which is not fly point
+                        else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
+                            for (int i = 0; i < 4; ++i) {
+                                position = (position + 1) % 52;
+                                auto jump = MoveTo::create(0.2, outer[position]);
+                                act[7 + i] = jump->clone();
+                            }
+                            jumped = true;
+                        }
+                    }
+                    // when at the turn point
+                    else if (position == turn_pt) {
+                        position = 0;
+                        status = "inner";
+                        if (color == 0) {
+                            auto turn = MoveTo::create(0.2, inner_blue[position]);
+                            act[i] = turn->clone();
+                        }
+                        if (color == 1) {
+                            auto turn = MoveTo::create(0.2, inner_green[position]);
+                            act[i] = turn->clone();
+                        }
+                        if (color == 2) {
+                            auto turn = MoveTo::create(0.2, inner_red[position]);
+                            act[i] = turn->clone();
+                        }
+                        if (color == 3) {
+                            auto turn = MoveTo::create(0.2, inner_yellow[position]);
+                            act[i] = turn->clone();
+                        }
+                    }
+                    // when at the final runway
+                    else if (status == "inner") {
+                        /*if (position > 4) position = 4;*/ // only for test, let the plane goes to the final point
+                        if (position == 5) {
+                            go_forward = false;
+                        }
+                        if (go_forward) {
+                            ++position;
+                        }
+                        else {
+                            --position;
+                        }
+                        if (color == 0) {
+                            auto inner_go = MoveTo::create(0.2, inner_blue[position]);
+                            act[i] = inner_go->clone();
+                        }
+                        if (color == 1) {
+                            auto inner_go = MoveTo::create(0.2, inner_green[position]);
+                            act[i] = inner_go->clone();
+                        }
+                        if (color == 2) {
+                            auto inner_go = MoveTo::create(0.2, inner_red[position]);
+                            act[i] = inner_go->clone();
+                        }
+                        if (color == 3) {
+                            auto inner_go = MoveTo::create(0.2, inner_yellow[position]);
+                            act[i] = inner_go->clone();
+                        }
+                    }
+                    // when finish
+                    if (position == 5 && status == "inner" && i == roll - 1) {
+                        status = "finished";
+                        card = "none";
+                        round_left_of_card = 0;
+                        buff = "none";
+                        round_left = 0;
+                        position = -1000;
+                        jumped = false;
+                        can_touch = false;
+                        auto finish = MoveTo::create(0.5, start_pt);
+                        act[6] = finish->clone();
+                        if (color == 0) {
+                            this->setTexture("plane_win_blue.png");
+                        }
+                        if (color == 1) {
+                            this->setTexture("plane_win_green.png");
+                        }
+                        if (color == 2) {
+                            this->setTexture("plane_win_red.png");
+                        }
+                        if (color == 3) {
+                            this->setTexture("plane_win_yellow.png");
+                        }
+                    }
+                }
+                
+                // events after the plane stops moving
+                auto afterMove = [&] () {
+                    
+                    // tell the dice that the action ends and let it touchable
+                    EventCustom eventPlaneEnd = EventCustom("plane_end");
+                    eventPlaneEnd.setUserData((bool*)true);
+                    _eventDispatcher->dispatchEvent(&eventPlaneEnd);
+                    cocos2d::log("iii");
+                    
+                    // tell other planes its position
+                    EventCustom eventPlanePosition = EventCustom("plane_position");
+                    int PositionArray[3] = { color, position, 0 };
+                    if (status == "outer") {
+                        PositionArray[2] = 1;
+                    }
+                    eventPlanePosition.setUserData((int*)PositionArray);
+                    _eventDispatcher->dispatchEvent(&eventPlanePosition);
+                    
+                    // ask planes to send whether they have finished
+                    EventCustom eventWinCheck = EventCustom("win_check");
+                    eventWinCheck.setUserData((void*)&color);
+                    _eventDispatcher->dispatchEvent(&eventWinCheck);
+                };
+                auto do_after_move = CallFunc::create(afterMove);
+                
+                // run the sequence
+                // do_after_move is only executed after the plane stops moving
+                auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
+                this->runAction(sequence);
+            }
+        }
+    }
+}
+
+void Planes::AIUseCard(EventCustom* event) {
+    int* cardInfoArray = (int*)event->getUserData();
+    if (cardInfoArray[0] == 1) {
+        card = "machinegun";
+    }
+    else if (cardInfoArray[0] == 2) {
+        card = "protection";
+    }
+    else if (cardInfoArray[0] == 3) {
+        card = "stopaction";
+    }
+    else if (cardInfoArray[0] == 4) {
+        card = "neutralize";
+    }
+    round_left_of_card = cardInfoArray[1];
+    if (color == cardInfoArray[3] && id == cardInfoArray[4]) {
+        if (status != "finished") {
+            if (card == "machinegun" && buff != "stopaction") {
+                int attackArray[13] = {-50, -50, -50, -50, -50, -50, -50, -50, -50, -50, -50, -50, 0};
+                for (int i = 0; i < 11; ++i) {
+                    attackArray[i] = (position + 52 - 5 + i) % 52;
+                }
+                attackArray[11] = color;
+                if (status == "outer") {
+                    attackArray[12] = 1;
+                }
+                EventCustom machinegunAttack = EventCustom("machinegun_attack");
+                machinegunAttack.setUserData((int*)attackArray);
+                _eventDispatcher->dispatchEvent(&machinegunAttack);
+            }
+            else if (card == "protection" && buff != "stopaction") {
+                buff = card;
+                round_left = round_left_of_card;
+                if (color == 0) {
+                    this->setTexture("plane_shield_blue.png");
+                }
+                if (color == 1) {
+                    this->setTexture("plane_shield_green.png");
+                }
+                if (color == 2) {
+                    this->setTexture("plane_shield_red.png");
+                }
+                if (color == 3) {
+                    this->setTexture("plane_shield_yellow.png");
+                }
+            }
+            else if (card == "stopaction" && buff != "protection") {
+                buff = card;
+                round_left = round_left_of_card;
+                if (color == 0) {
+                    this->setTexture("plane_disturb_blue.png");
+                }
+                if (color == 1) {
+                    this->setTexture("plane_disturb_green.png");
+                }
+                if (color == 2) {
+                    this->setTexture("plane_disturb_red.png");
+                }
+                if (color == 3) {
+                    this->setTexture("plane_disturb_yellow.png");
+                }
+            }
+            else if (card == "neutralize") {
+                buff = "none";
+                round_left = 0;
+                set_texture_to_default();
+            }
+        }
+        card = "none";
+        round_left_of_card = 0;
+        can_touch = false;
+        EventCustom eventUseCard = EventCustom("use_card");
+        _eventDispatcher->dispatchEvent(&eventUseCard);
+    }
 }

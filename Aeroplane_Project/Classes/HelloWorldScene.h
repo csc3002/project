@@ -33,7 +33,7 @@ using namespace CocosDenshion;
 class HelloWorld: public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
-	bool is_advance_mode;
+	int is_advance_mode;
 	bool online;
 	int players[4];
 	cocos2d::Label* Ad_Mode;

@@ -66,6 +66,10 @@ public:
     virtual void submit_win(EventCustom* event);
 
     virtual void get_chess();
+    
+    virtual void AIMove(EventCustom* event);
+    
+    virtual void AIUseCard(EventCustom* event);
 };
 
 #endif // planes_h

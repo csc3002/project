@@ -24,6 +24,7 @@ bool Card_Slot::init() {
     auto roundListener = EventListenerCustom::create("event_round_to_slots", CC_CALLBACK_1(Card_Slot::setTouchable, this));
     auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Card_Slot::setTouchableFalse, this));
     auto getCardListener = EventListenerCustom::create("event_get_card", CC_CALLBACK_1(Card_Slot::passCard, this));
+    auto AIUseCardListener = EventListenerCustom::create("AI_UseCard_2_Slot", CC_CALLBACK_1(Card_Slot::AIUseCard, this));
 
     // add listeners to event dispactcher
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
@@ -31,6 +32,7 @@ bool Card_Slot::init() {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(rollPTListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(getCardListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(AIUseCardListener, this);
     return true;
 }
 
@@ -124,8 +126,35 @@ void Card_Slot::setTouchableFalse(EventCustom* event) {
 void Card_Slot::passCard(EventCustom* event) {
     int round = *(int*)event->getUserData();
     if (round == color) {
-        EventCustom eventPassCard = EventCustom("event_pass_card");
-        eventPassCard.setUserData((int*)&card_num);
-        _eventDispatcher->dispatchEvent(&eventPassCard);
+        EventCustom eventReceiveCard = EventCustom("event_receive_card");
+        eventReceiveCard.setUserData((int*)&card_num);
+        _eventDispatcher->dispatchEvent(&eventReceiveCard);
     }
+}
+
+void Card_Slot::AIUseCard(EventCustom* event) {
+    int round_num = 0;
+    if (card_num == 2) {
+        round_num = player_count * 5 + 1;
+    }
+    if (card_num == 3) {
+        round_num = player_count * 4 + 1;
+    }
+    
+    // set the scope of target
+    int can_target_be_opponent = 1;
+    if (card_num == 1) {
+        can_target_be_opponent = 0;
+    }
+    
+    int id = *(int*)event->getUserData();
+    // pass the card number and effective rounds to ALL planes
+    EventCustom eventClick = EventCustom("AI_slot_click");
+    int cardInfoArray[5] = {card_num, round_num, can_target_be_opponent, color, id};
+    eventClick.setUserData((int*)cardInfoArray);
+    _eventDispatcher->dispatchEvent(&eventClick);
+    
+    // the card will be consumed after a click
+    card_num = 0;
+    this->setTexture("none.png");
 }

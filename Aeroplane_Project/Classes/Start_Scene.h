@@ -33,7 +33,7 @@ public:
 
     virtual bool init();
     bool online;
-    bool advance_mode;
+    int advance_mode;
     int num_player;
     int player[4];
     int character[4];
@@ -85,7 +85,7 @@ public:
     void refresh1(cocos2d::Ref* pSender);
     void refresh_menu(cocos2d::Ref* pSender);
     void refresh2(cocos2d::Ref* pSender);
-    void refresh3(cocos2d::Ref* pSender, bool mode);
+    void refresh3(cocos2d::Ref* pSender, int mode);
     void refresh2_1(Ref* pSender); // mode = true -> advanced, mode = false -> normal
     void startGame(cocos2d::Ref* pSender, Scene* start_scene, bool online);
     

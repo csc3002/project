@@ -54,7 +54,7 @@ bool HelloWorld::init() {
         return false;
     }
 
-    moveGenerator * mg = new moveGenerator(6, 0);
+    moveGenerator * mg = new moveGenerator(6, is_advance_mode);
     evaluator * eval = new evaluator();
     auto AI_player = AI_player::create();
     AI_player->setEvaluator(eval);

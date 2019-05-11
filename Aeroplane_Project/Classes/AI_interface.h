@@ -12,13 +12,13 @@ public:
     bool init();
     static AI_player* create();
     CHESS chessboard[16];
-    int roll_num;
-    int round;
     int side;
 
     void saveChessboard(EventCustom* event);
     
     void savePoint(EventCustom* event);
+    
+    void saveCard(EventCustom* event);
     
     void AIPlay();
 };

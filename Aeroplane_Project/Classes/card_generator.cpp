@@ -24,6 +24,7 @@ bool Card_Generator::init() {
     // set custom event listeners
     auto rollPTListener = EventListenerCustom::create("roll_point", CC_CALLBACK_1(Card_Generator::setTouchable, this));
     auto roundListener = EventListenerCustom::create("event_round_to_generator_and_planes", CC_CALLBACK_1(Card_Generator::setRound, this));
+    auto AIDrawListener = EventListenerCustom::create("AI_Draw_2_Generator", CC_CALLBACK_0(Card_Generator::AIDraw, this));
     auto planeClickListener = EventListenerCustom::create("plane_click", CC_CALLBACK_1(Card_Generator::setTouchableFalse, this));
 
     // add listeners to event dispactcher
@@ -31,6 +32,7 @@ bool Card_Generator::init() {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(rollPTListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(roundListener, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(planeClickListener, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(AIDrawListener, this);
     return true;
 }
 
@@ -101,4 +103,23 @@ void Card_Generator::setTouchableFalse(EventCustom* event) {
 // callback function to get the round
 void Card_Generator::setRound(EventCustom* event) {
     round = *(int*)event->getUserData();
+}
+
+void Card_Generator::AIDraw() {
+    int card_num = getrandom();
+    can_touch = false;
+    
+    // pass the card number and player color to ALL card slots
+    EventCustom eventClick = EventCustom("generator_click");
+    int cardArray[2] = {card_num, round};
+    eventClick.setUserData((int*)cardArray);
+    _eventDispatcher->dispatchEvent(&eventClick);
+    
+    // getting a card consumes a move chance
+    EventCustom eventPlaneClick = EventCustom("plane_click");
+    eventPlaneClick.setUserData((bool*)false);
+    _eventDispatcher->dispatchEvent(&eventPlaneClick);
+    EventCustom eventPlaneEnd = EventCustom("plane_end");
+    eventPlaneEnd.setUserData((bool*)true);
+    _eventDispatcher->dispatchEvent(&eventPlaneEnd);
 }
