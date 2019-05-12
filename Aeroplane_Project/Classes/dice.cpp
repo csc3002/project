@@ -79,16 +79,15 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->addChild(sprite->sign2);
         
         Animation* animation = Animation::create();
-        for(int i =1; i <= 6; i++) {
+        for(int i =1; i <= 6; ++i) {
             char str[15];
             sprintf(str, "dice%d.png", i);
             animation->addSpriteFrameWithFile(str);
         }
         animation->setRestoreOriginalFrame(true);
-        animation->setDelayPerUnit(0.01/1);
-        animation->setLoops(10);
+        animation->setDelayPerUnit(0.001/1);
+        animation->setLoops(30);
         AnimationCache::getInstance()->addAnimation(animation,"Dice");
-        
     }
     else {
         delete sprite;

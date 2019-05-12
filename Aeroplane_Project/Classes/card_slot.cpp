@@ -1,5 +1,5 @@
 //
-//  card_generator.cpp
+//  card_slot.cpp
 //  Aeroplane_Project
 //
 //  Created by Re-Entry on 2019/4/28.
@@ -36,7 +36,7 @@ bool Card_Slot::init() {
     return true;
 }
 
-Card_Slot* Card_Slot::create(int _color, int _player_count, int _player_type) {
+Card_Slot* Card_Slot::create(int _color, int _player_count, int _player_type, Vec2 _pt) {
     Card_Slot* sprite = new Card_Slot();
     if (sprite->init()) {
         sprite->autorelease();
@@ -45,6 +45,7 @@ Card_Slot* Card_Slot::create(int _color, int _player_count, int _player_type) {
         sprite->card_num = 0;
         sprite->player_count = _player_count;
         sprite->can_touch = false;
+        sprite->pt = _pt;
     }
     else {
         delete sprite;
@@ -91,6 +92,10 @@ bool Card_Slot::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
 void Card_Slot::setCard(EventCustom* event) {
     int* card_num_round = (int*)event->getUserData();
     if (card_num_round[1] == color) {
+        EventCustom animationCall = EventCustom("animation_call");
+        animationCall.setUserData((int*)&color);
+        _eventDispatcher->dispatchEvent(&animationCall);
+
         card_num = card_num_round[0];
         if (card_num == 1) {
             this->setTexture("machinegun.png");

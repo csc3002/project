@@ -110,7 +110,7 @@ bool BeginScene::init()
 	auto option_advanced = MenuItemImage::create(
 		"advanced_button.png",
 		"advanced_button.png",
-		CC_CALLBACK_1(BeginScene::refresh3, this , 1));
+		CC_CALLBACK_1(BeginScene::refresh3, this, true));
 	option_advanced->setPosition(Vec2(480, 540));
 	option_advanced->setScale(0);
 	this->option_advanced = option_advanced;
@@ -118,7 +118,7 @@ bool BeginScene::init()
 	auto option_normal = MenuItemImage::create(
 		"normal_button.png",
 		"normal_button.png",
-		CC_CALLBACK_1(BeginScene::refresh3, this, 0));
+		CC_CALLBACK_1(BeginScene::refresh3, this, false));
 	option_normal->setPosition(Vec2(480, 420));
 	option_normal->setScale(0);
 	this->option_normal = option_normal;
@@ -522,7 +522,7 @@ void BeginScene::refresh2_1(Ref* pSender ) {
 	this->option_normal->setScale(2);
 }
 
-void BeginScene::refresh3(Ref* pSender, int mode) {
+void BeginScene::refresh3(Ref* pSender, bool mode) {
 	this->advance_mode = mode;
     log("%d", advance_mode);
 	this->option1->setScale(0);

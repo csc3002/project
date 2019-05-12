@@ -151,8 +151,8 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
 
             // create an action array, delay works as a placeholder
             auto delay = DelayTime::create(0.01f);
-            ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
-                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
+            FiniteTimeAction* act[13] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
 
             // action
             if (buff != "stopaction") {
@@ -185,14 +185,14 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                         if (status == "outer" && position == fly_start && i == roll - 1) {
                             position = fly_end;
                             auto fly = MoveTo::create(0.5, outer[fly_end]);
-                            act[6] = fly->clone();
+                            act[7] = fly->clone();
                         }
                         // when stop at the same color point
                         else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
                             for (int i = 0; i < 4; ++i) {
                                 position = (position + 1) % 52;
                                 auto jump = MoveTo::create(0.2, outer[position]);
-                                act[7 + i] = jump->clone();
+                                act[8 + i] = jump->clone();
                             }
                             jumped = true;
                         }
@@ -200,14 +200,14 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                         if (status == "outer" && position == fly_start && i == roll - 1) {
                             position = fly_end;
                             auto fly = MoveTo::create(0.5, outer[fly_end]);
-                            act[11] = fly->clone();
+                            act[12] = fly->clone();
                         }
                         // when stop at the same colop point which is not fly point
                         else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
                             for (int i = 0; i < 4; ++i) {
                                 position = (position + 1) % 52;
                                 auto jump = MoveTo::create(0.2, outer[position]);
-                                act[7 + i] = jump->clone();
+                                act[8 + i] = jump->clone();
                             }
                             jumped = true;
                         }
@@ -273,34 +273,38 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
                         jumped = false;
                         can_touch = false;
                         auto finish = MoveTo::create(0.5, start_pt);
-                        act[6] = finish->clone();
-                        if (color == 0) {
-                            this->setTexture("plane_win_blue.png");
-                        }
-                        if (color == 1) {
-                            this->setTexture("plane_win_green.png");
-                        }
-                        if (color == 2) {
-                            this->setTexture("plane_win_red.png");
-                        }
-                        if (color == 3) {
-                            this->setTexture("plane_win_yellow.png");
-                        }
+                        act[7] = finish->clone();
+
+                        auto textureChange = [&]() {
+                            if (color == 0) {
+                                this->setTexture("plane_win_blue.png");
+                            }
+                            if (color == 1) {
+                                this->setTexture("plane_win_green.png");
+                            }
+                            if (color == 2) {
+                                this->setTexture("plane_win_red.png");
+                            }
+                            if (color == 3) {
+                                this->setTexture("plane_win_yellow.png");
+                            }
+                        };
+                        auto setWinTexture = CallFunc::create(textureChange);
+                        act[6] = setWinTexture;
                     }
                 }
             }
             // events after the plane stops moving
-            auto afterMove = [&] () {
+            auto afterMove = [&]() {
                 
                 // tell the dice that the action ends and let it touchable
                 EventCustom eventPlaneEnd = EventCustom("plane_end");
                 eventPlaneEnd.setUserData((bool*)true);
                 _eventDispatcher->dispatchEvent(&eventPlaneEnd);
-                cocos2d::log("iii");
                 
                 // tell other planes its position
                 EventCustom eventPlanePosition = EventCustom("plane_position");
-                int PositionArray[3] = { color, position, 0 };
+                int PositionArray[3] = {color, position, 0};
                 if (status == "outer") {
                     PositionArray[2] = 1;
                 }
@@ -316,7 +320,7 @@ bool Planes::onTouchBegan(Touch* touch, Event* event) {
             
             // run the sequence
             // do_after_move is only executed after the plane stops moving
-            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
+            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], act[12], do_after_move, nullptr);
             this->runAction(sequence);
         }
 
@@ -570,8 +574,8 @@ void Planes::AIMove(EventCustom* event) {
             
             // create an action array, delay works as a placeholder
             auto delay = DelayTime::create(0.01f);
-            ActionInterval* act[12] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
-                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
+            FiniteTimeAction* act[13] = {delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(),
+                delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone(), delay->clone()};
             // action
             if (buff != "stopaction") {
                 
@@ -603,14 +607,14 @@ void Planes::AIMove(EventCustom* event) {
                         if (status == "outer" && position == fly_start && i == roll - 1) {
                             position = fly_end;
                             auto fly = MoveTo::create(0.5, outer[fly_end]);
-                            act[6] = fly->clone();
+                            act[7] = fly->clone();
                         }
                         // when stop at the same color point
                         else if (status == "outer" && position % 4 == color && position != turn_pt && i == roll - 1) {
                             for (int i = 0; i < 4; ++i) {
                                 position = (position + 1) % 52;
                                 auto jump = MoveTo::create(0.2, outer[position]);
-                                act[7 + i] = jump->clone();
+                                act[8 + i] = jump->clone();
                             }
                             jumped = true;
                         }
@@ -618,14 +622,14 @@ void Planes::AIMove(EventCustom* event) {
                         if (status == "outer" && position == fly_start && i == roll - 1) {
                             position = fly_end;
                             auto fly = MoveTo::create(0.5, outer[fly_end]);
-                            act[11] = fly->clone();
+                            act[12] = fly->clone();
                         }
                         // when stop at the same colop point which is not fly point
                         else if (status == "outer" && position % 4 == color && position != turn_pt && !jumped  && i == roll - 1) {
                             for (int i = 0; i < 4; ++i) {
                                 position = (position + 1) % 52;
                                 auto jump = MoveTo::create(0.2, outer[position]);
-                                act[7 + i] = jump->clone();
+                                act[8 + i] = jump->clone();
                             }
                             jumped = true;
                         }
@@ -691,19 +695,24 @@ void Planes::AIMove(EventCustom* event) {
                         jumped = false;
                         can_touch = false;
                         auto finish = MoveTo::create(0.5, start_pt);
-                        act[6] = finish->clone();
-                        if (color == 0) {
-                            this->setTexture("plane_win_blue.png");
-                        }
-                        if (color == 1) {
-                            this->setTexture("plane_win_green.png");
-                        }
-                        if (color == 2) {
-                            this->setTexture("plane_win_red.png");
-                        }
-                        if (color == 3) {
-                            this->setTexture("plane_win_yellow.png");
-                        }
+                        act[7] = finish->clone();
+
+                        auto textureChange = [&]() {
+                            if (color == 0) {
+                                this->setTexture("plane_win_blue.png");
+                            }
+                            if (color == 1) {
+                                this->setTexture("plane_win_green.png");
+                            }
+                            if (color == 2) {
+                                this->setTexture("plane_win_red.png");
+                            }
+                            if (color == 3) {
+                                this->setTexture("plane_win_yellow.png");
+                            }
+                        };
+                        auto setWinTexture = CallFunc::create(textureChange);
+                        act[6] = setWinTexture;
                     }
                 }
             }
@@ -715,7 +724,6 @@ void Planes::AIMove(EventCustom* event) {
                 EventCustom eventPlaneEnd = EventCustom("plane_end");
                 eventPlaneEnd.setUserData((bool*)true);
                 _eventDispatcher->dispatchEvent(&eventPlaneEnd);
-                cocos2d::log("iii");
                 
                 // tell other planes its position
                 EventCustom eventPlanePosition = EventCustom("plane_position");
@@ -735,7 +743,7 @@ void Planes::AIMove(EventCustom* event) {
             
             // run the sequence
             // do_after_move is only executed after the plane stops moving
-            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], do_after_move, nullptr);
+            auto sequence = Sequence::create(act[0], act[1], act[2], act[3], act[4], act[5], act[6], act[7], act[8], act[9], act[10], act[11], act[12], do_after_move, nullptr);
             this->runAction(sequence);
         }
     }

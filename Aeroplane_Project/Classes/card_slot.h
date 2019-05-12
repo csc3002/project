@@ -1,5 +1,5 @@
 //
-//  card_generator.h
+//  card_slot.h
 //  Aeroplane_Project
 //
 //  Created by Re-Entry on 2019/4/28.
@@ -18,10 +18,11 @@ public:
     int card_num;                                          // the kind of the card stored, 0 = none, 1 = machinegun, 2 = protection, 3 = stopaction, 4 = neutralize
     int player_count;                                      // the number of players
     bool can_touch;                                        // enable to be touched or not
+    Vec2 pt;                                               // coordinate of the slot
 
     virtual bool init();
 
-    static Card_Slot* create(int _color, int _player_count, int _player_type);
+    static Card_Slot* create(int _color, int _player_count, int _player_type, Vec2 _pt);
 
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
 

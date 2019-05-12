@@ -18,12 +18,13 @@ bool AI_player::init() {
     _eventDispatcher->addEventListenerWithSceneGraphPriority(cardListener, this);
     return true;
 }
+
 AI_player* AI_player::create() {
     AI_player* sprite = new AI_player();
     if (sprite->init()) {
-		sprite->autorelease();
-		return sprite;
-	}
+        sprite->autorelease();
+        return sprite;
+    }
 }
 
 void AI_player::saveChessboard(EventCustom* event) {
@@ -50,7 +51,7 @@ void AI_player::saveCard(EventCustom* event) {
 }
 
 void AI_player::AIPlay() {
-    if(isGameOver(chessboard)){
+    if(isGameOver(chessboard)) {
         return;
     }
     int count = 0;          // count the current number of moves
@@ -84,5 +85,3 @@ void AI_player::AIPlay() {
         _eventDispatcher->dispatchEvent(&eventAIMove);
     }
 }
-
-

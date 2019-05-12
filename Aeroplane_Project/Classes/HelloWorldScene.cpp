@@ -33,6 +33,7 @@
 #include "AI_interface.h"
 #include "evaluator.h"
 #include "movegenerator.h"
+#include "card_slot_animation.h"
 #include <string>
 USING_NS_CC;
 using namespace std;
@@ -120,17 +121,17 @@ void HelloWorld::setPlane() {
     auto win_judge = Win_Judge::create();
 
 	// coordinates of starting area
-	const Vec2 blue_start_pts[5] = { Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140) };
-	const Vec2 green_start_pts[5] = { Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649) };
-	const Vec2 red_start_pts[5] = { Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825) };
-	const Vec2 yellow_start_pts[5] = { Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315) };
+	const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
+	const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
+	const Vec2 red_start_pts[5] = {Vec2(745, 815), Vec2(745, 745), Vec2(815, 815), Vec2(815, 745), Vec2(645, 825)};
+	const Vec2 yellow_start_pts[5] = {Vec2(815, 215), Vec2(745, 215), Vec2(815, 145), Vec2(745, 145), Vec2(820, 315)};
 
 	// positions of special points
-	const int enter_pt[4] = { 39, 0, 13, 26 };
-	const int turn_pt[4] = { 36, 49, 10, 23 };
-	const int fly_start[4] = { 4, 17, 30, 43 };
-	const int fly_end[4] = { 16, 29, 42, 3 };
-	const int init_rotation[4] = { 270, 0, 90, 180 };
+	const int enter_pt[4] = {39, 0, 13, 26};
+	const int turn_pt[4] = {36, 49, 10, 23};
+	const int fly_start[4] = {4, 17, 30, 43};
+	const int fly_end[4] = {16, 29, 42, 3};
+	const int init_rotation[4] = {270, 0, 90, 180};
 
 	Planes* blue[4];
 	Planes* green[4];
@@ -168,17 +169,21 @@ void HelloWorld::setPlane() {
 	// initiate card generator and card slots
 	auto card_generator = Card_Generator::create();
 
-	auto card_slot_blue = Card_Slot::create(0, number_of_players, players[0]);
-	card_slot_blue->setPosition(Vec2(50, 50));
+    const Vec2 card_slot_pts[4] = {Vec2(50, 50), Vec2(50, 910), Vec2(910, 910), Vec2(910, 50)};
 
-	auto card_slot_green = Card_Slot::create(1, number_of_players, players[1]);
-	card_slot_green->setPosition(Vec2(50, 910));
+	auto card_slot_blue = Card_Slot::create(0, number_of_players, players[0], card_slot_pts[0]);
+	card_slot_blue->setPosition(card_slot_blue->pt);
 
-	auto card_slot_red = Card_Slot::create(2, number_of_players, players[2]);
-	card_slot_red->setPosition(Vec2(910, 910));
+	auto card_slot_green = Card_Slot::create(1, number_of_players, players[1], card_slot_pts[1]);
+	card_slot_green->setPosition(card_slot_green->pt);
 
-	auto card_slot_yellow = Card_Slot::create(3, number_of_players, players[3]);
-	card_slot_yellow->setPosition(Vec2(910, 50));
+	auto card_slot_red = Card_Slot::create(2, number_of_players, players[2], card_slot_pts[2]);
+	card_slot_red->setPosition(card_slot_red->pt);
+
+	auto card_slot_yellow = Card_Slot::create(3, number_of_players, players[3], card_slot_pts[3]);
+	card_slot_yellow->setPosition(card_slot_yellow->pt);
+
+    auto card_slot_animation = Card_Slot_Animation::create();
 
 	// add child
 	if (players[0]) {
@@ -211,6 +216,7 @@ void HelloWorld::setPlane() {
     log("%d", this->is_advance_mode);
 	if (this->is_advance_mode) {
 		this->addChild(card_generator, 1);
+        this->addChild(card_slot_animation, 10);
 		if (players[0]) {
 			this->addChild(card_slot_blue, 1);
 		}
@@ -225,8 +231,8 @@ void HelloWorld::setPlane() {
 		}
 	}
     
-    moveGenerator * mg = new moveGenerator(6, is_advance_mode);
-    evaluator * eval = new evaluator();
+    moveGenerator *mg = new moveGenerator(6, is_advance_mode);
+    evaluator *eval = new evaluator();
     auto AI_player = AI_player::create();
     AI_player->setEvaluator(eval);
     AI_player->setMoveGenerator(mg);
