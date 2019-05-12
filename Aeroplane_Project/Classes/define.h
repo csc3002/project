@@ -9,11 +9,11 @@
 #define DEFINE_H
 
 // Define regions
-#define APRON "apron"
-#define OFF "off"
-#define OUTERLOOP "outerloop"
-#define TRACK "track"
-#define WIN "win"
+#define APRON 0
+#define OFF 1
+#define OUTERLOOP 2
+#define TRACK 3
+#define WIN 4
 
 // Define chess id
 #define NOCHESS 0
@@ -76,8 +76,9 @@
 #define IsBlockGreen(x) (x % 4 == 3)  //judge whether the block is green
 
 // Define some buff states
-#define DEFENSED "defense"
-#define INTERFERED "interfered"
+#define NONE 0
+#define DEFENSED 1
+#define INTERFERED 2
 
 // Define card
 #define NOCARD -1
@@ -90,7 +91,7 @@
 // Define the structure representing the coordinate
 
 typedef struct _coordinate {
-    std::string region;      //region of the block
+    int region;      //region of the block
     int code;           //the code for the block
 } COORDINATE;
 
@@ -108,7 +109,7 @@ typedef struct _chess {
     int chessID;                // the ID of the chess
     int color;               // the color of the chess
     COORDINATE currentCoor;     // the current coordinate of the chess
-    std::string buff_state = "";
+    int buff_state = NONE;
     int round_left = 0;
 
 } CHESS;

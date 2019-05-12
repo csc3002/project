@@ -525,11 +525,11 @@ void Planes::get_chess() {
     chess.color = (this->color + 2) % 4;
     chess.chessID = (chess.color * 4 + this->id + 1);
     if (buff == "none") {
-        chess.buff_state = "";
+        chess.buff_state = NONE;
     } else if (buff == "protection") {
-        chess.buff_state = "defense";
+        chess.buff_state = DEFENSED;
     } else if (buff == "stopaction") {
-        chess.buff_state = "interfered";
+        chess.buff_state = INTERFERE;
     }
     chess.round_left = this->round_left;
     if (status == "ground") {
@@ -772,7 +772,7 @@ void Planes::AIUseCard(EventCustom* event) {
                 _eventDispatcher->dispatchEvent(&machinegunAttack);
             }
             else if (cardInfoArray[0] == 2 && buff != "stopaction") {
-                buff = card;
+                buff = "protection";
                 round_left = cardInfoArray[1];
                 if (color == 0) {
                     this->setTexture("plane_shield_blue.png");
@@ -788,7 +788,7 @@ void Planes::AIUseCard(EventCustom* event) {
                 }
             }
             else if (cardInfoArray[0] == 3 && buff != "protection") {
-                buff = card;
+                buff = "stopaction";
                 round_left = cardInfoArray[1];
                 if (color == 0) {
                     this->setTexture("plane_disturb_blue.png");

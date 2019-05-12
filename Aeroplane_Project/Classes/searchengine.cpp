@@ -43,12 +43,12 @@ void searchEngine::play(CHESS chessboard[], int side){
     while(true){   // dice can be rolled n times if keep rolling out 6
         this->rollPoint = pMG->roll();
         //rollCount ++;
-        std::cout << "-------------------Adding moves-------------------" << std::endl;
+//        std::cout << "-------------------Adding moves-------------------" << std::endl;
         count = pMG->createPossibleMove(cur_Chessboard, this->rollPoint, side, myCard);
 
         if(count != 1){     // search move only when it is able to move a chess
             searchAGoodMove(count, side, myCard);
-            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << " , " << bestMove->aboutCard << std::endl;
+//            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << " , " << bestMove->aboutCard << std::endl;
 
             if(bestMove->aboutCard == DRAW) {
                 myCard = rand() % 4 + 1;
@@ -219,7 +219,7 @@ void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {
                chessboard[i].buff_state != DEFENSED && ((myLocation + 52 - enemyLocation )% 52 <= 5 || (enemyLocation + 52 - myLocation )% 52 <= 5)) {
                 chessboard[i].currentCoor.region = APRON;
                 chessboard[i].currentCoor.code = OUTSIDE;
-                chessboard[i].buff_state = "";
+				chessboard[i].buff_state = NONE;
                 chessboard[i].round_left = 0;
                 std::cout << "chess being attacked: " << chessboard[i].chessID << std::endl;
             }
@@ -237,7 +237,7 @@ void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {
         break;
     }
     case ELIMINATE: {
-        chessboard[move->chessID-1].buff_state = "";
+        chessboard[move->chessID-1].buff_state = NONE;
         chessboard[move->chessID-1].round_left = 0;
         break;
     }

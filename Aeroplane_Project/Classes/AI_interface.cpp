@@ -20,7 +20,10 @@ bool AI_player::init() {
 }
 AI_player* AI_player::create() {
     AI_player* sprite = new AI_player();
-    if (sprite->init()) {return sprite;}
+    if (sprite->init()) {
+		sprite->autorelease();
+		return sprite;
+	}
 }
 
 void AI_player::saveChessboard(EventCustom* event) {
