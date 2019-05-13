@@ -117,6 +117,7 @@ bool EndScene::init()
     auto exit = Menu::create(exitItem, NULL);
     exit->setPosition(Vec2::ZERO);
     this->addChild(exit, 1);
+    return true;
 }
 
 void EndScene::menuCloseCallback(Ref* pSender)

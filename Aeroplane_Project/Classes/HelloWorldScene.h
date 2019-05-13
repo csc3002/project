@@ -40,16 +40,10 @@ public:
 	cocos2d::Label* Online_Mode;
 	void update(float dt);
     virtual bool init();
-	void setPlane();
-    virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
-    virtual void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
-    virtual void onTouchMoved(cocos2d::Touch*, cocos2d::Event*);
-    virtual void onTouchCancelled(cocos2d::Touch*, cocos2d::Event*);
+    void setPlane();
 
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
-private:
-    cocos2d::Label* labelTouchInfo;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

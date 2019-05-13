@@ -59,20 +59,6 @@ bool HelloWorld::init() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // add touchlistener
-    auto touchListener = EventListenerTouchOneByOne::create();
-    touchListener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
-    touchListener->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
-    touchListener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
-    touchListener->onTouchCancelled = CC_CALLBACK_2(HelloWorld::onTouchCancelled, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-
-    // touch info, for test
-    labelTouchInfo = Label::createWithSystemFont("Touch or click somewhere to begin", "Arial", 18);
-    labelTouchInfo->setTextColor(Color4B(0,0,0,255));
-    labelTouchInfo->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-                                     Director::getInstance()->getVisibleSize().height / 2));
-
     // set background
     auto bg = Sprite::create("background.png");
     bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
@@ -97,7 +83,6 @@ bool HelloWorld::init() {
 	this->Ad_Mode = label;
 	this->Online_Mode = label2;
 	
-	this->addChild(labelTouchInfo, 1);
 	this->addChild(bg, 0);
 	this->schedule(schedule_selector(HelloWorld::update));
 	return true;
@@ -256,20 +241,3 @@ void HelloWorld::update(float dt) {
 	}
 }
 
-bool HelloWorld::onTouchBegan(Touch* touch, Event* event) {
-    labelTouchInfo->setPosition(touch->getLocation());
-    labelTouchInfo->setString("You Touched Here");
-    return true;
-}
-
-void HelloWorld::onTouchEnded(Touch* touch, Event* event) {
-    cocos2d::log("touch ended");
-}
-
-void HelloWorld::onTouchMoved(Touch* touch, Event* event) {
-    cocos2d::log("touch moved");
-}
-
-void HelloWorld::onTouchCancelled(Touch* touch, Event* event) {
-    cocos2d::log("touch cancelled");
-}
