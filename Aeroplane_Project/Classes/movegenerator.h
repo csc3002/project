@@ -34,6 +34,7 @@ public:
  * -------------------------------------
  * Constructor and destructor of the class instance.
  */
+
     moveGenerator(int offmode, int advance);
     virtual ~moveGenerator();
 
@@ -50,16 +51,15 @@ public:
 
 /*
  * Method: createPossibleMove
- * Usage: int moveCount = createPossibleMove(chessboard[16], rollPoint[3], side)
+ * Usage: int moveCount = createPossibleMove(chessboard[16], rollPoint, side, hadCard)
  * ------------------------------------------------------------------------------------
  * This function can generate all possible moves of a player and return the number of moves.
- * It has 3 parameters. chessboard[] is an array which contains the current chessboard.
- * rollPoint is the roll point of current player. side is the color of the player.
- * The method will write all possible moves into moveList.
+ * It has 4 parameters. chessboard[] is an array which contains the current chessboard.
+ * rollPoint is the roll point of current player. side is the color of the player. hadCard
+ * is the information about the card this player currently hold.
  */
 
     virtual int createPossibleMove(const CHESS chessboard[], int rollPoint, int side, int hadCard);
-
 
 //  This is the data structure which stores all possible moves.
 
@@ -73,8 +73,8 @@ public:
 
 //  This variable controls whether the advanced mode is on or off.
 //  Default setting is off (0).
-    int advanceMode = 0;
 
+    int advanceMode = 0;
 
 /*
  * Protected field starts from here.
@@ -84,16 +84,13 @@ protected:
 /*
  * Method: addMove
  * Usage: addMove(rollPoint, chessID, aboutCard)
- * ----------------------------------
+ * ----------------------------------------------
  * Add a valid chess move to the move list.
  */
     void addMove(int rollPoint, int chessID, int aboutCard);
 
 //  This variable stores the number of move generated at this stage.
     int moveCount;
-
-
-
 
 };
 

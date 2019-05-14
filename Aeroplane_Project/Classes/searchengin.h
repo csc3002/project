@@ -14,7 +14,6 @@
 #ifndef SEARCHENGINE_H
 #define SEARCHENGINE_H
 
-
 class searchEngine
 {
 public:
@@ -26,7 +25,7 @@ public:
 /*
  * Method: play
  * Usage: searchengine.play(chessboard[16], side)
- * ---------------------------
+ * ----------------------------------------------
  * This method simulates a player. It receives a chessboard
  * and change the original chessboard in place.
  */
@@ -36,13 +35,13 @@ public:
 /*
  * Method: searchAGoodMove
  * Usage: searchAGoodMove(count, side, hadCard)
- * ---------------------------------------
+ * --------------------------------------------
  * This method is used to find the best move. When it is executed,
  * it will change the bestMoves pointer pointing to the best move
  * in the moveList.
  */
-    virtual void searchAGoodMove(int count, int side, int hadCard);
 
+    virtual void searchAGoodMove(int count, int side, int hadCard);
 
 /*
  * Method: isGameOver
@@ -52,6 +51,7 @@ public:
  * It can be use when searching a good move. Probably
  * can be used in other situations.
  */
+
     bool isGameOver(const CHESS chessboard[]);
 
 //  This two method set evaluator and move generator to the search engine.
@@ -60,15 +60,15 @@ public:
 
 //  This variable preserves the roll point
     int rollPoint;
-// The card this player have
+//  The card this player have
     int myCard = NOCARD;
 
 protected:
 
 /*
  * Method: makeMove
- * Usage: makeMove(&move, chessboard, rollcount, side)
- * ---------------------------------------
+ * Usage: makeMove(&move, chessboard, side)
+ * ----------------------------------------
  * This method receives a pointer to a chess move and a pointer to a chessboard.
  * The method will modify the chessboard according to the move.
  */
@@ -77,8 +77,8 @@ protected:
 
 /*
  * Method: useAbility
- * Usage: useAbility(&move, chessboard, rollcount, side)
- * ---------------------------------------
+ * Usage: useAbility(&move, chessboard, side)
+ * ------------------------------------------
  * This method receives a pointer to a chess move and a pointer to a chessboard.
  * The method will modify the chessboard according to the ability used.
  */
@@ -112,7 +112,7 @@ protected:
 //  This is the pointer to the evaluator.
     evaluator * pEval;
 
-// This is the pointer to the move generator.
+//  This is the pointer to the move generator.
     moveGenerator * pMG;
 
 };

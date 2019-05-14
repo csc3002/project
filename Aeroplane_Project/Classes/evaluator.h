@@ -1,8 +1,8 @@
 /*
  * File: evaluator.h
  * -----------------
- * This is the head file of simple evaluator.The main method evaluate() just
- * evaluate the value of a move.
+ * This is the head file of evaluator. The main method evaluate() just
+ * evaluates the value of a move.
  */
 
 #include "define.h"
@@ -10,7 +10,6 @@
 
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
-
 
 class evaluator
 {
@@ -22,8 +21,8 @@ public:
 
 /*
  * Method: evaluate
- * Usage: score = evaluate(chessboard[16], side)
- * ---------------------------------------------
+ * Usage: score = evaluate(oldChessboard[16], chessboard[16], side)
+ * -----------------------------------------------------------------
  * This method can return the value of a chessboard situation base on the side of the player.
  */
 

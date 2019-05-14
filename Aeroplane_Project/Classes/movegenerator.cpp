@@ -55,7 +55,7 @@ int moveGenerator::roll()
 
 
 /*
- * Implementation note: createmy_chessMove
+ * Implementation note: createPossibleMove
  * ----------------------------------------
  * Notice that this function will NOT change the current chessboard.
  * Also this method does not check how many times does the dice roll.
@@ -195,5 +195,3 @@ void moveGenerator::addMove(int rollPoint, int chessID, int aboutCard){
     moveCount++;
 //    std::cout << moveCount << ": ";
 }
-
-

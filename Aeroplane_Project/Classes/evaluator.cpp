@@ -208,11 +208,3 @@ int evaluator::evaluate(const CHESS oldChessboard[],const CHESS newChessboard[],
 
     return benefit - damage;
 }
-
-
-
-
-
-
-
-

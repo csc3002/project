@@ -27,9 +27,9 @@ searchEngine::~searchEngine(){
  * This method simulates player behavior like this:
  * 1. Copy the chessboard into cur_Chessboard which is inside the search engine instance;
  * 2. Roll the dice. Then take create move.
- * 3. If there is only one move, it must be "don't move" case. Then do not do any movement.
+ * 3. If there is only one move, it must be "not possible to move" case. Then do not do any movement.
  *    If there is more than one possible move, search a good move and make move.
- * 4. If game is not over now and roll point is six, continue until the third time roll. Else, player end its turn.
+ * 4. If game is not over and roll point is six, continue until the third time roll. Else, player end its turn.
  * 5. Copy the modified chessboard in place to the original one.
  */
 
