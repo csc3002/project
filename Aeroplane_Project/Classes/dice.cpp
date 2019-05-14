@@ -63,7 +63,7 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->playerArray[2] = player2;
         sprite->playerArray[3] = player3;
 
-        for (int i=0; i<=3; ++i) {
+        for (int i = 0; i <= 3; ++i) {
             if (sprite->playerArray[i]) {
                 sprite->playerCount++;
             }
@@ -79,7 +79,7 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
         sprite->addChild(sprite->sign2);
         
         Animation* animation = Animation::create();
-        for(int i =1; i <= 6; ++i) {
+        for(int i = 1; i <= 6; ++i) {
             char str[15];
             sprintf(str, "dice%d.png", i);
             animation->addSpriteFrameWithFile(str);
@@ -100,7 +100,7 @@ Dice* Dice::create(int player0, int player1, int player2, int player3) {
 // get a random number as roll point
 int Dice::getrandom() {
     auto sprite = Sprite::create();
-    sprite->setPosition(Vec2(45.7,45.7));
+    sprite->setPosition(Vec2(45.7, 45.7));
     this->addChild(sprite);
     Animation* animation = AnimationCache::getInstance()->getAnimation("Dice");
     Animate* animate = Animate::create(animation);
@@ -188,15 +188,16 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
                         break;
                 }
                 
+                // tell the planes if the round changes
+                EventCustom eventRoundChange = EventCustom("round_change");
+                _eventDispatcher->dispatchEvent(&eventRoundChange);
+
                 if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3])) {
                     can_touch = true;
                     EventCustom eventRoundS = EventCustom("event_round_to_slots");
                     eventRoundS.setUserData((void*)&round);
                     _eventDispatcher->dispatchEvent(&eventRoundS);
                 }
-                // tell the planes if the round changes
-                EventCustom eventRoundChange = EventCustom("round_change");
-                _eventDispatcher->dispatchEvent(&eventRoundChange);
             }
             log("end %d", round);
             statusArray[0] = 0;
@@ -264,11 +265,41 @@ void Dice::setStatusArray(EventCustom* event) {
 
 // callback function to skip a player if the card generator is clicked
 void Dice::skipTurn(EventCustom* event) {
+    switch (round) {
+    case 0: // case blue
+        sign->setTexture("plane_blue.png");
+        break;
+    case 1: // case green
+        sign->setTexture("plane_green.png");
+        break;
+    case 2: // case red
+        sign->setTexture("plane_red.png");
+        break;
+    case 3: // case yellow
+        sign->setTexture("plane_yellow.png");
+        break;
+    }
+
     round = (round + 1) % 4;
 
     // skip if the player is nobody
     while (!playerArray[round]) {
         round = (round + 1) % 4;
+    }
+
+    switch (round) {
+    case 0: // case blue
+        sign2->setTexture("plane_blue.png");
+        break;
+    case 1: // case green
+        sign2->setTexture("plane_green.png");
+        break;
+    case 2: // case red
+        sign2->setTexture("plane_red.png");
+        break;
+    case 3: // case yellow
+        sign2->setTexture("plane_yellow.png");
+        break;
     }
 
     // reset the touchablity of dice
@@ -302,15 +333,15 @@ void Dice::AICall() {
 }
 
 void Dice::AIPass(EventCustom* event) {
-//    log("AI PASS1");
     auto chess = *(CHESS*)event->getUserData();
-    chessboard[chess.chessID-1] = chess;
+    chessboard[chess.chessID - 1] = chess;
     ++chessboardStatus;
     if (chessboardStatus == 4 * playerCount) {
         chessboardStatus = 0;
 
         roll_num = randomInteger(1, 6);
         roll_num = randomInteger(1, 6);
+        /*roll_num = 6;*/ // only for test, let the roll point be a fixed number
         EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
         eventRoundG.setUserData((void*)&round);
         _eventDispatcher->dispatchEvent(&eventRoundG);
@@ -386,7 +417,7 @@ void Dice::AIMove(EventCustom* event) {
 
 void Dice::AIDiceAnimation() {
     auto sprite = Sprite::create();
-    sprite->setPosition(Vec2(45.7,45.7));
+    sprite->setPosition(Vec2(45.7, 45.7));
     this->addChild(sprite);
     Animation* animation = AnimationCache::getInstance()->getAnimation("Dice");
     Animate* animate = Animate::create(animation);
@@ -411,27 +442,3 @@ void Dice::AISkipTurn() {
     EventCustom eventRoundChange = EventCustom("round_change");
     _eventDispatcher->dispatchEvent(&eventRoundChange);
 }
-//EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
-//eventRoundG.setUserData((void*)&round);
-//_eventDispatcher->dispatchEvent(&eventRoundG);
-//
-//// if roll_num is not 6, the next player rolls the dice
-//if (roll_num != 6) {
-//    round = (round + 1) % 4;
-//
-//    // skip if the player is nobody
-//    while (!playerArray[round]) {
-//        round = (round + 1) % 4;
-//    }
-//
-//    // pass round to the card slots
-//    if (!(statusArray[0] || statusArray[1] || statusArray[2] || statusArray[3]) ) {
-//        EventCustom eventRoundS = EventCustom("event_round_to_slots");
-//        eventRoundS.setUserData((void*)&round);
-//        _eventDispatcher->dispatchEvent(&eventRoundS);
-//    }
-//
-//    // tell the planes if the round changes
-//    EventCustom eventRoundChange = EventCustom("round_change");
-//    _eventDispatcher->dispatchEvent(&eventRoundChange);
-//    }

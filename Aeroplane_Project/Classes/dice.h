@@ -30,7 +30,6 @@ public:
     static Dice* create(int player0, int player1, int player2, int player3);
 
     int getrandom();
-//    int AIrandom();
 
     virtual bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
 
@@ -41,25 +40,21 @@ public:
     virtual void setStatusArray(EventCustom* event);
 
     virtual void skipTurn(EventCustom* event);
-    
+
     virtual void AISkipTurn();
 
-//    virtual void AICall2(float dt);
-    
     virtual void AICall();
 
     virtual void AIPass(EventCustom* event);
-    
-//    virtual void cardPass(EventCustom* event);
-    
+
     virtual void AINoMove();
-    
+
     virtual void AIDraw();
-    
+
     virtual void AIUseCard(EventCustom* event);
-    
+
     virtual void AIMove(EventCustom* event);
-    
+
     virtual void AIDiceAnimation();
 
 private:
