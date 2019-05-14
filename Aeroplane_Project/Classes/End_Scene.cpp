@@ -116,10 +116,7 @@ bool EndScene::init() {
     auto exit = Menu::create(exitItem, NULL);
     exit->setPosition(Vec2::ZERO);
     this->addChild(exit, 1);
-<<<<<<< HEAD
-=======
 
->>>>>>> b92ed136cd8d73f5fab217b385ece9646e274a81
     return true;
 }
 
