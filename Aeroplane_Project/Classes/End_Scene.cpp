@@ -45,8 +45,7 @@ static void problemLoading(const char* filename) {
 }
 
 // on "init" you need to initialize your instance
-bool EndScene::init()
-{
+bool EndScene::init() {
     //////////////////////////////
     // 1. super init first
     if ( !Scene::init() )
@@ -117,10 +116,11 @@ bool EndScene::init()
     auto exit = Menu::create(exitItem, NULL);
     exit->setPosition(Vec2::ZERO);
     this->addChild(exit, 1);
+
+    return true;
 }
 
-void EndScene::menuCloseCallback(Ref* pSender)
-{
+void EndScene::menuCloseCallback(Ref* pSender) {
     //Close the cocos2d-x game scene and quit the application
     Director::getInstance()->end();
 
