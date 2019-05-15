@@ -47,6 +47,7 @@ bool BeginScene::init()
         return false;
     }
     this->num_player = 0;
+	this->help_menu = 0;
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     auto bg = Sprite::create("Start.png");
@@ -302,6 +303,67 @@ bool BeginScene::init()
 	this->plane4->setPosition(Vec2(825, 335));
 	this->plane4->setScale(0);
 	this->addChild(plane4, 1);
+
+	auto help1= MenuItemImage::create(
+		"Option1.png",
+		"Option1.png",
+		CC_CALLBACK_1(BeginScene::helpmenu, this,1));
+	help1->setPosition(Vec2(250,600));
+	help1->setScale(0);
+	this->help1 = help1;
+
+	auto help2 = MenuItemImage::create(
+		"Option2.png",
+		"Option2.png",
+		CC_CALLBACK_1(BeginScene::helpmenu, this, 2));
+	help2->setPosition(Vec2(250, 475));
+	help2->setScale(0);
+	this->help2 = help2;
+
+	auto help3 = MenuItemImage::create(
+		"Option3.png",
+		"Option3.png",
+		CC_CALLBACK_1(BeginScene::helpmenu, this, 3));
+	help3->setPosition(Vec2(250, 350));
+	help3->setScale(0);
+	this->help3 = help3;
+
+	auto help4 = MenuItemImage::create(
+		"Option4.png",
+		"Option4.png",
+		CC_CALLBACK_1(BeginScene::helpmenu, this, 4));
+	help4->setPosition(Vec2(250, 225));
+	help4->setScale(0);
+	this->help4 = help4;
+
+	auto content1 = Sprite::create();
+	this->content1 = content1;
+	this->content1->setTexture("Content1.png");
+	this->content1->setPosition(Vec2(600, 400));
+	this->content1->setScale(0);
+	this->addChild(content1, 1);
+
+	auto content2 = Sprite::create();
+	this->content2 = content2;
+	this->content2->setTexture("Content2.png");
+	this->content2->setPosition(Vec2(600, 400));
+	this->content2->setScale(0);
+	this->addChild(content2, 1);
+
+	auto content3 = Sprite::create();
+	this->content3 = content3;
+	this->content3->setTexture("Content3.png");
+	this->content3->setPosition(Vec2(600, 400));
+	this->content3->setScale(0);
+	this->addChild(content3, 1);
+
+	auto content4 = Sprite::create();
+	this->content4 = content4;
+	this->content4->setTexture("Content4.png");
+	this->content4->setPosition(Vec2(600, 400));
+	this->content4->setScale(0);
+	this->addChild(content4, 1);
+
     if (closeItem == nullptr ||
         closeItem->getContentSize().width <= 0 ||
         closeItem->getContentSize().height <= 0)
@@ -317,7 +379,7 @@ bool BeginScene::init()
 
     // create menu, it's an autorelease object
     auto menu = Menu::create(option1, option2, option3, option_back, option_online, option_offline, option_advanced, option_normal, closeItem, option_player_one, option_AI_1, option_player_two, option_AI_2,
-        option_player_three, option_AI_3, option_player_four, option_AI_4, option_gamestart, exit, option_reset, cancel_1, cancel_2, cancel_3, cancel_4,
+        option_player_three, option_AI_3, option_player_four, option_AI_4, option_gamestart, exit, option_reset, cancel_1, cancel_2, cancel_3, cancel_4,help1,help2,help3,help4,
         NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
@@ -350,9 +412,45 @@ void BeginScene::update(float dt) {
 	else {
 		this->gamestart->setScale(0);
 	}
+	this->menu_show();
 	this->player_show();
 }
-
+void BeginScene::menu_show() {
+	if (this->help_menu == true) {
+		if (this->help_choose == 1) {
+			this->help1->setScale(1.5);
+			this->content1->setScale(1.5);
+		}
+		else {
+			this->help1->setScale(1);
+			this->content1->setScale(0);
+		}
+		if (this->help_choose == 2) {
+			this->help2->setScale(1.5);
+			this->content2->setScale(1.5);
+		}
+		else {
+			this->help2->setScale(1);
+			this->content2->setScale(0);
+		}
+		if (this->help_choose == 3) {
+			this->help3->setScale(1.5);
+			this->content3->setScale(1.5);
+		}
+		else {
+			this->help3->setScale(1);
+			this->content3->setScale(0);
+		}
+		if (this->help_choose == 4) {
+			this->help4->setScale(1.5);
+			this->content4->setScale(1.5);
+		}
+		else {
+			this->help4->setScale(1);
+			this->content4->setScale(0);
+		}
+	}
+}
 void BeginScene::player_show() {
 	if (this->player[0] == 1) {
 		this->player1->setString("Player 1");
@@ -441,6 +539,10 @@ void BeginScene::addplayer(Ref* pSender, int index) {
 	this->player[index - 1] = 1;
 }
 
+void BeginScene::helpmenu(Ref* pSender, int index) {
+	this->help_choose = index;
+}
+
 void BeginScene::addcomputer(Ref* pSender, int index) {
 	if (this->player[index - 1] == 0) {
 		this->num_player += 1;
@@ -488,7 +590,17 @@ void BeginScene::refresh1(Ref* pSender) {
 	this->plane4->setScale(0);
 	this->test->setScale(0);
 	this->option_reset->setScale(0);
+	this->content1->setScale(0);
+	this->help1->setScale(0);
+	this->content2->setScale(0);
+	this->help2->setScale(0);
+	this->content3->setScale(0);
+	this->help3->setScale(0);
+	this->content4->setScale(0);
+	this->help4->setScale(0);
 	this->reset(this);
+	this->help_choose = 0;
+	this->help_menu = false;
 	this->advance_mode = false;
 }
 
@@ -548,12 +660,15 @@ void BeginScene::refresh3(Ref* pSender, bool mode) {
 	this->option_AI_3->setScale(1.5);
 	this->option_player_four->setScale(1.5);
 	this->option_AI_4->setScale(1.5);
+
 }
 
 void BeginScene::refresh_menu(Ref* pSender) {
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);
+	this->help_menu = true;
+	this->help_choose = 1;
 	this->option_back->setPosition(Vec2(150, 100));
 	this->option_back->setScale(1.5);
 }

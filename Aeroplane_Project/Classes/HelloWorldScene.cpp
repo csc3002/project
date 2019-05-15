@@ -104,7 +104,10 @@ void HelloWorld::setPlane() {
 
     // initiate win judge
     auto win_judge = Win_Judge::create();
-
+	win_judge->is_advance_mode = this->is_advance_mode;
+	for (int i = 0; i < 4; ++i) {
+		win_judge->players[i] = this->players[i];
+	}
 	// coordinates of starting area
 	const Vec2 blue_start_pts[5] = {Vec2(215, 145), Vec2(145, 145), Vec2(215, 215), Vec2(145, 215), Vec2(314, 140)};
 	const Vec2 green_start_pts[5] = {Vec2(145, 745), Vec2(215, 745), Vec2(145, 815), Vec2(215, 815), Vec2(140, 649)};
