@@ -37,7 +37,7 @@ public:
 
     virtual bool init(int _init_rotation, string icon);
 
-    static Planes* create();
+//    static Planes* create();
 
     static Planes* create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string icon, string _status = "ground", int _position = -100, int _roll = 1);
 

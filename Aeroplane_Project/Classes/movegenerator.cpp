@@ -102,7 +102,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         CHESS & nowChess = my_chess[i];
         if(nowChess.chessID == NOCHESS){            // do not move is always avaliable
             addMove(rollPoint, nowChess.chessID, NOCARD);
-//            std::cout << "add no chess, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
+            std::cout << "add no chess, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
             continue;
         }
         if(nowChess.currentCoor.region == WIN)      // skip the chesses already win
@@ -111,7 +111,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
             if(rollPoint >= offMode && offCount == 0){      // special treatement for taking off:
                 addMove(rollPoint, nowChess.chessID, NOCARD);       // taking off just counts once
                 offCount++;
-//                std::cout << "add take off, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
+                std::cout << "add take off, chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
             }
             else
                 continue;
@@ -119,7 +119,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         else{       // else are the situations that move a chess on the chessboard
             if(nowChess.buff_state != INTERFERED){
                 addMove(rollPoint, nowChess.chessID, NOCARD);
-//                std::cout << "add move a chess,chessId = "<< nowChess.chessID << ", roll point = "<< rollPoint << std::endl;
+                std::cout << "add move a chess,chessId = "<< nowChess.chessID << ", buff_state = "<< nowChess.buff_state <<", roll point = "<< rollPoint << std::endl;
              }
         }
     }
@@ -128,7 +128,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         // generate draw card if possible
         if(rollPoint == 1 || rollPoint == 6) {
             addMove(rollPoint, NOCHESS, DRAW);
-//            std::cout << "draw a card" << std::endl;
+            std::cout << "draw a card" << std::endl;
         }
 
         // generate card use if possible
@@ -138,7 +138,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
                 for(int i = 1; i <= 4; i++) {
                     if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERED) {
                         addMove(rollPoint, my_chess[i].chessID, ATTACK);
-//                        std::cout << "attack " << my_chess[i].chessID << std::endl;
+                        std::cout << "attack " << my_chess[i].chessID << std::endl;
 
                     }
                 }
@@ -148,7 +148,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
                 for(int i = 1; i <= 4; i++) {
                     if(my_chess[i].currentCoor.region == OUTERLOOP && my_chess[i].buff_state != INTERFERED) {
                         addMove(rollPoint, my_chess[i].chessID, DEFENSE);
-//                        std::cout << "defense " << my_chess[i].chessID << std::endl;
+                        std::cout << "defense " << my_chess[i].chessID << std::endl;
                     }
                 }
                 break;
@@ -158,7 +158,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
                     if(chessboard[i].color != side && (chessboard[i].currentCoor.region == OUTERLOOP ||
                                                        chessboard[i].currentCoor.region == TRACK) && chessboard[i].buff_state != DEFENSED) {
                         addMove(rollPoint, chessboard[i].chessID, INTERFERE);
-//                        std::cout << "interfere " <<chessboard[i].chessID << std::endl;
+                        std::cout << "interfere " <<chessboard[i].chessID << std::endl;
                     }
                 }
                 break;
@@ -167,7 +167,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
                 for(int i = 0; i < 16; i++) {
                     if(chessboard[i].color == side && (chessboard[i].buff_state == DEFENSED || chessboard[i].buff_state == INTERFERED) ) {
                         addMove(rollPoint, chessboard[i].chessID, ELIMINATE);
-//                        std::cout << "eliminate "<< chessboard[i].chessID << std::endl;
+                        std::cout << "eliminate "<< chessboard[i].chessID << std::endl;
                     }
                 }
                 break;
@@ -177,7 +177,7 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
         }
     }
 
-//    std::cout <<"how many moves: " << moveCount<< std::endl;
+    std::cout <<"how many moves: " << moveCount<< std::endl;
     return moveCount;
 }
 
@@ -193,5 +193,5 @@ void moveGenerator::addMove(int rollPoint, int chessID, int aboutCard){
     moveList[moveCount].chessID = chessID;
     moveList[moveCount].aboutCard = aboutCard;
     moveCount++;
-//    std::cout << moveCount << ": ";
+    std::cout << moveCount << ": ";
 }

@@ -43,12 +43,12 @@ void searchEngine::play(CHESS chessboard[], int side){
     while(true){   // dice can be rolled n times if keep rolling out 6
         this->rollPoint = pMG->roll();
         //rollCount ++;
-//        std::cout << "-------------------Adding moves-------------------" << std::endl;
+          std::cout << "-------------------Adding moves-------------------" << std::endl;
         count = pMG->createPossibleMove(cur_Chessboard, this->rollPoint, side, myCard);
 
         if(count != 1){     // search move only when it is able to move a chess
             searchAGoodMove(count, side, myCard);
-//            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << " , " << bestMove->aboutCard << std::endl;
+            std::cout << "Current best move: " << bestMove->chessID << " , "<< bestMove->rollPoint << " , " << bestMove->aboutCard << std::endl;
 
             if(bestMove->aboutCard == DRAW) {
                 myCard = rand() % 4 + 1;

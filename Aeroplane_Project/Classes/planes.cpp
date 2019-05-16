@@ -69,18 +69,18 @@ bool Planes::init(int _init_rotation, string icon) {
 }
 
 // a test create function, will not be used in the project
-Planes* Planes::create() {
-    Planes* sprite = new Planes();
-    if (sprite->init(0, "plane.png")) {
-        sprite->autorelease();
-    }
-    else {
-        delete sprite;
-        sprite = NULL;
-        return NULL;
-    }
-    return sprite;
-}
+//Planes* Planes::create() {
+//    Planes* sprite = new Planes();
+//    if (sprite->init(0, "plane.png")) {
+//        sprite->autorelease();
+//    }
+//    else {
+//        delete sprite;
+//        sprite = NULL;
+//        return NULL;
+//    }
+//    return sprite;
+//}
 
 // create function. including color, id, some special point preset, initial rotation, initial status and position
 Planes* Planes::create(int _color, int _id, int _enter_pt, int _turn_pt, int _fly_start, int _fly_end, int _init_rotation, Vec2 _start_pt, Vec2 _take_off_pt, string icon, string _status, int _position, int _roll) {
@@ -533,7 +533,7 @@ void Planes::get_chess() {
     } else if (buff == "protection") {
         chess.buff_state = DEFENSED;
     } else if (buff == "stopaction") {
-        chess.buff_state = INTERFERE;
+        chess.buff_state = INTERFERED;
     }
     chess.round_left = this->round_left;
     if (status == "ground") {
