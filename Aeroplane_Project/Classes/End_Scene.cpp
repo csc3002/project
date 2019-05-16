@@ -108,30 +108,28 @@ bool EndScene::init() {
     }
     else
     {
-        float x = 960 * 3 / 4;
-        float y = 960 / 4;
-        exitItem->setPosition(Vec2(x, y));
+        exitItem->setPosition(Vec2(960 * 3 / 4, 960 / 4));
         exitItem->setScale(1.5);
     }
-	auto restart = MenuItemImage::create(
-		"Restart.png",
-		"Restart.png",
-		CC_CALLBACK_1(EndScene::restart, this));
-	restart->setScale(1.5);
-	restart->setPosition(Vec2(960 / 4, 960 / 4));
 
-	auto back_to = MenuItemImage::create(
-		"Back_to_title.png",
-		"Back_to_title.png",
-		CC_CALLBACK_1(EndScene::back_to_title, this));
-	back_to->setScale(1.5);
-	back_to->setPosition(Vec2(960 / 2, 960 / 4));
+    auto restart = MenuItemImage::create(
+        "Restart.png",
+        "Restart.png",
+        CC_CALLBACK_1(EndScene::restart, this));
+    restart->setScale(1.5);
+    restart->setPosition(Vec2(960 / 4, 960 / 4));
+
+    auto back_to = MenuItemImage::create(
+        "Back_to_title.png",
+        "Back_to_title.png",
+        CC_CALLBACK_1(EndScene::back_to_title, this));
+    back_to->setScale(1.5);
+    back_to->setPosition(Vec2(960 / 2, 960 / 4));
 
     // create exit menu, it's an autorelease object
-    auto exit = Menu::create(exitItem,restart,back_to, NULL);
+    auto exit = Menu::create(exitItem, restart, back_to, NULL);
     exit->setPosition(Vec2::ZERO);
     this->addChild(exit, 1);
-
     return true;
 }
 
@@ -226,20 +224,22 @@ void EndScene::addLabel() {
         }
     }
 }
+
 void EndScene::back_to_title(cocos2d::Ref* pSender) {
-	auto scene = BeginScene::create();
-	auto tran = TransitionFade::create(0.5, scene);
-	Director::getInstance()->replaceScene(tran);
+    auto scene = BeginScene::create();
+    auto tran = TransitionFade::create(0.5, scene);
+    Director::getInstance()->replaceScene(tran);
 }
+
 void EndScene::restart(Ref* pSender) {
-	auto scene = HelloWorld::create();
-	scene->online = this->online;
-	scene->is_advance_mode = this->is_advance_mode;
-	scene->update(0.1);
-	for (int i = 0; i < 4; ++i) {
-		scene->players[i] = this->players[i];
-	}
-	scene->setPlane();
-	auto tran = TransitionFade::create(0.5, scene);
-	Director::getInstance()->replaceScene(tran);
+    auto scene = HelloWorld::create();
+    scene->online = this->online;
+    scene->is_advance_mode = this->is_advance_mode;
+    scene->update(0.1);
+    for (int i = 0; i < 4; ++i) {
+        scene->players[i] = this->players[i];
+    }
+    scene->setPlane();
+    auto tran = TransitionFade::create(0.5, scene);
+    Director::getInstance()->replaceScene(tran);
 }

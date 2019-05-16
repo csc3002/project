@@ -33,7 +33,7 @@ public:
     virtual void setTouchableFalse(EventCustom* event);
 
     virtual void passCard(EventCustom* event);
-    
+
     virtual void AIUseCard(EventCustom* event);
 };
 

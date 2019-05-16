@@ -7,7 +7,7 @@
 #include "searchengin.h"
 USING_NS_CC;
 
-class AI_player: public searchEngine, public Node{
+class AI_player: public searchEngine, public Node {
 public:
     bool init();
     static AI_player* create();
@@ -15,11 +15,11 @@ public:
     int side;
 
     void saveChessboard(EventCustom* event);
-    
+
     void savePoint(EventCustom* event);
-    
+
     void saveCard(EventCustom* event);
-    
+
     void AIPlay();
 };
 #endif

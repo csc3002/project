@@ -81,12 +81,14 @@ public:
  */
 
 protected:
+
 /*
  * Method: addMove
  * Usage: addMove(rollPoint, chessID, aboutCard)
  * ----------------------------------------------
  * Add a valid chess move to the move list.
  */
+
     void addMove(int rollPoint, int chessID, int aboutCard);
 
 //  This variable stores the number of move generated at this stage.
