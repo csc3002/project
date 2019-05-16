@@ -47,7 +47,7 @@ bool BeginScene::init()
         return false;
     }
     this->num_player = 0;
-	this->help_menu = 0;
+    this->help_menu = 0;
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     auto bg = Sprite::create("Start.png");
@@ -64,7 +64,7 @@ bool BeginScene::init()
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(BeginScene::menuCloseCallback, this));
-	auto start_scene = HelloWorld::createScene();
+    auto start_scene = HelloWorld::createScene();
 	auto option1 = MenuItemImage::create(
 		"start1.png",
 		"start1.png",
@@ -307,8 +307,8 @@ bool BeginScene::init()
 	auto help1= MenuItemImage::create(
 		"Option1.png",
 		"Option1.png",
-		CC_CALLBACK_1(BeginScene::helpmenu, this,1));
-	help1->setPosition(Vec2(250,600));
+		CC_CALLBACK_1(BeginScene::helpmenu, this, 1));
+	help1->setPosition(Vec2(250, 600));
 	help1->setScale(0);
 	this->help1 = help1;
 
@@ -415,6 +415,7 @@ void BeginScene::update(float dt) {
 	this->menu_show();
 	this->player_show();
 }
+
 void BeginScene::menu_show() {
 	if (this->help_menu == true) {
 		if (this->help_choose == 1) {
@@ -451,6 +452,7 @@ void BeginScene::menu_show() {
 		}
 	}
 }
+
 void BeginScene::player_show() {
 	if (this->player[0] == 1) {
 		this->player1->setString("Player 1");
@@ -636,7 +638,6 @@ void BeginScene::refresh2_1(Ref* pSender ) {
 
 void BeginScene::refresh3(Ref* pSender, bool mode) {
 	this->advance_mode = mode;
-    log("%d", advance_mode);
 	this->option1->setScale(0);
 	this->option2->setScale(0);
 	this->option3->setScale(0);

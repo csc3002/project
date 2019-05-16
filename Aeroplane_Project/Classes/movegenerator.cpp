@@ -3,6 +3,7 @@
  * ------------------------
  * This file stores the implementation of move generator.
  */
+
 #include<stdio.h>
 #include<iostream>
 #include<stdlib.h>
@@ -33,6 +34,7 @@ moveGenerator::moveGenerator(int offmode, int advance)
  * ---------------------------------
  * The destructor of the generator.
  */
+
 moveGenerator::~moveGenerator()
 {
 
@@ -50,7 +52,6 @@ int moveGenerator::roll()
     int randNum;
     randNum = rand() % 6 + 1;
     return randNum;
-
 }
 
 
@@ -93,7 +94,6 @@ int moveGenerator::createPossibleMove(const CHESS chessboard[], int rollPoint, i
     default:
             return -1;
     }
-
 
     // offCounts: use to eliminate repeat taking off
     int offCount = 0;

@@ -17,7 +17,8 @@ searchEngine::searchEngine()
 }
 
 // destructor should remove the move generator and evaluator
-searchEngine::~searchEngine(){
+searchEngine::~searchEngine()
+{
 
 }
 
@@ -244,7 +245,6 @@ void searchEngine::useAbility(CHESSMOVE * move, CHESS * chessboard,  int side) {
     }
 }
 
-
 /*
  * Implementation note: isGameOver
  * ---------------------------------
@@ -263,7 +263,6 @@ bool searchEngine::isGameOver(const CHESS chessboard[]){
                    chessboard[14].currentCoor.region == WIN && chessboard[15].currentCoor.region == WIN);
     return (redWin || yellowWin || blueWin || greenWin);
 }
-
 
 /*
  * Implementation note: genOuterMove

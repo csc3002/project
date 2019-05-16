@@ -29,7 +29,7 @@ public:
     virtual void setTouchableFalse(EventCustom* event);
 
     virtual void setRound(EventCustom* event);
-    
+
     virtual void AIDraw();
 };
 

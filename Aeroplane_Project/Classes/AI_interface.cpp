@@ -23,8 +23,13 @@ AI_player* AI_player::create() {
     AI_player* sprite = new AI_player();
     if (sprite->init()) {
         sprite->autorelease();
-        return sprite;
     }
+    else {
+        delete sprite;
+        sprite = NULL;
+        return NULL;
+    }
+    return sprite;
 }
 
 void AI_player::saveChessboard(EventCustom* event) {

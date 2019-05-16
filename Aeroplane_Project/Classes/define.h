@@ -5,6 +5,7 @@
  */
 
 #include <string>
+
 #ifndef DEFINE_H
 #define DEFINE_H
 
@@ -56,7 +57,6 @@
 #define BLUE_FLY_END 6
 #define GREEN_FLY_BEGIN 7
 #define GREEN_FLY_END 19
-
 
 // Define colors
 #define RED 0
@@ -113,7 +113,5 @@ typedef struct _chess {
     int round_left = 0;
 
 } CHESS;
-
-
 
 #endif // DEFINE_H

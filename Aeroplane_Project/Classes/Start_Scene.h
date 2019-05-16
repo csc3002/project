@@ -32,20 +32,21 @@ public:
     static cocos2d::Scene* createScene();
 
     virtual bool init();
+
     bool online;
     bool advance_mode;
-	bool help_menu;
-	int help_choose;
+    bool help_menu;
+    int help_choose;
     int num_player;
     int player[4];
     int character[4];
     cocos2d::MenuItemImage* option1; // start game option
     cocos2d::MenuItemImage* option2; // help option
     cocos2d::MenuItemImage* option3; // exit option
-	cocos2d::MenuItemImage* help1;  //help 1st option
-	cocos2d::MenuItemImage* help2;  //help 2nd option
-	cocos2d::MenuItemImage* help3;  //help 3rd option
-	cocos2d::MenuItemImage* help4;  //help 4th option
+    cocos2d::MenuItemImage* help1;  // help 1st option
+    cocos2d::MenuItemImage* help2;  // help 2nd option
+    cocos2d::MenuItemImage* help3;  // help 3rd option
+    cocos2d::MenuItemImage* help4;  // help 4th option
     cocos2d::MenuItemImage* option_back; // back option in the menu
     cocos2d::MenuItemImage* option_online; // online option
     cocos2d::MenuItemImage* option_offline; // exit option
@@ -73,11 +74,11 @@ public:
     cocos2d::Label* player3;
     cocos2d::Label* player4;
     cocos2d::Label* test;
-	cocos2d::Sprite* plane1;
-	cocos2d::Sprite* plane2;
-	cocos2d::Sprite* plane3;
-	cocos2d::Sprite* plane4;
-	cocos2d::Sprite* content1;
+    cocos2d::Sprite* plane1;
+    cocos2d::Sprite* plane2;
+    cocos2d::Sprite* plane3;
+    cocos2d::Sprite* plane4;
+    cocos2d::Sprite* content1;
     cocos2d::Sprite* content2;
     cocos2d::Sprite* content3;
     cocos2d::Sprite* content4;
@@ -85,13 +86,13 @@ public:
 
     void addplayer(Ref* pSender, int index);
     void addcomputer(Ref* pSender, int index);
-	void helpmenu(Ref* pSender, int index);
+    void helpmenu(Ref* pSender, int index);
     void delplayer(Ref* pSender, int index);
     void change_char(Ref* pSender, int index, int num);
     void update(float dt);
     void reset(Ref* pSender);
     void player_show();
-	void menu_show();
+    void menu_show();
     void Problem_show(Ref* pSender);
     void menuCloseCallback(cocos2d::Ref* pSender);
     void refresh1(cocos2d::Ref* pSender);

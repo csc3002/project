@@ -60,6 +60,7 @@ public:
 
 //  This variable preserves the roll point
     int rollPoint;
+
 //  The card this player have
     int myCard = NOCARD;
 
