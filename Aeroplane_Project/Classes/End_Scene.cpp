@@ -233,7 +233,7 @@ void EndScene::back_to_title(cocos2d::Ref* pSender) {
 }
 void EndScene::restart(Ref* pSender) {
 	auto scene = HelloWorld::create();
-	scene->online = online;
+	scene->online = this->online;
 	scene->is_advance_mode = this->is_advance_mode;
 	scene->update(0.1);
 	for (int i = 0; i < 4; ++i) {

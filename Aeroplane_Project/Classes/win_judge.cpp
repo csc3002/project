@@ -62,6 +62,8 @@ void Win_Judge::endGame(int player_win_num) {
     auto scene = EndScene::create();
     scene->winner_color = player_win_num;
     scene->addLabel();
+	scene->is_advance_mode = this->is_advance_mode;
+	scene->online = this->online;
 	for (int i = 0; i < 4; i++) {
 		scene->players[i] = this->players[i];
 	}

@@ -105,6 +105,7 @@ void HelloWorld::setPlane() {
     // initiate win judge
     auto win_judge = Win_Judge::create();
 	win_judge->is_advance_mode = this->is_advance_mode;
+	win_judge->online = this->online;
 	for (int i = 0; i < 4; ++i) {
 		win_judge->players[i] = this->players[i];
 	}
