@@ -54,7 +54,6 @@ int moveGenerator::roll()
     return randNum;
 }
 
-
 /*
  * Implementation note: createPossibleMove
  * ----------------------------------------
