@@ -4,10 +4,10 @@
  * This file stores the implementation of move generator.
  */
 
-#include<stdio.h>
-#include<iostream>
-#include<stdlib.h>
-#include<ctime>
+#include <stdio.h>
+#include <iostream>
+#include <stdlib.h>
+#include <ctime>
 #include "define.h"
 #include "movegenerator.h"
 
