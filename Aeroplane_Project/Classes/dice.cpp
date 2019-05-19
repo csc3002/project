@@ -157,13 +157,11 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
             EventCustom eventRollPT = EventCustom("roll_point");
             eventRollPT.setUserData((void*)&roll_num);
             _eventDispatcher->dispatchEvent(&eventRollPT);
-            log("rpt %d %d", round, roll_num);
             // pass round to the card generator
             // ask the planes for there position status
             EventCustom eventRoundG = EventCustom("event_round_to_generator_and_planes");
             eventRoundG.setUserData((void*)&round);
             _eventDispatcher->dispatchEvent(&eventRoundG);
-            log("passround %d", round);
             // if roll_num is not 6, the next player rolls the dice
             if (roll_num != 6) {
                 round = (round + 1) % 4;
@@ -199,7 +197,6 @@ bool Dice::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event) {
                     _eventDispatcher->dispatchEvent(&eventRoundS);
                 }
             }
-            log("end %d", round);
             statusArray[0] = 0;
             statusArray[1] = 0;
             statusArray[2] = 0;
@@ -256,8 +253,6 @@ void Dice::setStatusArray(EventCustom* event) {
             EventCustom eventRoundS = EventCustom("event_round_to_slots");
             eventRoundS.setUserData((void*)&round);
             _eventDispatcher->dispatchEvent(&eventRoundS);
-            log("%d %d %d %d", statusArray[0],statusArray[1],statusArray[2],statusArray[3]);
-            log("status done");
         }
         updated_num = 0;
     }
@@ -316,20 +311,13 @@ void Dice::skipTurn(EventCustom* event) {
 }
 
 void Dice::AICall() {
-    log("playerArray[round] %d", playerArray[round]);
-    log("player %d", round);
-    if (playerArray[round] == -1) {
-        log("ai");
-        can_touch = false;
-        EventCustom eventGetCard = EventCustom("event_get_card");
-        eventGetCard.setUserData((int*)&round);
-        _eventDispatcher->dispatchEvent(&eventGetCard);
-        EventCustom eventGetChess = EventCustom("event_get_chess");
-        eventGetChess.setUserData((void*)true);
-        _eventDispatcher->dispatchEvent(&eventGetChess);
-    } else {
-        log("human");
-    }
+    can_touch = false;
+    EventCustom eventGetCard = EventCustom("event_get_card");
+    eventGetCard.setUserData((int*)&round);
+    _eventDispatcher->dispatchEvent(&eventGetCard);
+    EventCustom eventGetChess = EventCustom("event_get_chess");
+    eventGetChess.setUserData((void*)true);
+    _eventDispatcher->dispatchEvent(&eventGetChess);
 }
 
 void Dice::AIPass(EventCustom* event) {

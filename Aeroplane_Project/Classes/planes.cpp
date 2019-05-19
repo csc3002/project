@@ -751,19 +751,6 @@ void Planes::AIMove(EventCustom* event) {
 
 void Planes::AIUseCard(EventCustom* event) {
     int* cardInfoArray = (int*)event->getUserData();
-//    if (cardInfoArray[0] == 1) {
-//        card = "machinegun";
-//    }
-//    else if (cardInfoArray[0] == 2) {
-//        card = "protection";
-//    }
-//    else if (cardInfoArray[0] == 3) {
-//        card = "stopaction";
-//    }
-//    else if (cardInfoArray[0] == 4) {
-//        card = "neutralize";
-//    }
-//    round_left_of_card = cardInfoArray[1];
     if (color == cardInfoArray[3] && id == cardInfoArray[4]) {
         if (status != "finished") {
             if (cardInfoArray[0] == 1 && buff != "stopaction") {
