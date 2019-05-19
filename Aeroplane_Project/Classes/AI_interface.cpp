@@ -6,7 +6,6 @@
 #include "evaluator.h"
 #include "planes.h"
 #include "dice.h"
-
 USING_NS_CC;
 
 bool AI_player::init() {
@@ -37,55 +36,53 @@ void AI_player::saveChessboard(EventCustom* event) {
     for (int i=0; i<16; ++i) {
         chessboard[i] = array[i];
     }
-    log("save chessboard");
 }
 
 void AI_player::savePoint(EventCustom* event) {
     int* array = (int*)event->getUserData();
     rollPoint = array[0];
     side = (array[1] + 2) % 4;
-    log("save point");
     AIPlay();
 }
 
 void AI_player::saveCard(EventCustom* event) {
     int card_num = *(int*)event->getUserData();
     myCard = card_num;
-    if (myCard == 0) {myCard = -1;}
-    log("save card");
+    if (myCard == 0) {
+        myCard = -1;
+    }
 }
 
 void AI_player::AIPlay() {
     if(isGameOver(chessboard)) {
         return;
     }
-    int count = 0;          // count the current number of moves
+
+    // count the current number of moves
+    int count = 0;
     memcpy(cur_Chessboard, chessboard, sizeof(cur_Chessboard));
-    log("rollPoint %d side %d myCard %d", rollPoint, side, myCard);
     count = pMG->createPossibleMove(chessboard, rollPoint, side, myCard);
+
     if (count == 1) {
-        log("ai nomove");
         EventCustom eventAINoMove = EventCustom("AI_NoMove");
         _eventDispatcher->dispatchEvent(&eventAINoMove);
         return;
     }
-    else {     // search move only when it is able to move a chess
+    // search move only when it is able to move a chess
+    else {
         searchAGoodMove(count, side, myCard);
     }
+
     if (bestMove->aboutCard == DRAW) {
-        log("ai draw");
         EventCustom eventAIDraw = EventCustom("AI_Draw");
         _eventDispatcher->dispatchEvent(&eventAIDraw);
     }
     else if (bestMove->aboutCard != NOCARD) {
-        log("ai usecard");
         EventCustom eventAIUseCard = EventCustom("AI_UseCard");
         eventAIUseCard.setUserData((int*)&(bestMove->chessID));
         _eventDispatcher->dispatchEvent(&eventAIUseCard);
     }
     else if (bestMove->aboutCard == NOCARD) {
-        log("ai move");
-        log("chessid %d rollpoint %d aboutcard %d", bestMove->chessID, bestMove->rollPoint, bestMove->aboutCard);
         EventCustom eventAIMove = EventCustom("AI_Move");
         eventAIMove.setUserData((int*)&(bestMove->chessID));
         _eventDispatcher->dispatchEvent(&eventAIMove);

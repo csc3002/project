@@ -19,7 +19,6 @@ public:
     static Card_Slot_Animation* create();
 
     virtual void play_animation(EventCustom* event);
-
 };
 
 #endif // card_slot_animation_h

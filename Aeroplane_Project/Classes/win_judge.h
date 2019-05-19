@@ -18,6 +18,7 @@ public:
     bool is_advance_mode;
     bool online;
     int players[4];
+
     virtual bool init();
 
     static Win_Judge* create();

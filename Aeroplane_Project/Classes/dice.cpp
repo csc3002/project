@@ -340,7 +340,6 @@ void Dice::AIPass(EventCustom* event) {
         EventCustom eventReceivePoint = EventCustom("event_receive_point");
         eventReceivePoint.setUserData((void*)passArray);
         _eventDispatcher->dispatchEvent(&eventReceivePoint);
-        log("AI PASS");
         if (roll_num != 6) {
             round = (round + 1) % 4;
             // skip if the player is nobody
@@ -382,7 +381,6 @@ void Dice::AIDraw() {
 
 void Dice::AIUseCard(EventCustom* event) {
     int chessID = *(int*)event->getUserData();
-    log("chessID %d", chessID);
     int color = ((chessID - 1) / 4 + 2) % 4;
     int id = (chessID - 1) % 4;
     int ColorIDArray[3] = {color, id, round};

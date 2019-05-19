@@ -30,9 +30,7 @@
 class BeginScene: public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
-
     virtual bool init();
-
     bool online;
     bool advance_mode;
     bool help_menu;
@@ -82,8 +80,6 @@ public:
     cocos2d::Sprite* content2;
     cocos2d::Sprite* content3;
     cocos2d::Sprite* content4;
-    // a selector callback
-
     void addplayer(Ref* pSender, int index);
     void addcomputer(Ref* pSender, int index);
     void helpmenu(Ref* pSender, int index);
@@ -94,6 +90,7 @@ public:
     void player_show();
     void menu_show();
     void Problem_show(Ref* pSender);
+    // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
     void refresh1(cocos2d::Ref* pSender);
     void refresh_menu(cocos2d::Ref* pSender);
@@ -101,7 +98,6 @@ public:
     void refresh3(cocos2d::Ref* pSender, bool mode);
     void refresh2_1(Ref* pSender); // mode = true -> advanced, mode = false -> normal
     void startGame(cocos2d::Ref* pSender, Scene* start_scene, bool online);
-    
     // implement the "static create()" method manually
     CREATE_FUNC(BeginScene);
 };

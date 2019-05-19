@@ -37,13 +37,11 @@
 class EndScene: public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
-
     virtual bool init();
     bool is_advance_mode;
     bool online;
     int players[4];
     int winner_color;                                      // who wins
-
     virtual void addLabel();
     virtual void back_to_title(cocos2d::Ref* pSender);
     // a selector callback

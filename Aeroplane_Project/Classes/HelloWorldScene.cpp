@@ -54,7 +54,6 @@ bool HelloWorld::init() {
     {
         return false;
     }
-//    log("%d", is_advance_mode);
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -202,7 +201,6 @@ void HelloWorld::setPlane() {
 		this->addChild(yellow_plane_2, 10);
 		this->addChild(yellow_plane_3, 10);
 	}
-    log("%d", this->is_advance_mode);
 	if (this->is_advance_mode) {
 		this->addChild(card_generator, 1);
         this->addChild(card_slot_animation, 10);
@@ -244,4 +242,3 @@ void HelloWorld::update(float dt) {
 		this->Online_Mode->setString("Mode : Normal");
 	}
 }
-

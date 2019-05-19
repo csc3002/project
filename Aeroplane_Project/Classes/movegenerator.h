@@ -8,9 +8,10 @@
  * find the current best move.
  */
 
-#include "define.h"
 #ifndef MOVEGENERATOR_H
 #define MOVEGENERATOR_H
+
+#include "define.h"
 
 /*
  * Class: moveGenerator

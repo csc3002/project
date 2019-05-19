@@ -5,11 +5,11 @@
  * evaluates the value of a move.
  */
 
-#include "define.h"
-#include "math.h"
-
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
+
+#include "define.h"
+#include "math.h"
 
 class evaluator
 {

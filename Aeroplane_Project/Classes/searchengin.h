@@ -8,11 +8,12 @@
  * and it will change the chessboard in place.
  */
 
+#ifndef SEARCHENGINE_H
+#define SEARCHENGINE_H
+
 #include "define.h"
 #include "movegenerator.h"
 #include "evaluator.h"
-#ifndef SEARCHENGINE_H
-#define SEARCHENGINE_H
 
 class searchEngine
 {

@@ -4,10 +4,10 @@
  * This file defines data structures and macros for an AI.
  */
 
-#include <string>
-
 #ifndef DEFINE_H
 #define DEFINE_H
+
+#include <string>
 
 // Define regions
 #define APRON 0

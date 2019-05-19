@@ -188,7 +188,6 @@ bool BeginScene::init()
 	option_player_one->setScale(0);
 	this->option_player_one = option_player_one;
 
-
 	auto option_AI_1 = MenuItemImage::create(
 		"Add_Computer.png",
 		"Add_Computer.png",
@@ -245,7 +244,6 @@ bool BeginScene::init()
 	this->gamestart = option_gamestart;
 	this->gamestart->setScale(0);
 	this->gamestart->setPosition(Vec2(480, 25));
-
 
 	// cancel button
 	auto cancel_1 = MenuItemImage::create(
@@ -661,7 +659,6 @@ void BeginScene::refresh3(Ref* pSender, bool mode) {
 	this->option_AI_3->setScale(1.5);
 	this->option_player_four->setScale(1.5);
 	this->option_AI_4->setScale(1.5);
-
 }
 
 void BeginScene::refresh_menu(Ref* pSender) {

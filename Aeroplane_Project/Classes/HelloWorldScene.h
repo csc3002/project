@@ -41,7 +41,6 @@ public:
 	void update(float dt);
     virtual bool init();
     void setPlane();
-
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 };

@@ -1,8 +1,8 @@
 #pragma once
 #ifndef AI_interface_h
 #define AI_interface_h
+
 #include "cocos2d.h"
-#include <string>
 #include "define.h"
 #include "searchengin.h"
 USING_NS_CC;
@@ -22,4 +22,5 @@ public:
 
     void AIPlay();
 };
-#endif
+
+#endif // AI_interface_h

@@ -68,8 +68,9 @@ bool Planes::init(int _init_rotation, string icon) {
     return true;
 }
 
-// a test create function, will not be used in the project
+//// a test create function, will not be used in the project
 //Planes* Planes::create() {
+//    log("plane create");
 //    Planes* sprite = new Planes();
 //    if (sprite->init(0, "plane.png")) {
 //        sprite->autorelease();
@@ -552,7 +553,6 @@ void Planes::get_chess() {
         chess.currentCoor.region = WIN;
         chess.currentCoor.code = OUTSIDE;
     }
-//    log("chess PASS %d", chess.chessID);
     EventCustom eventChessPass = EventCustom("event_chess_pass");
     eventChessPass.setUserData((void*)&chess);
     _eventDispatcher->dispatchEvent(&eventChessPass);
@@ -562,11 +562,9 @@ void Planes::AIMove(EventCustom* event) {
     
     int* array = (int*)event->getUserData();
     if (color == array[0] && id == array[1]) {
-        log ("do AI move %d %d %s %s", color, id, buff.c_str(), card.c_str());
         roll = array[2];
         if (card == "none") {
             can_touch = false;
-            log("begin move");
             // to tell other planes that this plane has been click and let them untouchable
             EventCustom eventPlaneClick = EventCustom("plane_click");
             eventPlaneClick.setUserData((bool*)false);
