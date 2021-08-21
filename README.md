@@ -1,11 +1,12 @@
 # CSC3002 project
 
-这个是我们组的project的远程仓库。
-因为cocos的引擎太大了 放不上来 而且我们的修改仅限于classes和resources文件夹 所以只传了这两个
+The remote repository of Aeroplane Game project.
 
-第一次拉取的时候稍微注意下：
-1，先clone下来随便一个文件夹
-2，新建一个cocos2d工程，把cocos2d还有几个proj文件夹复制过来扔到clone下来的路径
-3，然后就可以照常push和pull了 因为那几个大文件夹我都用gitignore屏蔽了（接下来用vs或者gitbash都可以了
+If this is your first time cloning this project:
+1，Clone the project
+2，Build a new cocos2d project, and move the cocos2d project to the cloned project
+3，Edit .gitignore in order to not push/pull cocos2d project files
+
+
 
 
